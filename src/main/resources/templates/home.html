@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{components/base :: page(
+          title='Home',
+          content=~{::content}
+      )}">
+<section th:fragment="content">
+    <h1>Bienvenido</h1>
+    <p>Contenido de inicio.</p>
+</section>
+</html>
