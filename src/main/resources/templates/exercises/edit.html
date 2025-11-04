@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<section th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/exercises/edit.css}">
+    <div class="container">
+        <div th:if="${actualExercise == null}">
+            <p>Ejercicio no encontrado.</p>
+            <p><a th:href="@{/mvc/exercises}">Volver</a></p>
+        </div>
+
+        <div th:if="${actualExercise != null}">
+            <h2>Editar ejercicio</h2>
+
+            <div th:if="${error}" class="alert-error">
+                <span th:text="${error}">Error message</span>
+            </div>
+
+            <form th:action="@{/mvc/exercises/edit}" method="post" th:object="${actualExercise}">
+                <input type="hidden" th:field="*{id}" />
+
+                <div>
+                    <label>Nombre</label>
+                    <input type="text" th:field="*{name}" maxlength="80" required>
+                </div>
+
+                <div>
+                    <label>Tipo</label>
+                    <select th:field="*{type}" required>
+                        <option value="">-- Seleccione --</option>
+                        <option value="cardio">Cardio</option>
+                        <option value="fuerza">Fuerza</option>
+                        <option value="movilidad">Movilidad</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Dificultad</label>
+                    <select th:field="*{difficulty}" required>
+                        <option value="">-- Seleccione --</option>
+                        <option value="fácil">Fácil</option>
+                        <option value="intermedio">Intermedio</option>
+                        <option value="avanzado">Avanzado</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Duración (segundos)</label>
+                    <input type="number" th:field="*{durationSeconds}" min="1" step="1" required>
+                </div>
+
+                <div>
+                    <label>Descripción</label>
+                    <textarea th:field="*{description}" maxlength="500"
+                        placeholder="Instrucciones, forma, tips, etc."></textarea>
+                </div>
+
+                <div>
+                    <label>Videos demostrativos (una URL por línea)</label>
+                    <textarea name="videosText" th:text="${videosText}"></textarea>
+                </div>
+
+                <div>
+                    <button type="submit">Actualizar</button>
+                </div>
+            </form>
+
+            <p><a th:href="@{/mvc/exercises}">Volver</a></p>
+        </div>
+    </div>
+</section>
+</html>

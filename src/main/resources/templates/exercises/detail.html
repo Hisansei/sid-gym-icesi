@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<section th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/exercises/detail.css}">
+    <div class="container">
+        <div th:if="${exercise == null}">
+            <p>Ejercicio no encontrado.</p>
+            <p><a th:href="@{/mvc/exercises}">Volver</a></p>
+        </div>
+
+        <div th:if="${exercise != null}">
+            <h2 th:text="${exercise.name}">Nombre</h2>
+            <p><strong>Tipo:</strong> <span th:text="${exercise.type}">tipo</span></p>
+            <p><strong>Dificultad:</strong> <span th:text="${exercise.difficulty}">dif</span></p>
+            <p th:if="${exercise.durationSeconds != null}">
+                <strong>Duración:</strong> <span th:text="${exercise.durationSeconds}">0</span> s
+            </p>
+            <p th:if="${exercise.description}">
+                <strong>Descripción:</strong> <span th:text="${exercise.description}"></span>
+            </p>
+
+            <div th:if="${exercise.demoVideos != null and !exercise.demoVideos.isEmpty()}">
+                <h3>Videos demostrativos</h3>
+                <ul>
+                    <li th:each="v : ${exercise.demoVideos}">
+                        <a th:href="${v}" target="_blank" th:text="${v}">video</a>
+                    </li>
+                </ul>
+            </div>
+
+            <p>
+                <a th:href="@{/mvc/exercises}">Volver</a>
+                <a th:href="@{/mvc/exercises/edit(id=${exercise.id})}">Editar</a>
+                <a th:href="@{/mvc/exercises/delete(id=${exercise.id})}">Eliminar</a>
+            </p>
+        </div>
+    </div>
+</section>
+</html>
