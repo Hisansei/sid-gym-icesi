@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<section th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/exercises/list.css}">
+    <div class="container">
+        <h2>Catálogo de ejercicios</h2>
+
+        <div th:if="${error}" class="alert-error">
+            <span th:text="${error}">Error message</span>
+        </div>
+
+        <div th:if="${message}" class="alert-success">
+            <span th:text="${message}">Success message</span>
+        </div>
+
+        <form class="search-box" th:action="@{/mvc/exercises}" method="get">
+            <input type="text" name="q" placeholder="Buscar por nombre..." />
+            <select name="type">
+                <option value="">-- Tipo --</option>
+                <option value="cardio">Cardio</option>
+                <option value="fuerza">Fuerza</option>
+                <option value="movilidad">Movilidad</option>
+            </select>
+            <select name="difficulty">
+                <option value="">-- Dificultad --</option>
+                <option value="fácil">Fácil</option>
+                <option value="intermedio">Intermedio</option>
+                <option value="avanzado">Avanzado</option>
+            </select>
+            <button type="submit">Buscar</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Tipo</th>
+                    <th>Dificultad</th>
+                    <th>Duración (s)</th>
+                    <th>Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="e : ${exercises}">
+                    <td th:text="${e.name}">Nombre</td>
+                    <td th:text="${e.type}">tipo</td>
+                    <td th:text="${e.difficulty}">dif</td>
+                    <td th:text="${e.durationSeconds}">0</td>
+                    <td>
+                        <a th:href="@{/mvc/exercises/detail(id=${e.id})}">Detalle</a>
+                        <a th:href="@{/mvc/exercises/edit(id=${e.id})}">Editar</a>
+                        <a th:href="@{/mvc/exercises/delete(id=${e.id})}">Eliminar</a>
+                    </td>
+                </tr>
+                <tr th:if="${exercises == null or exercises.isEmpty()}">
+                    <td colspan="5">Aún no hay ejercicios en el catálogo . . .</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><a th:href="@{/mvc/exercises/add}">Agregar ejercicio</a></p>
+    </div>
+</section>
+</html>
