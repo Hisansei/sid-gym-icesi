@@ -25,7 +25,7 @@ public class RoutineTemplate {
     private String description;
     private String level; // BEGINNER|INTERMEDIATE|ADVANCED
 
-    @Indexed // Esto es para consultas rápidas de plantillas por entrenador
+    @Indexed
     @Field("trainer_id")
     private String trainerId;
 
@@ -34,14 +34,13 @@ public class RoutineTemplate {
 
     private boolean status;
 
-    @Builder.Default // Para crear listas vacías por defecto
+    @Builder.Default
     private List<TemplateItem> exercises = new ArrayList<>();
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    // Tiene otro nombre en el modelo
     public static class TemplateItem {
         private int order;
 
@@ -49,6 +48,7 @@ public class RoutineTemplate {
         private String exerciseId;
 
         private int sets;
+
         private int reps;
 
         @Field("rest_seconds")

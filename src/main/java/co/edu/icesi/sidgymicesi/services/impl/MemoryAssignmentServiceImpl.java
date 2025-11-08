@@ -1,6 +1,6 @@
 package co.edu.icesi.sidgymicesi.services.impl;
 
-import co.edu.icesi.sidgymicesi.model.TrainerAssignment;
+import co.edu.icesi.sidgymicesi.model.mongo.TrainerAssignment;
 import co.edu.icesi.sidgymicesi.services.IAssignmentService;
 import co.edu.icesi.sidgymicesi.services.ITrainerStatsService;
 import org.springframework.context.annotation.Primary;
@@ -28,7 +28,7 @@ public class MemoryAssignmentServiceImpl implements IAssignmentService {
         Objects.requireNonNull(userUsername, "userUsername requerido");
         Objects.requireNonNull(trainerUsername, "trainerUsername requerido");
 
-        // si el usuario ya tiene una activa, la cerramos
+        // cierra la activa (si existe)
         Optional.ofNullable(activeByUser.get(userUsername))
                 .map(store::get)
                 .filter(TrainerAssignment::isActive)
@@ -40,7 +40,7 @@ public class MemoryAssignmentServiceImpl implements IAssignmentService {
         TrainerAssignment a = TrainerAssignment.builder()
                 .id(UUID.randomUUID().toString())
                 .userUsername(userUsername)
-                .trainerUsername(trainerUsername)
+                .trainerId(trainerUsername)   // usamos trainerUsername como id
                 .active(true)
                 .assignedAt(LocalDateTime.now())
                 .build();
@@ -70,7 +70,7 @@ public class MemoryAssignmentServiceImpl implements IAssignmentService {
 
     @Override public List<TrainerAssignment> listByTrainer(String trainerUsername) {
         return store.values().stream()
-                .filter(a -> Objects.equals(a.getTrainerUsername(), trainerUsername))
+                .filter(a -> Objects.equals(a.getTrainerId(), trainerUsername))
                 .sorted(Comparator.comparing(TrainerAssignment::getAssignedAt).reversed())
                 .collect(Collectors.toList());
     }
@@ -81,7 +81,6 @@ public class MemoryAssignmentServiceImpl implements IAssignmentService {
         if (a != null && a.isActive()) {
             a.setActive(false);
             a.setEndedAt(LocalDateTime.now());
-            // si era la activa del usuario, la removemos del índice
             activeByUser.computeIfPresent(a.getUserUsername(), (u,id) -> id.equals(assignmentId) ? null : id);
         }
     }

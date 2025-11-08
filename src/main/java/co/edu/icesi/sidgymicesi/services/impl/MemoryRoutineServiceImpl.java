@@ -1,6 +1,6 @@
 package co.edu.icesi.sidgymicesi.services.impl;
 
-import co.edu.icesi.sidgymicesi.model.*;
+import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 import co.edu.icesi.sidgymicesi.services.IRoutineService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -40,15 +40,16 @@ public class MemoryRoutineServiceImpl implements IRoutineService {
     public List<Routine> listByOwner(String ownerUsername) {
         return store.values().stream()
                 .filter(r -> Objects.equals(r.getOwnerUsername(), ownerUsername))
+                .sorted(Comparator.comparing(Routine::getCreatedAt).reversed())
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Routine addItem(String routineId, RoutineItem item) {
+    public Routine addItem(String routineId, Routine.RoutineItem item) {
         Routine r = store.get(routineId);
         if (r == null) throw new IllegalArgumentException("Rutina no existe");
-        if (item.getId()==null) item.setId(UUID.randomUUID().toString());
-        if (item.getOrderIndex()==null) item.setOrderIndex(r.getItems().size()+1);
+        if (item.getId() == null) item.setId(UUID.randomUUID().toString());
+        if (item.getOrderIndex() == null) item.setOrderIndex(r.getItems().size() + 1);
         r.getItems().add(item);
         return r;
     }
@@ -60,7 +61,7 @@ public class MemoryRoutineServiceImpl implements IRoutineService {
         r.getItems().removeIf(it -> Objects.equals(it.getId(), itemId));
         // normaliza orden
         int idx = 1;
-        for (RoutineItem it : r.getItems()) it.setOrderIndex(idx++);
+        for (Routine.RoutineItem it : r.getItems()) it.setOrderIndex(idx++);
         return r;
     }
 
@@ -68,15 +69,16 @@ public class MemoryRoutineServiceImpl implements IRoutineService {
     public Routine reorder(String routineId, List<String> orderedItemIds) {
         Routine r = store.get(routineId);
         if (r == null) throw new IllegalArgumentException("Rutina no existe");
-        Map<String, RoutineItem> byId = r.getItems().stream().collect(Collectors.toMap(RoutineItem::getId, it->it));
-        List<RoutineItem> ordered = new ArrayList<>();
+        Map<String, Routine.RoutineItem> byId = r.getItems().stream()
+                .collect(Collectors.toMap(Routine.RoutineItem::getId, it -> it));
+        List<Routine.RoutineItem> ordered = new ArrayList<>();
         for (String id : orderedItemIds) {
-            RoutineItem it = byId.get(id);
+            Routine.RoutineItem it = byId.get(id);
             if (it != null) ordered.add(it);
         }
         r.setItems(ordered);
         int idx = 1;
-        for (RoutineItem it : r.getItems()) it.setOrderIndex(idx++);
+        for (Routine.RoutineItem it : r.getItems()) it.setOrderIndex(idx++);
         return r;
     }
 

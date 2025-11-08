@@ -1,6 +1,6 @@
 package co.edu.icesi.sidgymicesi.services.impl;
 
-import co.edu.icesi.sidgymicesi.model.ProgressLog;
+import co.edu.icesi.sidgymicesi.model.mongo.ProgressLog;
 import co.edu.icesi.sidgymicesi.services.IProgressService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,7 @@
 package co.edu.icesi.sidgymicesi.controller;
 
-import co.edu.icesi.sidgymicesi.model.TrainerAssignment;
+import co.edu.icesi.sidgymicesi.model.mongo.TrainerAssignment;
+import co.edu.icesi.sidgymicesi.model.mongo.TrainerAssignment;
 import co.edu.icesi.sidgymicesi.services.IAssignmentService;
 import co.edu.icesi.sidgymicesi.services.ITrainerStatsService;
 import lombok.RequiredArgsConstructor;

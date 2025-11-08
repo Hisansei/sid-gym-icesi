@@ -1,6 +1,8 @@
 package co.edu.icesi.sidgymicesi.services;
 
 import co.edu.icesi.sidgymicesi.model.*;
+import co.edu.icesi.sidgymicesi.model.mongo.Routine;
+
 import java.util.*;
 
 public interface IRoutineService {
@@ -9,7 +11,7 @@ public interface IRoutineService {
     Optional<Routine> findById(String routineId);
     List<Routine> listByOwner(String ownerUsername);
 
-    Routine addItem(String routineId, RoutineItem item);
+    Routine addItem(String routineId, Routine.RoutineItem item);
     Routine removeItem(String routineId, String itemId);
     Routine reorder(String routineId, List<String> orderedItemIds);
 
