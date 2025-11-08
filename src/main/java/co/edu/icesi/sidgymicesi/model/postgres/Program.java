@@ -3,7 +3,6 @@ package co.edu.icesi.sidgymicesi.model.postgres;
 import jakarta.persistence.*;
 import lombok.*;
 
-import javax.security.auth.Subject;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

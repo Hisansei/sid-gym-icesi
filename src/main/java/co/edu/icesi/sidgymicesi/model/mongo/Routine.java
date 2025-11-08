@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,51 +17,33 @@ public class Routine {
     private String id;
 
     @Indexed
-    private String username;
+    private String ownerUsername;
 
     @Field("origin_template_id")
-    private String originTemplateId;
+    private String sourceTemplateId;
 
     private String name;
 
-    private String description;
-
-    private String level;
-
     @Field("created_at")
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
-    private boolean status;
+    private String status;
 
     @Builder.Default
-    private List<RoutineItem> exercises = new ArrayList<>();
+    private List<RoutineItem> items = new ArrayList<>();
 
     @Data @NoArgsConstructor @AllArgsConstructor @Builder
     public static class RoutineItem {
         private String id;
+        private Integer orderIndex;
+        @Field("exercise_id")
+        private String exerciseId;
 
-        private int order;
-
-        @Field("exercise_id") private String exerciseId;
-        private String name;
-
+        private String customName;
         private String type;
-
         private String description;
-
-        @Field("duration_seconds")
-        private Integer durationSeconds;
-
-        private String difficulty;
-
-        @Field("demo_videos")
-        private List<String> demoVideos;
-
-        private Integer sets;
-
-        private Integer reps;
-
-        @Field("rest_seconds")
-        private Integer restSeconds;
+        private Integer targetReps;
+        private Integer targetTimeSeconds;
+        private Integer targetIntensity;
     }
 }

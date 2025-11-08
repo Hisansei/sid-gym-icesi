@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data @NoArgsConstructor @AllArgsConstructor @Builder
 @Document("trainer_assignments")
@@ -21,5 +21,14 @@ public class TrainerAssignment {
     private String userUsername;
 
     @Field("assigned_at")
-    private Instant assignedAt;
+    private LocalDateTime assignedAt;
+
+    private boolean active;
+
+    @Field("ended_at")
+    private LocalDateTime endedAt;
+
+    public String getTrainerUsername() {
+        return trainerId;
+    }
 }

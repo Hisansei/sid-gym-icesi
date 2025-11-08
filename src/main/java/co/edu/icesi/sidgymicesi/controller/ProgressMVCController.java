@@ -1,6 +1,8 @@
 package co.edu.icesi.sidgymicesi.controller;
 
 import co.edu.icesi.sidgymicesi.model.*;
+import co.edu.icesi.sidgymicesi.model.mongo.ProgressLog;
+import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 import co.edu.icesi.sidgymicesi.services.*;
 import co.edu.icesi.sidgymicesi.util.DemoCurrentUser;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +41,7 @@ public class ProgressMVCController {
                 .orElseThrow(() -> new IllegalArgumentException("Rutina no existe"));
 
         List<ProgressEntry> entries = new ArrayList<>();
-        for (RoutineItem it : r.getItems()) {
+        for (Routine.RoutineItem it : r.getItems()) {
             Integer reps = parseInt(form.get("reps_" + it.getId()));
             Integer secs = parseInt(form.get("time_" + it.getId()));
             Integer rpe  = parseInt(form.get("rpe_"  + it.getId()));

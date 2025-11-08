@@ -1,6 +1,7 @@
 package co.edu.icesi.sidgymicesi.controller;
 
 import co.edu.icesi.sidgymicesi.model.*;
+import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 import co.edu.icesi.sidgymicesi.services.*;
 import co.edu.icesi.sidgymicesi.util.DemoCurrentUser;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +62,7 @@ public class RoutineMVCController {
                           @RequestParam(required = false) Integer targetIntensity,
                           RedirectAttributes ra) {
 
-        RoutineItem item = RoutineItem.builder()
+        Routine.RoutineItem item = Routine.RoutineItem.builder()
                 .exerciseId(exerciseId != null && !exerciseId.isBlank() ? exerciseId : null)
                 .customName(customName)
                 .type(type)
