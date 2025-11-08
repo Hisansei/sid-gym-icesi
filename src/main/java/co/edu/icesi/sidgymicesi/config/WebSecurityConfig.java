@@ -65,7 +65,7 @@ public class WebSecurityConfig {
     @Order(1)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/mvc/**")
+                // .securityMatcher("/mvc/**") Ahora cubre todas las rutas!
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authenticationProvider(authenticationProvider())
