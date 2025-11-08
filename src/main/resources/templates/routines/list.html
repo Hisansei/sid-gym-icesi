@@ -1,0 +1,30 @@
+<section th:fragment="content">
+    <div class="container">
+        <h2>Mis rutinas</h2>
+
+        <div th:if="${#lists.isEmpty(routines)}" class="alert-info">
+            Aún no tienes rutinas. ¡Crea la primera!
+        </div>
+
+        <div style="margin:12px 0">
+            <a class="btn" th:href="@{/mvc/routines/create}">Nueva rutina</a>
+        </div>
+
+        <table class="table" th:if="${!#lists.isEmpty(routines)}">
+            <thead><tr><th>Nombre</th><th>Creada</th><th>Items</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="r : ${routines}">
+                <td th:text="${r.name}">Full Body</td>
+                <td th:text="${#temporals.format(r.createdAt, 'yyyy-MM-dd HH:mm')}">fecha</td>
+                <td th:text="${#lists.size(r.items)}">0</td>
+                <td style="text-align:right">
+                    <a class="btn" th:href="@{|/mvc/routines/detail?id=${r.id}|}">Abrir</a>
+                    <form th:action="@{|/mvc/routines/${r.id}/delete|}" method="post" style="display:inline">
+                        <button class="btn ghost" onclick="return confirm('¿Eliminar rutina?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</section>

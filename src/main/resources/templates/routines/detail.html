@@ -1,0 +1,96 @@
+<section th:fragment="content">
+    <div class="container">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+            <h2 th:text="${routine != null ? routine.name : 'Rutina'}">Rutina</h2>
+            <div>
+                <form th:action="@{|/mvc/routines/${routine.id}/rename|}" method="post" style="display:inline">
+                    <input type="text" name="name" th:value="${routine.name}" required>
+                    <button class="btn ghost">Renombrar</button>
+                </form>
+                <a class="btn" th:href="@{|/mvc/progress/log?routineId=${routine.id}|}">Registrar progreso</a>
+                <a class="btn ghost" th:href="@{|/mvc/progress/history?routineId=${routine.id}|}">Ver histórico</a>
+            </div>
+        </div>
+
+        <table class="table" th:if="${routine != null}">
+            <thead><tr><th>#</th><th>Nombre</th><th>Tipo</th><th>Objetivo</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="it : ${routine.items}">
+                <td th:text="${it.orderIndex}">1</td>
+                <td>
+          <span th:if="${it.exerciseId != null}"
+                th:text="${#lists.findFirst(catalog, ex -> ex.id == it.exerciseId)?.name}">Ejercicio</span>
+                    <span th:if="${it.exerciseId == null}" th:text="${it.customName}">Personalizado</span>
+                </td>
+                <td th:text="${it.type}">fuerza</td>
+                <td>
+                    <span th:if="${it.targetReps != null}" th:text="${it.targetReps + ' reps'}"></span>
+                    <span th:if="${it.targetTimeSeconds != null}"
+                          th:text="${(it.targetReps != null ? ' / ' : '') + T(java.lang.Math).round(it.targetTimeSeconds/60.0) + ' min'}"></span>
+                    <span th:if="${it.targetIntensity != null}" th:text="${' / RPE ' + it.targetIntensity}"></span>
+                </td>
+                <td style="text-align:right">
+                    <form th:action="@{|/mvc/routines/${routine.id}/items/${it.id}/remove|}" method="post" style="display:inline">
+                        <button class="btn ghost" onclick="return confirm('¿Eliminar ítem?')">Eliminar</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(routine.items)}">
+                <td colspan="5" style="text-align:center;color:var(--muted)">Aún no hay ejercicios en esta rutina.</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top:24px">
+            <h3>Agregar ejercicio</h3>
+            <form th:action="@{|/mvc/routines/${routine.id}/items/add|}" method="post" class="form" style="gap:12px">
+                <fieldset>
+                    <legend>Desde el catálogo</legend>
+                    <select name="exerciseId">
+                        <option value="">-- Elegir --</option>
+                        <option th:each="ex : ${catalog}" th:value="${ex.id}"
+                                th:text="${ex.name + ' (' + ex.type + ')'}">Sentadilla</option>
+                    </select>
+                </fieldset>
+
+                <p style="margin:8px 0; color:var(--muted)">o define uno personalizado:</p>
+
+                <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
+                    <div>
+                        <label>Nombre personalizado</label>
+                        <input type="text" name="customName" placeholder="Ej. Remo con banda">
+                    </div>
+                    <div>
+                        <label>Tipo</label>
+                        <select name="type">
+                            <option value="">--</option>
+                            <option>cardio</option>
+                            <option>fuerza</option>
+                            <option>movilidad</option>
+                        </select>
+                    </div>
+                    <div style="grid-column:1/-1">
+                        <label>Descripción</label>
+                        <input type="text" name="description" placeholder="Notas del ejercicio">
+                    </div>
+                    <div>
+                        <label>Objetivo Reps</label>
+                        <input type="number" min="0" name="targetReps">
+                    </div>
+                    <div>
+                        <label>Objetivo Tiempo (seg)</label>
+                        <input type="number" min="0" name="targetTimeSeconds">
+                    </div>
+                    <div>
+                        <label>Intensidad (RPE 1-10)</label>
+                        <input type="number" min="1" max="10" name="targetIntensity">
+                    </div>
+                </div>
+
+                <div style="margin-top:12px">
+                    <button class="btn">Agregar ítem</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>

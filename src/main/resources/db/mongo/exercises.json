@@ -1,0 +1,20 @@
+[
+  {
+    "_id": "ex_pushups",
+    "name": "Push Ups",
+    "type": "fuerza",
+    "description": "Flexiones básicas de pecho",
+    "duration_seconds": 60,
+    "difficulty": "MEDIA",
+    "demo_videos": ["https://youtu.be/demo1"]
+  },
+  {
+    "_id": "ex_plank",
+    "name": "Plank",
+    "type": "core",
+    "description": "Plancha isométrica",
+    "duration_seconds": 45,
+    "difficulty": "MEDIA",
+    "demo_videos": ["https://youtu.be/demo2"]
+  }
+]
