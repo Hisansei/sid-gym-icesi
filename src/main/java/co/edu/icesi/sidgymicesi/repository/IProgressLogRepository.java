@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IProgressLogRepository extends MongoRepository<ProgressLog, String> {
+
     Optional<ProgressLog> findByRoutineIdAndDate(String routineId, LocalDate date);
-    List<ProgressLog> findByUsernameOrderByDateDesc(String username);
+
+    List<ProgressLog> findByOwnerUsernameOrderByDateDesc(String ownerUsername);
 }

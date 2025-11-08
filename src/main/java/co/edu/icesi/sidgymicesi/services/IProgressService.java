@@ -1,6 +1,6 @@
 package co.edu.icesi.sidgymicesi.services;
 
-import co.edu.icesi.sidgymicesi.model.ProgressLog;
+import co.edu.icesi.sidgymicesi.model.mongo.ProgressLog;
 import java.time.LocalDate;
 import java.util.*;
 

@@ -1,10 +1,7 @@
 package co.edu.icesi.sidgymicesi.model.mongo;
 
 import org.springframework.data.annotation.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -14,13 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Document("routine_templates")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
 public class RoutineTemplate {
     @Id
     private String id;
+
     private String name;
     private String description;
     private String level; // BEGINNER|INTERMEDIATE|ADVANCED
@@ -37,10 +32,7 @@ public class RoutineTemplate {
     @Builder.Default
     private List<TemplateItem> exercises = new ArrayList<>();
 
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
+    @Data @NoArgsConstructor @AllArgsConstructor @Builder
     public static class TemplateItem {
         private int order;
 
@@ -48,7 +40,6 @@ public class RoutineTemplate {
         private String exerciseId;
 
         private int sets;
-
         private int reps;
 
         @Field("rest_seconds")

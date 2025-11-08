@@ -17,15 +17,13 @@ public class Routine {
     private String id;
 
     @Indexed
-    private String username;
+    private String ownerUsername;
 
     @Field("origin_template_id")
-    private String originTemplateId;
+    private String sourceTemplateId;
 
     private String name;
-
     private String description;
-
     private String level;
 
     @Field("created_at")
@@ -34,19 +32,18 @@ public class Routine {
     private boolean status;
 
     @Builder.Default
-    private List<RoutineItem> exercises = new ArrayList<>();
+    private List<RoutineExercise> exercises = new ArrayList<>();
 
     @Data @NoArgsConstructor @AllArgsConstructor @Builder
-    public static class RoutineItem {
+    public static class RoutineExercise {
         private String id;
-
         private int order;
 
-        @Field("exercise_id") private String exerciseId;
+        @Field("exercise_id")
+        private String exerciseId;
+
         private String name;
-
         private String type;
-
         private String description;
 
         @Field("duration_seconds")
@@ -57,11 +54,10 @@ public class Routine {
         @Field("demo_videos")
         private List<String> demoVideos;
 
-        private Integer sets;
-
-        private Integer reps;
+        private int sets;
+        private int reps;
 
         @Field("rest_seconds")
-        private Integer restSeconds;
+        private int restSeconds;
     }
 }

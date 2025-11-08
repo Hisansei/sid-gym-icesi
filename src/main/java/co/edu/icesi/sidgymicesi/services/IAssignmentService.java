@@ -1,10 +1,11 @@
 package co.edu.icesi.sidgymicesi.services;
 
-import co.edu.icesi.sidgymicesi.model.TrainerAssignment;
+import co.edu.icesi.sidgymicesi.model.mongo.TrainerAssignment;
+
 import java.util.*;
 
 public interface IAssignmentService {
-    TrainerAssignment assign(String userUsername, String trainerUsername);
+    co.edu.icesi.sidgymicesi.model.mongo.TrainerAssignment assign(String userUsername, String trainerUsername);
     TrainerAssignment reassign(String userUsername, String newTrainerUsername);
 
     Optional<TrainerAssignment> findActiveByUser(String userUsername);

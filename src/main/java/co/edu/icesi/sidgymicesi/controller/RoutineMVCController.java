@@ -1,15 +1,17 @@
 package co.edu.icesi.sidgymicesi.controller;
 
-import co.edu.icesi.sidgymicesi.model.*;
-import co.edu.icesi.sidgymicesi.services.*;
+import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
+import co.edu.icesi.sidgymicesi.model.mongo.Routine;
+import co.edu.icesi.sidgymicesi.services.IExerciseService;
+import co.edu.icesi.sidgymicesi.services.IRoutineService;
 import co.edu.icesi.sidgymicesi.util.DemoCurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.*;
+import java.time.Instant;
+import java.util.List;
 
 @Controller
 @RequestMapping("/mvc/routines")
@@ -18,86 +20,78 @@ public class RoutineMVCController {
 
     private final IRoutineService routineService;
     private final IExerciseService exerciseService;
-    private final DemoCurrentUser currentUser;
 
-    @GetMapping
+    @GetMapping("")
     public String list(Model model) {
-        var owner = currentUser.username();
-        model.addAttribute("routines", routineService.listByOwner(owner));
-        model.addAttribute("owner", owner);
-        return "routines/list";
-    }
-
-    @GetMapping("/create")
-    public String createForm(Model model) {
-        model.addAttribute("name", "");
-        return "routines/create";
+        String owner = DemoCurrentUser.username();
+        List<Routine> routines = routineService.listByOwner(owner);
+        model.addAttribute("routines", routines);
+        return "routine/list";
     }
 
     @PostMapping("/create")
-    public String create(@RequestParam("name") String name, RedirectAttributes ra) {
-        var owner = currentUser.username();
-        routineService.create(owner, name, null);
-        ra.addFlashAttribute("message", "Rutina creada.");
-        return "redirect:/mvc/routines";
+    public String create(@RequestParam String name) {
+        String owner = DemoCurrentUser.username();
+        Routine r = routineService.create(owner, name, null);
+        return "redirect:/mvc/routines/" + r.getId();
     }
 
-    @GetMapping("/detail")
-    public String detail(@RequestParam String id, Model model) {
-        Routine r = routineService.findById(id).orElse(null);
-        model.addAttribute("routine", r);
+    @GetMapping("/{id}")
+    public String detail(@PathVariable String id, Model model) {
+        Routine routine = routineService.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Rutina no encontrada"));
+        model.addAttribute("routine", routine);
         model.addAttribute("catalog", exerciseService.findAll());
-        return "routines/detail";
+        return "routine/detail";
     }
 
     @PostMapping("/{id}/items/add")
-    public String addItem(@PathVariable("id") String routineId,
-                          @RequestParam(required = false) String exerciseId,
-                          @RequestParam(required = false) String customName,
-                          @RequestParam(required = false) String type,
-                          @RequestParam(required = false) String description,
-                          @RequestParam(required = false) Integer targetReps,
-                          @RequestParam(required = false) Integer targetTimeSeconds,
-                          @RequestParam(required = false) Integer targetIntensity,
-                          RedirectAttributes ra) {
+    public String addItem(@PathVariable String id,
+                          @RequestParam("exerciseId") String exerciseId,
+                          @RequestParam(name = "sets", required = false, defaultValue = "3") int sets,
+                          @RequestParam(name = "reps", required = false, defaultValue = "10") int reps,
+                          @RequestParam(name = "restSeconds", required = false, defaultValue = "60") int restSeconds,
+                          @RequestParam(name = "order", required = false, defaultValue = "0") int order) {
 
-        RoutineItem item = RoutineItem.builder()
-                .exerciseId(exerciseId != null && !exerciseId.isBlank() ? exerciseId : null)
-                .customName(customName)
-                .type(type)
-                .description(description)
-                .targetReps(targetReps)
-                .targetTimeSeconds(targetTimeSeconds)
-                .targetIntensity(targetIntensity)
+        Exercise ex = exerciseService.findById(exerciseId)
+                .orElseThrow(() -> new IllegalArgumentException("Ejercicio no encontrado"));
+
+        Routine.RoutineExercise item = Routine.RoutineExercise.builder()
+                .id(java.util.UUID.randomUUID().toString())
+                .order(order)
+                .exerciseId(ex.getId())
+                .name(ex.getName())
+                .type(ex.getType())
+                .description(ex.getDescription())
+                .durationSeconds(ex.getDurationSeconds())
+                .difficulty(ex.getDifficulty())
+                .demoVideos(ex.getDemoVideos())
+                .sets(sets)
+                .reps(reps)
+                .restSeconds(restSeconds)
                 .build();
 
-        routineService.addItem(routineId, item);
-        ra.addFlashAttribute("message", "Ejercicio agregado a la rutina.");
-        return "redirect:/mvc/routines/detail?id=" + routineId;
+        routineService.addItem(id, item);
+        return "redirect:/mvc/routines/" + id;
     }
 
-    @PostMapping("/{id}/items/{itemId}/remove")
-    public String removeItem(@PathVariable("id") String routineId,
-                             @PathVariable String itemId,
-                             RedirectAttributes ra) {
-        routineService.removeItem(routineId, itemId);
-        ra.addFlashAttribute("message", "Ítem eliminado.");
-        return "redirect:/mvc/routines/detail?id=" + routineId;
+    @PostMapping("/{id}/items/remove")
+    public String removeItem(@PathVariable String id,
+                             @RequestParam("itemId") String itemId) {
+        routineService.removeItem(id, itemId);
+        return "redirect:/mvc/routines/" + id;
     }
 
     @PostMapping("/{id}/rename")
-    public String rename(@PathVariable("id") String routineId,
-                         @RequestParam("name") String newName,
-                         RedirectAttributes ra) {
-        routineService.rename(routineId, newName);
-        ra.addFlashAttribute("message", "Rutina renombrada.");
-        return "redirect:/mvc/routines/detail?id=" + routineId;
+    public String rename(@PathVariable String id,
+                         @RequestParam("name") String name) {
+        routineService.rename(id, name);
+        return "redirect:/mvc/routines/" + id;
     }
 
     @PostMapping("/{id}/delete")
-    public String deleteRoutine(@PathVariable("id") String routineId, RedirectAttributes ra) {
-        routineService.deleteById(routineId);
-        ra.addFlashAttribute("message", "Rutina eliminada.");
+    public String delete(@PathVariable String id) {
+        routineService.deleteById(id);
         return "redirect:/mvc/routines";
     }
 }

@@ -2,13 +2,12 @@ package co.edu.icesi.sidgymicesi.services.impl;
 
 import co.edu.icesi.sidgymicesi.model.TrainerMonthlyStats;
 import co.edu.icesi.sidgymicesi.services.ITrainerStatsService;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.time.YearMonth;
 import java.util.*;
 
-@Service @Primary
+@Service
 public class MemoryTrainerStatsServiceImpl implements ITrainerStatsService {
 
     private final Map<String, TrainerMonthlyStats> store = new LinkedHashMap<>();

@@ -3,7 +3,6 @@ package co.edu.icesi.sidgymicesi.model.postgres;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.awt.geom.Area;
 import java.util.LinkedHashSet;
 import java.util.Set;
 

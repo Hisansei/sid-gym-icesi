@@ -20,7 +20,7 @@ public class ProgressLog {
     private String id;
 
     @Indexed
-    private String username;
+    private String ownerUsername;
 
     @Field("routine_id")
     private String routineId;
@@ -30,8 +30,8 @@ public class ProgressLog {
     @Builder.Default
     private List<Entry> entries = new ArrayList<>();
 
-    @Field("trainer_feedback")
     @Builder.Default
+    @Field("trainer_feedback")
     private List<TrainerFeedback> trainerFeedback = new ArrayList<>();
 
     @Field("created_at")
@@ -45,15 +45,14 @@ public class ProgressLog {
         @Field("is_completed")
         private boolean completed;
 
-        private Integer sets;
-
-        private Integer reps;
+        private List<Integer> sets;
+        private List<Integer> reps;
 
         @Field("weight_kg")
-        private Double weightKg;
+        private List<Double> weightKg;
 
         @Field("effort_level")
-        private Integer effortLevel;
+        private String effortLevel;
 
         @Field("notes_user")
         private String notesUser;
