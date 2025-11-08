@@ -2,39 +2,37 @@ package co.edu.icesi.sidgymicesi.services.impl;
 
 import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 import co.edu.icesi.sidgymicesi.services.IRoutineService;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-@Service @Primary
+@Service
 public class MemoryRoutineServiceImpl implements IRoutineService {
 
-    private final Map<String, Routine> store = new LinkedHashMap<>();
+    private final Map<String, Routine> store = new ConcurrentHashMap<>();
 
     @Override
-    public Routine create(String ownerUsername, String name, String sourceTemplateId) {
-        if (ownerUsername == null || ownerUsername.isBlank())
-            throw new IllegalArgumentException("Usuario propietario requerido");
-        if (name == null || name.isBlank())
-            throw new IllegalArgumentException("Nombre de rutina requerido");
-
+    public Routine create(String ownerUsername, String name, String originTemplateId) {
         Routine r = Routine.builder()
                 .id(UUID.randomUUID().toString())
                 .ownerUsername(ownerUsername)
                 .name(name)
-                .createdAt(LocalDateTime.now())
-                .sourceTemplateId(sourceTemplateId)
-                .status("ACTIVE")
-                .items(new ArrayList<>())
+                .sourceTemplateId(originTemplateId)
+                .createdAt(Instant.now())
+                .status(true)
+                .exercises(new ArrayList<>())
                 .build();
         store.put(r.getId(), r);
         return r;
     }
 
-    @Override public Optional<Routine> findById(String routineId) { return Optional.ofNullable(store.get(routineId)); }
+    @Override
+    public Optional<Routine> findById(String id) {
+        return Optional.ofNullable(store.get(id));
+    }
 
     @Override
     public List<Routine> listByOwner(String ownerUsername) {
@@ -45,50 +43,64 @@ public class MemoryRoutineServiceImpl implements IRoutineService {
     }
 
     @Override
-    public Routine addItem(String routineId, Routine.RoutineItem item) {
+    public Routine addItem(String routineId, Routine.RoutineExercise item) {
         Routine r = store.get(routineId);
-        if (r == null) throw new IllegalArgumentException("Rutina no existe");
-        if (item.getId() == null) item.setId(UUID.randomUUID().toString());
-        if (item.getOrderIndex() == null) item.setOrderIndex(r.getItems().size() + 1);
-        r.getItems().add(item);
+        if (r == null) throw new NoSuchElementException("Routine not found: " + routineId);
+
+        if (item.getId() == null || item.getId().isBlank()) {
+            item.setId(UUID.randomUUID().toString());
+        }
+        // Si no viene 'order', lo ponemos al final.
+        if (item.getOrder() <= 0) {
+            int next = r.getExercises().stream()
+                    .mapToInt(Routine.RoutineExercise::getOrder)
+                    .max().orElse(0) + 1;
+            item.setOrder(next);
+        }
+        r.getExercises().add(item);
+        // Normalizamos el orden
+        r.getExercises().sort(Comparator.comparingInt(Routine.RoutineExercise::getOrder));
         return r;
     }
 
     @Override
     public Routine removeItem(String routineId, String itemId) {
         Routine r = store.get(routineId);
-        if (r == null) throw new IllegalArgumentException("Rutina no existe");
-        r.getItems().removeIf(it -> Objects.equals(it.getId(), itemId));
-        // normaliza orden
-        int idx = 1;
-        for (Routine.RoutineItem it : r.getItems()) it.setOrderIndex(idx++);
+        if (r == null) throw new NoSuchElementException("Routine not found: " + routineId);
+        r.setExercises(
+                r.getExercises().stream()
+                        .filter(it -> !Objects.equals(it.getId(), itemId))
+                        .collect(Collectors.toList())
+        );
         return r;
     }
 
     @Override
     public Routine reorder(String routineId, List<String> orderedItemIds) {
         Routine r = store.get(routineId);
-        if (r == null) throw new IllegalArgumentException("Rutina no existe");
-        Map<String, Routine.RoutineItem> byId = r.getItems().stream()
-                .collect(Collectors.toMap(Routine.RoutineItem::getId, it -> it));
-        List<Routine.RoutineItem> ordered = new ArrayList<>();
-        for (String id : orderedItemIds) {
-            Routine.RoutineItem it = byId.get(id);
-            if (it != null) ordered.add(it);
+        if (r == null) throw new NoSuchElementException("Routine not found: " + routineId);
+
+        Map<String, Integer> orderMap = new HashMap<>();
+        for (int i = 0; i < orderedItemIds.size(); i++) {
+            orderMap.put(orderedItemIds.get(i), i + 1);
         }
-        r.setItems(ordered);
-        int idx = 1;
-        for (Routine.RoutineItem it : r.getItems()) it.setOrderIndex(idx++);
+        r.getExercises().forEach(it ->
+                it.setOrder(orderMap.getOrDefault(it.getId(), it.getOrder()))
+        );
+        r.getExercises().sort(Comparator.comparingInt(Routine.RoutineExercise::getOrder));
         return r;
     }
 
     @Override
     public Routine rename(String routineId, String newName) {
         Routine r = store.get(routineId);
-        if (r == null) throw new IllegalArgumentException("Rutina no existe");
+        if (r == null) throw new NoSuchElementException("Routine not found: " + routineId);
         r.setName(newName);
         return r;
     }
 
-    @Override public void deleteById(String routineId) { store.remove(routineId); }
+    @Override
+    public void deleteById(String routineId) {
+        store.remove(routineId);
+    }
 }

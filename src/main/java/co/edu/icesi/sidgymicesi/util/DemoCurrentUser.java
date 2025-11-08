@@ -6,10 +6,10 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class DemoCurrentUser {
-    private final HttpServletRequest request;
+    private static HttpServletRequest request = null;
     public DemoCurrentUser(HttpServletRequest request) { this.request = request; }
 
-    public String username() {
+    public static String username() {
         String u = request.getParameter("u");
         return (u != null && !u.isBlank()) ? u : "laura.h";
     }

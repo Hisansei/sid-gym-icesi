@@ -1,17 +1,18 @@
 package co.edu.icesi.sidgymicesi.services;
 
-import co.edu.icesi.sidgymicesi.model.*;
 import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public interface IRoutineService {
+    Routine create(String ownerUsername, String name, String originTemplateId);
 
-    Routine create(String ownerUsername, String name, String sourceTemplateId);
-    Optional<Routine> findById(String routineId);
+    Optional<Routine> findById(String id);
     List<Routine> listByOwner(String ownerUsername);
 
-    Routine addItem(String routineId, Routine.RoutineItem item);
+    Routine addItem(String routineId, Routine.RoutineExercise item);
     Routine removeItem(String routineId, String itemId);
     Routine reorder(String routineId, List<String> orderedItemIds);
 

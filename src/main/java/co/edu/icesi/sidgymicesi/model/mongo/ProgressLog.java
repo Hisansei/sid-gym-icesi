@@ -1,6 +1,5 @@
 package co.edu.icesi.sidgymicesi.model.mongo;
 
-import co.edu.icesi.sidgymicesi.model.ProgressEntry;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -29,8 +28,44 @@ public class ProgressLog {
     private LocalDate date;
 
     @Builder.Default
-    private List<ProgressEntry> entries = new ArrayList<>();
+    private List<Entry> entries = new ArrayList<>();
+
+    @Builder.Default
+    @Field("trainer_feedback")
+    private List<TrainerFeedback> trainerFeedback = new ArrayList<>();
 
     @Field("created_at")
     private Instant createdAt;
+
+    @Data @NoArgsConstructor @AllArgsConstructor @Builder
+    public static class Entry {
+        @Field("exercise_id")
+        private String exerciseId;
+
+        @Field("is_completed")
+        private boolean completed;
+
+        private List<Integer> sets;
+        private List<Integer> reps;
+
+        @Field("weight_kg")
+        private List<Double> weightKg;
+
+        @Field("effort_level")
+        private String effortLevel;
+
+        @Field("notes_user")
+        private String notesUser;
+    }
+
+    @Data @NoArgsConstructor @AllArgsConstructor @Builder
+    public static class TrainerFeedback {
+        @Field("trainer_id")
+        private String trainerId;
+
+        private String message;
+
+        @Field("created_at")
+        private Instant createdAt;
+    }
 }
