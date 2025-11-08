@@ -1,6 +1,6 @@
 package co.edu.icesi.sidgymicesi.services.impl;
 
-import co.edu.icesi.sidgymicesi.model.Exercise;
+import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
 import co.edu.icesi.sidgymicesi.services.IExerciseService;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
