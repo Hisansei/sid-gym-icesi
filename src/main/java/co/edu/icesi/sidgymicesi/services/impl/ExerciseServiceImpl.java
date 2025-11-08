@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import co.edu.icesi.sidgymicesi.model.Exercise;
+import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
 import co.edu.icesi.sidgymicesi.repository.IExerciseRepository;
 import co.edu.icesi.sidgymicesi.services.IExerciseService;
 

@@ -3,7 +3,7 @@ package co.edu.icesi.sidgymicesi.repository;
 import java.util.List;
 import java.util.Optional;
 
-import co.edu.icesi.sidgymicesi.model.Exercise;
+import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.data.mongodb.repository.MongoRepository;
