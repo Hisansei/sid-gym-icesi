@@ -9,14 +9,13 @@
 </head>
 <body>
 <div class="header">
-    <h1>UNIVERDAD ICESI</h1>
+    <h1>UNIVERSIDAD ICESI</h1> <!-- Corregí "UNIVERDAD" a "UNIVERSIDAD" -->
 </div>
 
 <div class="container">
     <div class="login-card">
         <h2 class="login-title">Inicia sesión</h2>
 
-        <!-- Mensajes de error o éxito -->
         <div th:if="${param.error}" class="alert alert-error">
             Credenciales inválidas
         </div>
@@ -24,10 +23,11 @@
             Sesión cerrada exitosamente
         </div>
 
+        <!-- CAMBIO: Cambiado name="email" por name="username" -->
         <form th:action="@{/mvc/auth/login}" method="post">
             <div class="form-group">
-                <label for="email">Email</label>
-                <input id="email" type="text" name="email" class="form-control" placeholder="example@u.icesi.edu.co" required />
+                <label for="username">Usuario</label>
+                <input id="username" type="text" name="username" class="form-control" placeholder="Tu nombre de usuario" required />
             </div>
 
             <div class="form-group">
