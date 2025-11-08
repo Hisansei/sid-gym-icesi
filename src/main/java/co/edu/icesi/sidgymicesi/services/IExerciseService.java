@@ -3,7 +3,7 @@ package co.edu.icesi.sidgymicesi.services;
 import java.util.List;
 import java.util.Optional;
 
-import co.edu.icesi.sidgymicesi.model.Exercise;
+import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
 
 public interface IExerciseService {
 
