@@ -1,28 +1,24 @@
 package co.edu.icesi.sidgymicesi.model.mongo;
 
-import java.util.List;
-
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
+import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Document(collection = "exercises") // Colección sujeta a cambios!
-public class Exercise {
+import java.util.List;
 
+@Data @NoArgsConstructor @AllArgsConstructor @Builder
+@Document("exercises")
+public class Exercise {
     @Id
     private String id;
-    
+
+    @Indexed
     private String name;
-    
+
     private String type;
-    
+
     private String description;
 
     @Field("duration_seconds")
