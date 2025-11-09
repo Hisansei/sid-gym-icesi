@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface IRoutineRepository extends MongoRepository<Routine, String> {
 
-    List<Routine> findByOwnerUsernameOrderByCreatedAtDesc(String ownerUsername);
+    List<Routine> findByUsernameOrderByCreatedAtDesc(String ownerUsername);
 }
