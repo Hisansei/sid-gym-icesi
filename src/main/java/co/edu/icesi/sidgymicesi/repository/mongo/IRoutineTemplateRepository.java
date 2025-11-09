@@ -1,4 +1,4 @@
-package co.edu.icesi.sidgymicesi.repository;
+package co.edu.icesi.sidgymicesi.repository.mongo;
 
 import co.edu.icesi.sidgymicesi.model.mongo.RoutineTemplate;
 import org.springframework.data.mongodb.repository.MongoRepository;

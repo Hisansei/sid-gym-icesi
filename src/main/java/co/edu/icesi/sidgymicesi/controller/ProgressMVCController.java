@@ -3,7 +3,7 @@ package co.edu.icesi.sidgymicesi.controller;
 import co.edu.icesi.sidgymicesi.model.mongo.ProgressLog;
 import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 import co.edu.icesi.sidgymicesi.services.IProgressService;
-import co.edu.icesi.sidgymicesi.services.IRoutineService;
+import co.edu.icesi.sidgymicesi.services.mongo.IRoutineService;
 import co.edu.icesi.sidgymicesi.util.DemoCurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

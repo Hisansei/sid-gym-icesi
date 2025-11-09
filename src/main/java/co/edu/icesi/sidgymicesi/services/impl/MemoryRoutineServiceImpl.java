@@ -1,7 +1,7 @@
 package co.edu.icesi.sidgymicesi.services.impl;
 
 import co.edu.icesi.sidgymicesi.model.mongo.Routine;
-import co.edu.icesi.sidgymicesi.services.IRoutineService;
+import co.edu.icesi.sidgymicesi.services.mongo.IRoutineService;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
