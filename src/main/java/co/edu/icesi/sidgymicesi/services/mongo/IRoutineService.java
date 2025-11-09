@@ -1,9 +1,8 @@
-package co.edu.icesi.sidgymicesi.services;
+package co.edu.icesi.sidgymicesi.services.mongo;
 
 import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public interface IRoutineService {
