@@ -1,16 +1,25 @@
+-- Tablas “nuevas” del proyecto y auxiliares
+DROP TABLE IF EXISTS user_monthly_stats CASCADE;
 DROP TABLE IF EXISTS trainer_monthly_stats CASCADE;
+
+-- Tablas extra de versiones anteriores que ya NO usamos
+DROP TABLE IF EXISTS trainer_assignments CASCADE;  -- ahora vive en Mongo
+DROP TABLE IF EXISTS user_stats CASCADE;
+DROP TABLE IF EXISTS trainer_stats CASCADE;
+
+-- Módulo académico / institucional
 DROP TABLE IF EXISTS enrollments CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS groups CASCADE;
 DROP TABLE IF EXISTS subjects CASCADE;
 DROP TABLE IF EXISTS programs CASCADE;
 DROP TABLE IF EXISTS areas CASCADE;
-DROP TABLE IF EXISTS faculties CASCADE;
 DROP TABLE IF EXISTS employees CASCADE;
 DROP TABLE IF EXISTS students CASCADE;
+DROP TABLE IF EXISTS campuses CASCADE;
+DROP TABLE IF EXISTS faculties CASCADE;
 DROP TABLE IF EXISTS employee_types CASCADE;
 DROP TABLE IF EXISTS contract_types CASCADE;
 DROP TABLE IF EXISTS cities CASCADE;
 DROP TABLE IF EXISTS departments CASCADE;
 DROP TABLE IF EXISTS countries CASCADE;
-DROP TABLE IF EXISTS campuses CASCADE;
