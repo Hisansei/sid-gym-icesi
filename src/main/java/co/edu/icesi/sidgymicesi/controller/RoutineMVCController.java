@@ -2,15 +2,14 @@ package co.edu.icesi.sidgymicesi.controller;
 
 import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
 import co.edu.icesi.sidgymicesi.model.mongo.Routine;
-import co.edu.icesi.sidgymicesi.services.IExerciseService;
-import co.edu.icesi.sidgymicesi.services.IRoutineService;
+import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
+import co.edu.icesi.sidgymicesi.services.mongo.IRoutineService;
 import co.edu.icesi.sidgymicesi.util.DemoCurrentUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.util.List;
 
 @Controller

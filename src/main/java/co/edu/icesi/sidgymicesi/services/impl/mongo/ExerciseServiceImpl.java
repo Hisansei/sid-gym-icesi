@@ -1,4 +1,4 @@
-package co.edu.icesi.sidgymicesi.services.impl;
+package co.edu.icesi.sidgymicesi.services.impl.mongo;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
-import co.edu.icesi.sidgymicesi.repository.IExerciseRepository;
-import co.edu.icesi.sidgymicesi.services.IExerciseService;
+import co.edu.icesi.sidgymicesi.repository.mongo.IExerciseRepository;
+import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 
 @Service
 @RequiredArgsConstructor
