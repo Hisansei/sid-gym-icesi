@@ -4,8 +4,9 @@ import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
 import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 import co.edu.icesi.sidgymicesi.services.mongo.IRoutineService;
-import co.edu.icesi.sidgymicesi.util.DemoCurrentUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,18 +21,32 @@ public class RoutineMVCController {
     private final IRoutineService routineService;
     private final IExerciseService exerciseService;
 
-    @GetMapping("")
-    public String list(Model model) {
-        String owner = DemoCurrentUser.username();
-        List<Routine> routines = routineService.listByOwner(owner);
-        model.addAttribute("routines", routines);
-        return "routine/list";
+    private String currentUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getName() == null) {
+            throw new IllegalStateException("No hay usuario autenticado.");
+        }
+        return auth.getName();
     }
 
+    @GetMapping("")
+    public String list(Model model) {
+        List<Routine> routines = routineService.listByOwner(currentUsername());
+        model.addAttribute("routines", routines);
+        return "routines/list"; // <- carpeta correcta
+    }
+
+    // Enlace rápido desde la lista: GET /mvc/routines/create
+    @GetMapping("/create")
+    public String createQuick() {
+        Routine r = routineService.create(currentUsername(), "Mi rutina", null);
+        return "redirect:/mvc/routines/" + r.getId();
+    }
+
+    // Mantengo la opción POST /mvc/routines/create (si luego haces un formulario con nombre)
     @PostMapping("/create")
     public String create(@RequestParam String name) {
-        String owner = DemoCurrentUser.username();
-        Routine r = routineService.create(owner, name, null);
+        Routine r = routineService.create(currentUsername(), name, null);
         return "redirect:/mvc/routines/" + r.getId();
     }
 
@@ -41,16 +56,22 @@ public class RoutineMVCController {
                 .orElseThrow(() -> new IllegalArgumentException("Rutina no encontrada"));
         model.addAttribute("routine", routine);
         model.addAttribute("catalog", exerciseService.findAll());
-        return "routine/detail";
+        return "routines/detail"; // <- carpeta correcta
+    }
+
+    // Compatibilidad con enlaces existentes: /mvc/routines/detail?id=...
+    @GetMapping("/detail")
+    public String detailParam(@RequestParam("id") String id, Model model) {
+        return detail(id, model);
     }
 
     @PostMapping("/{id}/items/add")
     public String addItem(@PathVariable String id,
                           @RequestParam("exerciseId") String exerciseId,
-                          @RequestParam(name = "sets", required = false, defaultValue = "3") int sets,
-                          @RequestParam(name = "reps", required = false, defaultValue = "10") int reps,
-                          @RequestParam(name = "restSeconds", required = false, defaultValue = "60") int restSeconds,
-                          @RequestParam(name = "order", required = false, defaultValue = "0") int order) {
+                          @RequestParam(name = "sets", defaultValue = "3") int sets,
+                          @RequestParam(name = "reps", defaultValue = "10") int reps,
+                          @RequestParam(name = "restSeconds", defaultValue = "60") int restSeconds,
+                          @RequestParam(name = "order", defaultValue = "0") int order) {
 
         Exercise ex = exerciseService.findById(exerciseId)
                 .orElseThrow(() -> new IllegalArgumentException("Ejercicio no encontrado"));
@@ -83,8 +104,8 @@ public class RoutineMVCController {
 
     @PostMapping("/{id}/rename")
     public String rename(@PathVariable String id,
-                         @RequestParam("name") String name) {
-        routineService.rename(id, name);
+                         @RequestParam("name") String newName) {
+        routineService.rename(id, newName);
         return "redirect:/mvc/routines/" + id;
     }
 

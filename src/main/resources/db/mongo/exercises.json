@@ -11,10 +11,37 @@
   {
     "_id": "ex_plank",
     "name": "Plank",
-    "type": "core",
-    "description": "Plancha isométrica",
+    "type": "fuerza",
+    "description": "Plancha isométrica (core)",
     "duration_seconds": 45,
     "difficulty": "MEDIA",
     "demo_videos": ["https://youtu.be/demo2"]
+  },
+  {
+    "_id": "ex_treadmill_walk",
+    "name": "Caminadora (caminata)",
+    "type": "cardio",
+    "description": "Caminata suave en caminadora",
+    "duration_seconds": 900,
+    "difficulty": "BAJA",
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_rower",
+    "name": "Remo en máquina",
+    "type": "cardio",
+    "description": "Remo continuo a ritmo moderado",
+    "duration_seconds": 600,
+    "difficulty": "MEDIA",
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_hip_mobility",
+    "name": "Movilidad de cadera",
+    "type": "movilidad",
+    "description": "Secuencia corta de movilidad de cadera",
+    "duration_seconds": 300,
+    "difficulty": "BAJA",
+    "demo_videos": []
   }
 ]

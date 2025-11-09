@@ -2,14 +2,28 @@
   {
     "_id": "tpl_full_body",
     "name": "Full Body Starter",
-    "description": "Rutina de cuerpo completo principiantes",
+    "description": "Rutina de cuerpo completo para principiantes",
     "level": "BEGINNER",
     "trainer_id": "juan.p",
     "last_updated_at": "2024-01-01T00:00:00Z",
     "status": true,
     "exercises": [
-      { "order": 1, "exercise_id": "ex_pushups", "sets": 3, "reps": 12, "rest_seconds": 60 },
-      { "order": 2, "exercise_id": "ex_plank",   "sets": 3, "reps": 1,  "rest_seconds": 45 }
+      { "order": 1, "exercise_id": "ex_pushups",       "sets": 3, "reps": 12, "rest_seconds": 60 },
+      { "order": 2, "exercise_id": "ex_plank",         "sets": 3, "reps": 1,  "rest_seconds": 45 },
+      { "order": 3, "exercise_id": "ex_treadmill_walk","sets": 1, "reps": 1,  "rest_seconds": 0  }
+    ]
+  },
+  {
+    "_id": "tpl_mobility_basic",
+    "name": "Movilidad básica",
+    "description": "Secuencia corta para movilidad general",
+    "level": "BEGINNER",
+    "trainer_id": "juana.r",
+    "last_updated_at": "2024-01-15T00:00:00Z",
+    "status": true,
+    "exercises": [
+      { "order": 1, "exercise_id": "ex_hip_mobility", "sets": 1, "reps": 1, "rest_seconds": 0 },
+      { "order": 2, "exercise_id": "ex_plank",        "sets": 2, "reps": 1, "rest_seconds": 45 }
     ]
   }
 ]

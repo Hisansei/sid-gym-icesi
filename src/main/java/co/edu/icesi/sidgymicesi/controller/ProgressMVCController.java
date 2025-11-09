@@ -3,9 +3,11 @@ package co.edu.icesi.sidgymicesi.controller;
 import co.edu.icesi.sidgymicesi.model.mongo.ProgressLog;
 import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 import co.edu.icesi.sidgymicesi.services.IProgressService;
+import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 import co.edu.icesi.sidgymicesi.services.mongo.IRoutineService;
-import co.edu.icesi.sidgymicesi.util.DemoCurrentUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,21 @@ public class ProgressMVCController {
 
     private final IRoutineService routineService;
     private final IProgressService progressService;
+    private final IExerciseService exerciseService;
+
+    private String currentUsername() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || auth.getName() == null) {
+            throw new IllegalStateException("No hay usuario autenticado.");
+        }
+        return auth.getName();
+    }
+
+    // Compatibilidad con la vista: GET /mvc/progress/log?routineId=...
+    @GetMapping("/log")
+    public String logFormByParam(@RequestParam("routineId") String routineId, Model model) {
+        return logForm(routineId, model);
+    }
 
     @GetMapping("/{routineId}")
     public String logForm(@PathVariable String routineId, Model model) {
@@ -28,7 +45,15 @@ public class ProgressMVCController {
                 .orElseThrow(() -> new IllegalArgumentException("Rutina no encontrada"));
         model.addAttribute("routine", routine);
         model.addAttribute("today", LocalDate.now());
+        model.addAttribute("catalog", exerciseService.findAll()); // la vista usa #vars.catalog
         return "progress/log";
+    }
+
+    // Compatibilidad con el form action="/mvc/progress/log"
+    @PostMapping("/log")
+    public String submitLogByParam(@RequestParam("routineId") String routineId,
+                                   @RequestParam Map<String, String> form) {
+        return submitLog(routineId, form);
     }
 
     @PostMapping("/{routineId}")
@@ -41,7 +66,7 @@ public class ProgressMVCController {
         List<ProgressLog.Entry> entries = new ArrayList<>();
 
         for (Routine.RoutineExercise it : routine.getExercises()) {
-            String key = it.getId(); // id del item dentro de la rutina del usuario
+            String key = it.getId(); // id del item en la rutina
 
             Integer reps = parseInt(form.get("reps_" + key));
             Integer secs = parseInt(form.get("time_" + key));
@@ -56,7 +81,6 @@ public class ProgressMVCController {
             ProgressLog.Entry entry = ProgressLog.Entry.builder()
                     .exerciseId(it.getExerciseId())
                     .completed(completed)
-                    // el formulario captura un único valor; lo guardamos como lista de un elemento
                     .reps(reps != null ? List.of(reps) : null)
                     .sets(null)
                     .weightKg(null)
@@ -68,7 +92,7 @@ public class ProgressMVCController {
         }
 
         ProgressLog log = ProgressLog.builder()
-                .ownerUsername(DemoCurrentUser.username())
+                .ownerUsername(currentUsername())
                 .routineId(routineId)
                 .date(LocalDate.now())
                 .entries(entries)
@@ -77,6 +101,16 @@ public class ProgressMVCController {
 
         progressService.addLog(log);
         return "redirect:/mvc/routines/" + routineId;
+    }
+
+    // Histórico: /mvc/progress/history?routineId=...
+    @GetMapping("/history")
+    public String history(@RequestParam("routineId") String routineId, Model model) {
+        Routine routine = routineService.findById(routineId)
+                .orElseThrow(() -> new IllegalArgumentException("Rutina no encontrada"));
+        model.addAttribute("routine", routine);
+        model.addAttribute("logs", progressService.listByRoutine(routineId));
+        return "progress/history";
     }
 
     private Integer parseInt(String v) {
