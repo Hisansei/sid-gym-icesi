@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<section th:fragment="content">
+  <link rel="stylesheet" th:href="@{/css/users/detail.css}">
+  <div class="container">
+
+    <div th:if="${error}" class="alert-error">
+      <span th:text="${error}">Usuario no encontrado.</span>
+      <p><a th:href="@{/mvc/admin/users}">Volver</a></p>
+    </div>
+
+    <div th:if="${actualUser != null}">
+      <h2>Detalle del usuario</h2>
+      <table>
+        <tr><th>Username</th><td th:text="${actualUser.username}">username</td></tr>
+        <tr><th>Rol</th><td th:text="${actualUser.role}">ROLE</td></tr>
+        <tr><th>Estudiante ID</th><td th:text="${actualUser.studentId}">-</td></tr>
+        <tr><th>Empleado ID</th><td th:text="${actualUser.employeeId}">-</td></tr>
+        <tr><th>Activo</th><td th:text="${actualUser.active} ? 'Sí' : 'No'">Sí</td></tr>
+        <tr>
+          <th>Creado</th>
+          <td th:text="${actualUser.createdAt != null ? #temporals.format(actualUser.createdAt,'dd/MM/yyyy HH:mm') : '-'}">fecha</td>
+        </tr>
+      </table>
+
+      <div th:if="${actualUser.passwordHash}" style="display:none"></div>
+
+      <p style="margin-top: 12px;">
+        <a th:href="@{/mvc/admin/users}">Volver al listado</a>
+      </p>
+    </div>
+
+    <div th:if="${actualUser == null and error == null}">
+      <p>Usuario no disponible.</p>
+      <p><a th:href="@{/mvc/admin/users}">Volver</a></p>
+    </div>
+
+  </div>
+</section>
+</html>

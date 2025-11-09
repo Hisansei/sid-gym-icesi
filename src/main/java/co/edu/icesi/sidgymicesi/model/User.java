@@ -24,16 +24,16 @@ public class User {
     @Column(name = "role", nullable = false, length = 50)
     private Role role;
 
-    @Column(name = "student_id")
+    @Column(name = "student_id", length = 15)
     private String studentId;
 
-    @Column(name = "employee_id")
+    @Column(name = "employee_id", length = 15)
     private String employeeId;
 
     @Column(name = "is_active", nullable = false, insertable = false)
     private boolean active;
 
-    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, insertable = true, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist

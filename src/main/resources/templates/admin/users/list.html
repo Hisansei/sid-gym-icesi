@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<section th:fragment="content">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <div class="container">
+    <h2>Usuarios institucionales</h2>
+
+    <div th:if="${error}" class="alert-error">
+      <span th:text="${error}">Ha ocurrido un error</span>
+    </div>
+    <div th:if="${message}" class="alert-success">
+      <span th:text="${message}">Operación exitosa</span>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Rol</th>
+          <th>Estudiante ID</th>
+          <th>Empleado ID</th>
+          <th>Activo</th>
+          <th>Creado</th>
+          <th>Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="u : ${users}">
+          <td th:text="${u.username}">username</td>
+          <td th:text="${u.role}">ROLE</td>
+          <td th:text="${u.studentId}">-</td>
+          <td th:text="${u.employeeId}">-</td>
+          <td th:text="${u.active} ? 'Sí' : 'No'">Sí/No</td>
+          <td th:text="${u.createdAt != null ? #temporals.format(u.createdAt,'dd/MM/yyyy HH:mm') : '-'}">fecha</td>
+          <td>
+            <a th:href="@{/mvc/admin/users/detail(username=${u.username})}">Detalle</a>
+          </td>
+        </tr>
+        <tr th:if="${users == null or users.isEmpty()}">
+          <td colspan="7">No hay usuarios para mostrar…</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+</html>

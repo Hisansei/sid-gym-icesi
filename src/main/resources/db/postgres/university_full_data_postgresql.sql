@@ -126,6 +126,21 @@ INSERT INTO USERS (username, password_hash, role, student_id, employee_id, is_ac
 UPDATE FACULTIES SET dean_id = '1001' WHERE code = 1;
 UPDATE FACULTIES SET dean_id = '1002' WHERE code = 2;
 
+-- Actualización de contraseñas con BCrypt
+UPDATE users SET password_hash = '$2a$10$FW7gloavwxFmiF8xsf57HObtT3ZpwaBdgzqZVTevtR32470XhnthK' WHERE username = 'laura.h';
+UPDATE users SET password_hash = '$2a$10$lb8nh4rIpxmVitUOqyilq.NlR2VmhX3Vkh6K.8UDYPUtXyGPtOwUe' WHERE username = 'pedro.m';
+UPDATE users SET password_hash = '$2a$10$ivwNHM87GWZJ6X.n.gNsl.gNABjjyma7HUnmuIF.DKaiT4x.0jM.G' WHERE username = 'ana.s';
+UPDATE users SET password_hash = '$2a$10$Sewt/v.7x.7ByYsy.5hzmuQ/AZXXSVLl6/IRkzXU8r88/keNtZDSe' WHERE username = 'luis.r';
+UPDATE users SET password_hash = '$2a$10$lRVjl8BacPO6nGSZGTXCR.U6uGGZQDD4RvLVPqHP9x5cLOUyZjl4e' WHERE username = 'sofia.g';
+
+UPDATE users SET password_hash = '$2a$10$LoSFejG3oC4Bikabc3ptiejYkqJZJ9AKAFTFqUWpHc8tX4oRLGK/q' WHERE username = 'juan.p';
+UPDATE users SET password_hash = '$2a$10$qrOK2YVTRptSHJB.GzDHA.M6VYknTDC5SctND3AW4Q80BCVmD8dbm' WHERE username = 'maria.g';
+UPDATE users SET password_hash = '$2a$10$UOs9LLyZrufzLeP4uWOx6erPnnvIrXCZakld5IDkcVpYsa2nsCtYi' WHERE username = 'carlos.l';
+UPDATE users SET password_hash = '$2a$10$BwxnpYTMDMMGZ98jQImCUeGG0mnYW8ShtgN7TNUCocJVI5tRFlraq' WHERE username = 'carlos.m';
+UPDATE users SET password_hash = '$2a$10$YkTcVoMIx5rvSiaXHQwAw.odvLzPyhjuVtwel2qcHsMp5e0Rcjy2.' WHERE username = 'sandra.o';
+UPDATE users SET password_hash = '$2a$10$BE0YZCnWDVGhXeIjiL.GQe23xZfeL6GwyEO2ysZqROzP6jsquvjCO' WHERE username = 'paula.r';
+UPDATE users SET password_hash = '$2a$10$XrRJnujctTzjLnHv/k3sTODxq9ZGKILWe5gGID7NHU./JHrJrxwOC' WHERE username = 'andres.c';
+
 -- =========================
 -- Constraints (mismo paquete original, ejecutadas al final)
 -- =========================
