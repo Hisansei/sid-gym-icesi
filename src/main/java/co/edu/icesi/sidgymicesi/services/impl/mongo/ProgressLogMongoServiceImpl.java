@@ -39,8 +39,8 @@ public class ProgressLogMongoServiceImpl implements IProgressLogMongoService {
     }
 
     @Override
-    public List<ProgressLog> findByUsername(String username) {
-        return progressLogRepository.findByUsernameOrderByDateDesc(username);
+    public List<ProgressLog> findByUsername(String ownerUsername) {
+        return progressLogRepository.findByOwnerUsernameOrderByDateDesc(ownerUsername);
     }
 
     @Override

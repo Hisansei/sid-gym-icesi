@@ -34,7 +34,7 @@ public class RoutineMongoServiceImpl implements IRoutineMongoService {
 
     @Override
     public List<Routine> findByUsername(String username) {
-        return routineRepository.findByUsernameOrderByCreatedAtDesc(username);
+        return routineRepository.findByOwnerUsernameOrderByCreatedAtDesc(username);
     }
 
     @Override
