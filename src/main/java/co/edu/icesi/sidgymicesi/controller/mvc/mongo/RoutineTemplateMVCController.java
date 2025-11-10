@@ -3,6 +3,7 @@ package co.edu.icesi.sidgymicesi.controller.mvc.mongo;
 import co.edu.icesi.sidgymicesi.model.mongo.RoutineTemplate;
 import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 import co.edu.icesi.sidgymicesi.services.mongo.IRoutineTemplateService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,14 +25,14 @@ public class RoutineTemplateMVCController {
         this.exerciseService = exerciseService;
     }
 
-    // LIST
+    // LIST - visible autenticados
     @GetMapping("/list")
     public String list(Model model) {
         model.addAttribute("templates", templateService.findAll());
         return "routine-templates/list";
     }
 
-    // DETAIL
+    // DETAIL - visible autenticados (para adoptar)
     @GetMapping("/detail")
     public String detail(@RequestParam String id, Model model) {
         RoutineTemplate tpl = templateService.findById(id)
@@ -41,7 +42,8 @@ public class RoutineTemplateMVCController {
         return "routine-templates/detail";
     }
 
-    // NEW (form)
+    // CREATE
+    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN')")
     @GetMapping("/create")
     public String createForm(Model model) {
         model.addAttribute("template", new RoutineTemplate());
@@ -49,7 +51,7 @@ public class RoutineTemplateMVCController {
         return "routine-templates/form";
     }
 
-    // NEW (submit)
+    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN')")
     @PostMapping("/create")
     public String createSubmit(@ModelAttribute("template") RoutineTemplate template,
                                BindingResult br,
@@ -66,7 +68,8 @@ public class RoutineTemplateMVCController {
         return "redirect:/mvc/routine-templates/list";
     }
 
-    // EDIT (form)
+    // EDIT
+    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN')")
     @GetMapping("/edit")
     public String editForm(@RequestParam String id, Model model) {
         RoutineTemplate tpl = templateService.findById(id)
@@ -76,7 +79,7 @@ public class RoutineTemplateMVCController {
         return "routine-templates/form";
     }
 
-    // EDIT (submit)
+    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN')")
     @PostMapping("/edit")
     public String editSubmit(@ModelAttribute("template") RoutineTemplate template,
                              BindingResult br,
@@ -96,6 +99,7 @@ public class RoutineTemplateMVCController {
     }
 
     // DELETE
+    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN')")
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable String id) {
         templateService.deleteById(id);

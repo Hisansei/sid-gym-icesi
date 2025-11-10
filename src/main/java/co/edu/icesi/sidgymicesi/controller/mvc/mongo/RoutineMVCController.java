@@ -5,6 +5,7 @@ import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 import co.edu.icesi.sidgymicesi.services.mongo.IRoutineService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -33,38 +34,38 @@ public class RoutineMVCController {
     public String list(Model model) {
         List<Routine> routines = routineService.listByOwner(currentUsername());
         model.addAttribute("routines", routines);
-        return "routines/list"; // <- carpeta correcta
+        return "routines/list";
     }
 
-    // Enlace rápido desde la lista: GET /mvc/routines/create
     @GetMapping("/create")
     public String createQuick() {
         Routine r = routineService.create(currentUsername(), "Mi rutina", null);
         return "redirect:/mvc/routines/" + r.getId();
     }
 
-    // Mantengo la opción POST /mvc/routines/create (si luego haces un formulario con nombre)
     @PostMapping("/create")
     public String create(@RequestParam String name) {
         Routine r = routineService.create(currentUsername(), name, null);
         return "redirect:/mvc/routines/" + r.getId();
     }
 
+    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     @GetMapping("/{id}")
     public String detail(@PathVariable String id, Model model) {
         Routine routine = routineService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Rutina no encontrada"));
         model.addAttribute("routine", routine);
         model.addAttribute("catalog", exerciseService.findAll());
-        return "routines/detail"; // <- carpeta correcta
+        return "routines/detail";
     }
 
-    // Compatibilidad con enlaces existentes: /mvc/routines/detail?id=...
+    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     @GetMapping("/detail")
     public String detailParam(@RequestParam("id") String id, Model model) {
         return detail(id, model);
     }
 
+    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     @PostMapping("/{id}/items/add")
     public String addItem(@PathVariable String id,
                           @RequestParam("exerciseId") String exerciseId,
@@ -95,6 +96,7 @@ public class RoutineMVCController {
         return "redirect:/mvc/routines/" + id;
     }
 
+    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     @PostMapping("/{id}/items/remove")
     public String removeItem(@PathVariable String id,
                              @RequestParam("itemId") String itemId) {
@@ -102,6 +104,7 @@ public class RoutineMVCController {
         return "redirect:/mvc/routines/" + id;
     }
 
+    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     @PostMapping("/{id}/rename")
     public String rename(@PathVariable String id,
                          @RequestParam("name") String newName) {
@@ -109,6 +112,7 @@ public class RoutineMVCController {
         return "redirect:/mvc/routines/" + id;
     }
 
+    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable String id) {
         routineService.deleteById(id);

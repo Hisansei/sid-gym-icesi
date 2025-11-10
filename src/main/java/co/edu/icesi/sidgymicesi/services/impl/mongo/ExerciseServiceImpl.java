@@ -67,6 +67,53 @@ public class ExerciseServiceImpl implements IExerciseService {
         return exerciseRepository.save(exercise);
     }
 
+    @Override
+    public Exercise update(Exercise updated) {
+        if (updated == null || updated.getId() == null || updated.getId().isBlank()) {
+            throw new IllegalArgumentException("Debe enviar el id del ejercicio a actualizar.");
+        }
+
+        Exercise current = exerciseRepository.findById(updated.getId())
+                .orElseThrow(() -> new IllegalArgumentException("No existe ejercicio con id: " + updated.getId()));
+
+        current.setName(updated.getName());
+        current.setType(updated.getType());
+        current.setDescription(updated.getDescription());
+        current.setDurationSeconds(updated.getDurationSeconds());
+        current.setDifficulty(updated.getDifficulty());
+        current.setDemoVideos(updated.getDemoVideos());
+
+        normalize(current);
+        validate(current);
+
+        return exerciseRepository.save(current);
+    }
+
+    /* ===== Helpers ===== */
+
+    private void normalize(Exercise e) {
+        if (e.getName() != null) e.setName(e.getName().trim());
+        if (e.getType() != null) e.setType(e.getType().trim().toLowerCase());
+        if (e.getDifficulty() != null) e.setDifficulty(e.getDifficulty().trim());
+        if (e.getDescription() != null && e.getDescription().isBlank()) e.setDescription(null);
+        if (e.getDemoVideos() != null) e.setDemoVideos(cleanUrls(e.getDemoVideos()));
+    }
+
+    private void validate(Exercise e) {
+        if (e.getName() == null || e.getName().isBlank()) {
+            throw new IllegalArgumentException("El ejercicio debe tener un nombre.");
+        }
+        if (e.getType() == null || e.getType().isBlank()) {
+            throw new IllegalArgumentException("El tipo de ejercicio es obligatorio.");
+        }
+        if (!ALLOWED_TYPES.contains(e.getType())) {
+            throw new IllegalArgumentException("Tipo inválido. Use: cardio, fuerza o movilidad.");
+        }
+        if (e.getDurationSeconds() != null && e.getDurationSeconds() < 0) {
+            throw new IllegalArgumentException("La duración no puede ser negativa.");
+        }
+    }
+
     private List<String> cleanUrls(List<String> urls) {
         if (urls == null) return null;
         List<String> cleaned = urls.stream()
