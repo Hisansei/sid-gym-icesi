@@ -1,64 +1,67 @@
 package co.edu.icesi.sidgymicesi.services.impl.mongo;
 
-import java.util.List;
-import java.util.Optional;
-
+import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
+import co.edu.icesi.sidgymicesi.repository.mongo.IExerciseRepository;
+import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
-import co.edu.icesi.sidgymicesi.repository.mongo.IExerciseRepository;
-import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class ExerciseServiceImpl implements IExerciseService{
+public class ExerciseServiceImpl implements IExerciseService {
 
     private final IExerciseRepository exerciseRepository;
 
+    private static final Set<String> ALLOWED_TYPES = Set.of("cardio", "fuerza", "movilidad");
+
     @Override
     public Exercise save(Exercise exercise) {
+        if (exercise == null) throw new IllegalArgumentException("Ejercicio nulo.");
 
+        // Normalizaciones básicas
+        if (exercise.getName() != null) exercise.setName(exercise.getName().trim());
+        if (exercise.getType() != null) exercise.setType(exercise.getType().trim().toLowerCase());
+        if (exercise.getDifficulty() != null) exercise.setDifficulty(exercise.getDifficulty().trim());
+        if (exercise.getDescription() != null && exercise.getDescription().isBlank()) {
+            exercise.setDescription(null);
+        }
+        if (exercise.getDemoVideos() != null) {
+            exercise.setDemoVideos(cleanUrls(exercise.getDemoVideos()));
+        }
+
+        // Validaciones de negocio
         if (exercise.getName() == null || exercise.getName().isBlank()) {
             throw new IllegalArgumentException("El ejercicio debe tener un nombre.");
         }
         if (exercise.getType() == null || exercise.getType().isBlank()) {
-            throw new IllegalArgumentException("El tipo de ejercicio debe ser especificado.");
+            throw new IllegalArgumentException("El tipo de ejercicio es obligatorio.");
         }
+        if (!ALLOWED_TYPES.contains(exercise.getType())) {
+            throw new IllegalArgumentException("Tipo inválido. Use: cardio, fuerza o movilidad.");
+        }
+        // En tu versión anterior exigías duración > 0; mantengo esa regla
         if (exercise.getDurationSeconds() == null || exercise.getDurationSeconds() <= 0) {
-            throw new IllegalArgumentException("La duración del ejercicio es obligatoria y debe ser un número entero positivo.");
+            throw new IllegalArgumentException("La duración es obligatoria y debe ser > 0.");
         }
         if (exercise.getDifficulty() == null || exercise.getDifficulty().isBlank()) {
-            throw new IllegalArgumentException("La dificultad del ejercicio debe ser especificada.");
+            throw new IllegalArgumentException("La dificultad es obligatoria.");
         }
 
+        // Merge suave si viene con id (actualización parcial de campos opcionales)
         if (exercise.getId() != null) {
             exerciseRepository.findById(exercise.getId()).ifPresent(existing -> {
-
-                if (exercise.getDescription() == null || exercise.getDescription().isBlank()) {
+                if (exercise.getDescription() == null) {
                     exercise.setDescription(existing.getDescription());
                 }
-                
-                if (exercise.getDemoVideos() == null || exercise.getDemoVideos().isEmpty()) {
+                if (exercise.getDemoVideos() == null) {
                     exercise.setDemoVideos(existing.getDemoVideos());
-                } else {
-
-                    List<String> cleaned = cleanUrls(exercise.getDemoVideos());
-                    exercise.setDemoVideos(cleaned == null ? existing.getDemoVideos() : cleaned);
                 }
             });
-        } else {
-
-            if (exercise.getDescription() != null && exercise.getDescription().isBlank()) {
-                exercise.setDescription(null);
-            }
-
-            if (exercise.getDemoVideos() != null) {
-                List<String> cleaned = cleanUrls(exercise.getDemoVideos());
-                exercise.setDemoVideos(cleaned);
-            }
         }
 
         return exerciseRepository.save(exercise);
@@ -66,42 +69,52 @@ public class ExerciseServiceImpl implements IExerciseService{
 
     private List<String> cleanUrls(List<String> urls) {
         if (urls == null) return null;
-
         List<String> cleaned = urls.stream()
-                .filter(s -> s != null && !s.isBlank())
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isBlank())
                 .distinct()
-                .toList();
-
+                .collect(Collectors.toList());
         return cleaned.isEmpty() ? null : cleaned;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Exercise> findAll() {
         return exerciseRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Exercise> findById(String id) {
         return exerciseRepository.findById(id);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Exercise> findByType(String type) {
-        return exerciseRepository.findByType(type);
+        if (type == null) return List.of();
+        return exerciseRepository.findByType(type.trim().toLowerCase());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Exercise> findByDifficulty(String difficulty) {
-        return exerciseRepository.findByDifficulty(difficulty);
+        if (difficulty == null) return List.of();
+        return exerciseRepository.findByDifficulty(difficulty.trim());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Exercise> findByNameContainingIgnoreCase(String name) {
-        return exerciseRepository.findByNameContainingIgnoreCase(name);
+        if (name == null || name.isBlank()) return List.of();
+        return exerciseRepository.findByNameContainingIgnoreCase(name.trim());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Exercise> findByDurationSeconds(Integer durationSeconds) {
+        if (durationSeconds == null || durationSeconds <= 0) return List.of();
         return exerciseRepository.findByDurationSeconds(durationSeconds);
     }
 
@@ -109,5 +122,4 @@ public class ExerciseServiceImpl implements IExerciseService{
     public void deleteById(String id) {
         exerciseRepository.deleteById(id);
     }
-
 }

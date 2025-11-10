@@ -1,8 +1,8 @@
--- Tablas “nuevas” del proyecto y auxiliares
+-- Tablas del proyecto (estadísticas)
 DROP TABLE IF EXISTS user_monthly_stats CASCADE;
 DROP TABLE IF EXISTS trainer_monthly_stats CASCADE;
 
--- Tablas extra de versiones anteriores que ya NO usamos
+-- Tablas extra que ya NO se usan en Postgres
 DROP TABLE IF EXISTS trainer_assignments CASCADE;  -- ahora vive en Mongo
 DROP TABLE IF EXISTS user_stats CASCADE;
 DROP TABLE IF EXISTS trainer_stats CASCADE;

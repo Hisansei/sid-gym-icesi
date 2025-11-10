@@ -18,11 +18,11 @@ import co.edu.icesi.sidgymicesi.services.IUserService;
 @RequestMapping("/mvc/admin/users")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
-public class UserMVCController {
+public class UserController {
 
     private final IUserService userService;
 
-    // Ruta: http://localhost:8081/sid-gym-icesi//mvc/users
+    // Ruta: http://localhost:8081/sid-gym-icesi/mvc/admin/users
 
     @GetMapping
     public String getAll(Model model) {

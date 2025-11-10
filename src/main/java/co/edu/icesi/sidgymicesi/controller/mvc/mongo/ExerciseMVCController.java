@@ -1,4 +1,4 @@
-package co.edu.icesi.sidgymicesi.controller;
+package co.edu.icesi.sidgymicesi.controller.mvc.mongo;
 
 import java.util.List;
 import java.util.Arrays;
@@ -22,6 +22,8 @@ import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 @RequestMapping("/mvc/exercises")
 @RequiredArgsConstructor
 public class ExerciseMVCController {
+
+    // Ruta: http://localhost:8081/sid-gym-icesi/mvc/exercises
 
     private final IExerciseService exerciseService;
 

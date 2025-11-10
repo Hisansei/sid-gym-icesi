@@ -1,26 +1,24 @@
 package co.edu.icesi.sidgymicesi.config;
-import co.edu.icesi.sidgymicesi.security.CustomUserDetailsService;
-import co.edu.icesi.sidgymicesi.security.filters.CustomAuthenticationFilter;
-import co.edu.icesi.sidgymicesi.security.filters.JwtAuthenticationFilter;
-import org.springframework.http.HttpMethod;
 
+import co.edu.icesi.sidgymicesi.security.CustomUserDetailsService;
+import co.edu.icesi.sidgymicesi.security.filters.JwtAuthenticationFilter;
+import co.edu.icesi.sidgymicesi.security.filters.CustomAuthenticationFilter;
+
+import org.springframework.core.annotation.Order;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
+
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
@@ -65,7 +63,6 @@ public class WebSecurityConfig {
     @Order(1)
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // .securityMatcher("/mvc/**") Ahora cubre todas las rutas!
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
                 .authenticationProvider(authenticationProvider())
