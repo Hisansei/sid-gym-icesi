@@ -23,6 +23,8 @@ import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 @RequiredArgsConstructor
 public class ExerciseMVCController {
 
+    // Ruta: http://localhost:8081/sid-gym-icesi/mvc/exercises
+
     private final IExerciseService exerciseService;
 
     @GetMapping

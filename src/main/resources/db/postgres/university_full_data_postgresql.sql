@@ -66,7 +66,8 @@ INSERT INTO EMPLOYEES (
         ('1005', 'Sandra', 'Ortiz',  'sandra.ortiz@univcali.edu.co','Cátedra', 'Docente',        2, 4, 104),
         ('1006', 'Julián', 'Reyes',  'julian.reyes@univcali.edu.co','Planta',  'Administrativo', 2, 1, 105),
         ('1007', 'Paula',  'Ramírez','paula.ramirez@univcali.edu.co','Planta', 'Instructor',     1, 1, 101),
-        ('1008', 'Andrés', 'Castro', 'andres.castro@univcali.edu.co','Cátedra','Instructor',     1, 3, 103);
+        ('1008', 'Andrés', 'Castro', 'andres.castro@univcali.edu.co','Cátedra','Instructor',     1, 3, 103),
+        ('1009', 'Pepito', 'Arcos', 'pepito.arcos@univcali.edu.co', 'Planta',  'Administrativo', 2, 1, 105); -- Administrador del gym [Prueba]
 
 -- =========================
 -- Areas
@@ -149,7 +150,10 @@ INSERT INTO USERS (
         ('carlos.m', 'hash_cm123', 'EMPLOYEE', NULL,   '1004', TRUE, CURRENT_TIMESTAMP),
         ('sandra.o', 'hash_so123', 'EMPLOYEE', NULL,   '1005', TRUE, CURRENT_TIMESTAMP),
         ('paula.r',  'hash_pr123', 'EMPLOYEE', NULL,   '1007', TRUE, CURRENT_TIMESTAMP),
-        ('andres.c', 'hash_ac123', 'EMPLOYEE', NULL,   '1008', TRUE, CURRENT_TIMESTAMP);
+        ('andres.c', 'hash_ac123', 'EMPLOYEE', NULL,   '1008', TRUE, CURRENT_TIMESTAMP),
+
+        -- Administrador(es) [Prueba]
+        ('pepito.a', 'hash_pa123', 'ADMIN',    NULL,   '1009', TRUE, CURRENT_TIMESTAMP);
 
 -- =========================
 -- Hashes BCrypt
@@ -167,6 +171,8 @@ UPDATE users SET password_hash = '$2a$10$BwxnpYTMDMMGZ98jQImCUeGG0mnYW8ShtgN7TNU
 UPDATE users SET password_hash = '$2a$10$YkTcVoMIx5rvSiaXHQwAw.odvLzPyhjuVtwel2qcHsMp5e0Rcjy2.' WHERE username = 'sandra.o';
 UPDATE users SET password_hash = '$2a$10$BE0YZCnWDVGhXeIjiL.GQe23xZfeL6GwyEO2ysZqROzP6jsquvjCO' WHERE username = 'paula.r';
 UPDATE users SET password_hash = '$2a$10$XrRJnujctTzjLnHv/k3sTODxq9ZGKILWe5gGID7NHU./JHrJrxwOC' WHERE username = 'andres.c';
+
+UPDATE users SET password_hash = '$2a$10$E637lQy51VSagThtkZ7Mwuuo1qm72pqGY6gGRbrM3tQWyWQRSXtaC' WHERE username = 'pepito.a';
 
 -- =========================
 -- Stats (vacías)
