@@ -1,12 +1,11 @@
 package co.edu.icesi.sidgymicesi.services.mongo;
 
+import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
+
 import java.util.List;
 import java.util.Optional;
 
-import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
-
 public interface IExerciseService {
-
     Exercise save(Exercise exercise);
 
     List<Exercise> findAll();

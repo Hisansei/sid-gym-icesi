@@ -1,4 +1,4 @@
-package co.edu.icesi.sidgymicesi.repository;
+package co.edu.icesi.sidgymicesi.repository.postgres;
 
 import co.edu.icesi.sidgymicesi.model.postgres.TrainerMonthlyStat;
 import co.edu.icesi.sidgymicesi.model.postgres.TrainerMonthlyStatId;

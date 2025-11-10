@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/mvc/public/auth")
-public class AuthControllerMVC {
+public class AuthController {
 //http://localhost:8081/sid-gym-icesi/mvc/public/auth/login
-    private static final Logger logger = LoggerFactory.getLogger(AuthControllerMVC.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @GetMapping("/login")
     public String showLoginForm(

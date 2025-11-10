@@ -11,5 +11,6 @@ public interface IProgressLogRepository extends MongoRepository<ProgressLog, Str
 
     Optional<ProgressLog> findByRoutineIdAndDate(String routineId, LocalDate date);
 
-    List<ProgressLog> findByOwnerUsernameOrderByDateDesc(String ownerUsername);
+    List<ProgressLog> findAllByRoutineIdOrderByDateDesc(String routineId);
+    List<ProgressLog> findAllByOwnerUsernameOrderByDateDesc(String ownerUsername);
 }

@@ -1,8 +1,8 @@
-package co.edu.icesi.sidgymicesi.controller;
+package co.edu.icesi.sidgymicesi.controller.mvc.mongo;
 
 import co.edu.icesi.sidgymicesi.model.mongo.ProgressLog;
 import co.edu.icesi.sidgymicesi.model.mongo.Routine;
-import co.edu.icesi.sidgymicesi.services.IProgressService;
+import co.edu.icesi.sidgymicesi.services.mongo.IProgressLogService;
 import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 import co.edu.icesi.sidgymicesi.services.mongo.IRoutineService;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +19,10 @@ import java.util.*;
 @Controller
 @RequestMapping("/mvc/progress")
 @RequiredArgsConstructor
-public class ProgressMVCController {
+public class ProgressLogMVCController {
 
     private final IRoutineService routineService;
-    private final IProgressService progressService;
+    private final IProgressLogService progressService;
     private final IExerciseService exerciseService;
 
     private String currentUsername() {
@@ -49,7 +49,7 @@ public class ProgressMVCController {
         return "progress/log";
     }
 
-    // Compatibilidad con el form action="/mvc/progress/log"
+    // Compatibilidad con form action="/mvc/progress/log"
     @PostMapping("/log")
     public String submitLogByParam(@RequestParam("routineId") String routineId,
                                    @RequestParam Map<String, String> form) {
@@ -81,6 +81,7 @@ public class ProgressMVCController {
             ProgressLog.Entry entry = ProgressLog.Entry.builder()
                     .exerciseId(it.getExerciseId())
                     .completed(completed)
+                    // El formulario captura un valor simple; lo guardamos como lista de un elemento
                     .reps(reps != null ? List.of(reps) : null)
                     .sets(null)
                     .weightKg(null)
@@ -103,11 +104,12 @@ public class ProgressMVCController {
         return "redirect:/mvc/routines/" + routineId;
     }
 
-    // Histórico: /mvc/progress/history?routineId=...
+    // Histórico de una rutina: /mvc/progress/history?routineId=...
     @GetMapping("/history")
     public String history(@RequestParam("routineId") String routineId, Model model) {
         Routine routine = routineService.findById(routineId)
                 .orElseThrow(() -> new IllegalArgumentException("Rutina no encontrada"));
+
         model.addAttribute("routine", routine);
         model.addAttribute("logs", progressService.listByRoutine(routineId));
         return "progress/history";

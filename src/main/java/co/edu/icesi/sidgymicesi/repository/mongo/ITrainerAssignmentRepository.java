@@ -7,6 +7,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ITrainerAssignmentRepository extends MongoRepository<TrainerAssignment, String> {
+
     Optional<TrainerAssignment> findByUserUsernameAndActiveTrue(String username);
+
+    List<TrainerAssignment> findByActiveTrue();
+
+    List<TrainerAssignment> findByTrainerIdOrderByAssignedAtDesc(String trainerId);
+
     List<TrainerAssignment> findByTrainerIdAndActiveTrue(String trainerId);
 }
