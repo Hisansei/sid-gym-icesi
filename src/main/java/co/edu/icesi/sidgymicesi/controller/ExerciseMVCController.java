@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import co.edu.icesi.sidgymicesi.model.Exercise;
-import co.edu.icesi.sidgymicesi.services.IExerciseService;
+import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
+import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 
 @Controller
 @RequestMapping("/mvc/exercises")

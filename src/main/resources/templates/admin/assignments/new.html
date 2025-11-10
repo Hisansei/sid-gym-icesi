@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nueva asignación</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+<main class="container narrow card space-y">
+    <h1>Nueva asignación</h1>
+    <form th:action="@{/mvc/admin/assignments}" method="post" class="form">
+        <label>Usuario (username)
+            <input name="userUsername" type="text" required placeholder="p.ej. jdoe"/>
+        </label>
+        <label>Entrenador (username)
+            <input name="trainerUsername" type="text" required placeholder="p.ej. coach1"/>
+        </label>
+        <div class="form-actions">
+            <button class="btn" type="submit">Asignar</button>
+            <a class="btn btn-secondary" th:href="@{/mvc/admin/assignments}">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="page(title, content)">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${title} ?: 'Mi Aplicación'">Mi Aplicación</title>
+
+    <link rel="stylesheet" th:href="@{/css/components/base.css}" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar">
+        <header class="sidebar-header">
+            <a th:href="@{/mvc/home}" class="header-logo">
+                <img th:src="@{/img/icono.jpg}" alt="Logo" class="logo" />
+            </a>
+            <button class="toggler sidebar-toggler" type="button" aria-label="Colapsar barra">
+                <span class="material-symbols-rounded">chevron_left</span>
+            </button>
+            <button class="toggler menu-toggler" type="button" aria-label="Abrir menú">
+                <span class="material-symbols-rounded">menu</span>
+            </button>
+        </header>
+
+        <nav class="sidebar-nav">
+            <ul class="nav-list primary-nav">
+                <li class="nav-item">
+                    <a th:href="@{/mvc/home}" class="nav-link" data-page="home">
+                        <span class="material-symbols-rounded nav-icon">home</span>
+                        <span class="nav-label">Home</span>
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/mvc/users}" class="nav-link" data-page="users">
+                        <span class="material-symbols-rounded nav-icon">group</span>
+                        <span class="nav-label">Usuarios</span>
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/mvc/roles}" class="nav-link" data-page="roles">
+                        <span class="material-symbols-rounded nav-icon">shield</span>
+                        <span class="nav-label">Roles</span>
+                    </a>
+                </li>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/mvc/permissions}" class="nav-link" data-page="permissions">
+                        <span class="material-symbols-rounded nav-icon">lock</span>
+                        <span class="nav-label">Permisos</span>
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="nav-list secondary-nav">
+                <li class="nav-item">
+                    <form th:action="@{/mvc/auth/logout}" method="post" class="logout-form" style="margin:0">
+                        <button type="submit" class="nav-link"
+                                style="width:100%;background:transparent;border:none;cursor:pointer">
+                            <span class="material-symbols-rounded nav-icon">logout</span>
+                            <span class="nav-label">Salir</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="content" role="main" th:insert="${content}"></main>
+</div>
+
+<script th:src="@{/js/components/base.js}"></script>
+</body>
+</html>
