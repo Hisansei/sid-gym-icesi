@@ -22,7 +22,7 @@ public class UserController {
 
     private final IUserService userService;
 
-    // Ruta: http://localhost:8081/sid-gym-icesi//mvc/users
+    // Ruta: http://localhost:8081/sid-gym-icesi/mvc/admin/users
 
     @GetMapping
     public String getAll(Model model) {

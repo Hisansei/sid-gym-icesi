@@ -19,5 +19,7 @@ public class HashGen {
         System.out.println("sandra.o →  " + encoder.encode("hash_so123"));
         System.out.println("paula.r  →  " + encoder.encode("hash_pr123"));
         System.out.println("andres.c →  " + encoder.encode("hash_ac123"));
+
+        System.out.println("pepito.a →  " + encoder.encode("hash_pa123"));
     }
 }

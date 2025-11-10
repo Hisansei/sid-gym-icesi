@@ -111,7 +111,7 @@ CREATE TABLE ENROLLMENTS (
                              student_id      VARCHAR(15) NOT NULL,
                              NRC             VARCHAR(10) NOT NULL,
                              enrollment_date DATE        NOT NULL,
-                             status          VARCHAR(15) NOT NULL
+                             status          VARCHAR(15) NOT NULL -- 'Active', 'Passed', 'Failed', 'Withdrawn'
 );
 ALTER TABLE ENROLLMENTS ADD CONSTRAINT ENROLLMENTS_PK PRIMARY KEY (student_id, NRC);
 
@@ -121,7 +121,7 @@ ALTER TABLE ENROLLMENTS ADD CONSTRAINT ENROLLMENTS_PK PRIMARY KEY (student_id, N
 CREATE TABLE USERS (
                        username      VARCHAR(100) NOT NULL,
                        password_hash VARCHAR(255) NOT NULL,
-                       role          VARCHAR(50)  NOT NULL,
+                       role          VARCHAR(50)  NOT NULL, -- e.g., 'STUDENT', 'EMPLOYEE', 'ADMIN'
                        student_id    VARCHAR(15),
                        employee_id   VARCHAR(15),
                        is_active     BOOLEAN      DEFAULT TRUE,
