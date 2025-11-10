@@ -6,6 +6,7 @@ import co.edu.icesi.sidgymicesi.services.mongo.IProgressLogService;
 import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 import co.edu.icesi.sidgymicesi.services.mongo.IRoutineService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -33,29 +34,33 @@ public class ProgressLogMVCController {
         return auth.getName();
     }
 
-    // Compatibilidad con la vista: GET /mvc/progress/log?routineId=...
+    // Compatibilidad: GET /mvc/progress/log?routineId=.
+    @PreAuthorize("@authz.isOwnerOfRoutine(#routineId, authentication)")
     @GetMapping("/log")
     public String logFormByParam(@RequestParam("routineId") String routineId, Model model) {
         return logForm(routineId, model);
     }
 
+    @PreAuthorize("@authz.isOwnerOfRoutine(#routineId, authentication)")
     @GetMapping("/{routineId}")
     public String logForm(@PathVariable String routineId, Model model) {
         Routine routine = routineService.findById(routineId)
                 .orElseThrow(() -> new IllegalArgumentException("Rutina no encontrada"));
         model.addAttribute("routine", routine);
         model.addAttribute("today", LocalDate.now());
-        model.addAttribute("catalog", exerciseService.findAll()); // la vista usa #vars.catalog
+        model.addAttribute("catalog", exerciseService.findAll());
         return "progress/log";
     }
 
-    // Compatibilidad con form action="/mvc/progress/log"
+    // Compatibilidad: POST /mvc/progress/log
+    @PreAuthorize("@authz.isOwnerOfRoutine(#routineId, authentication)")
     @PostMapping("/log")
     public String submitLogByParam(@RequestParam("routineId") String routineId,
                                    @RequestParam Map<String, String> form) {
         return submitLog(routineId, form);
     }
 
+    @PreAuthorize("@authz.isOwnerOfRoutine(#routineId, authentication)")
     @PostMapping("/{routineId}")
     public String submitLog(@PathVariable String routineId,
                             @RequestParam Map<String, String> form) {
@@ -64,10 +69,8 @@ public class ProgressLogMVCController {
                 .orElseThrow(() -> new IllegalArgumentException("Rutina no encontrada"));
 
         List<ProgressLog.Entry> entries = new ArrayList<>();
-
         for (Routine.RoutineExercise it : routine.getExercises()) {
-            String key = it.getId(); // id del item en la rutina
-
+            String key = it.getId();
             Integer reps = parseInt(form.get("reps_" + key));
             Integer secs = parseInt(form.get("time_" + key));
             String rpe = form.get("rpe_" + key);
@@ -81,14 +84,12 @@ public class ProgressLogMVCController {
             ProgressLog.Entry entry = ProgressLog.Entry.builder()
                     .exerciseId(it.getExerciseId())
                     .completed(completed)
-                    // El formulario captura un valor simple; lo guardamos como lista de un elemento
                     .reps(reps != null ? List.of(reps) : null)
                     .sets(null)
                     .weightKg(null)
                     .effortLevel(rpe)
                     .notesUser(notes)
                     .build();
-
             entries.add(entry);
         }
 
@@ -104,12 +105,11 @@ public class ProgressLogMVCController {
         return "redirect:/mvc/routines/" + routineId;
     }
 
-    // Histórico de una rutina: /mvc/progress/history?routineId=...
+    @PreAuthorize("@authz.isOwnerOfRoutine(#routineId, authentication)")
     @GetMapping("/history")
     public String history(@RequestParam("routineId") String routineId, Model model) {
         Routine routine = routineService.findById(routineId)
                 .orElseThrow(() -> new IllegalArgumentException("Rutina no encontrada"));
-
         model.addAttribute("routine", routine);
         model.addAttribute("logs", progressService.listByRoutine(routineId));
         return "progress/history";
