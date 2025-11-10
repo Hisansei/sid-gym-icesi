@@ -7,7 +7,6 @@ import co.edu.icesi.sidgymicesi.services.mongo.IRoutineService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -22,35 +21,34 @@ public class RoutineMVCController {
     private final IRoutineService routineService;
     private final IExerciseService exerciseService;
 
-    private String currentUsername() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null || auth.getName() == null) {
-            throw new IllegalStateException("No hay usuario autenticado.");
-        }
-        return auth.getName();
-    }
-
+    // Lista del usuario autenticado
     @GetMapping("")
-    public String list(Model model) {
-        List<Routine> routines = routineService.listByOwner(currentUsername());
+    @PreAuthorize("hasAnyRole('STUDENT','EMPLOYEE','ADMIN')")
+    public String list(Authentication auth, Model model) {
+        List<Routine> routines = routineService.listByOwner(auth.getName());
         model.addAttribute("routines", routines);
         return "routines/list";
     }
 
+    // Crear rápida (nombre por defecto)
     @GetMapping("/create")
-    public String createQuick() {
-        Routine r = routineService.create(currentUsername(), "Mi rutina", null);
+    @PreAuthorize("hasAnyRole('STUDENT','EMPLOYEE')")
+    public String createQuick(Authentication auth) {
+        Routine r = routineService.create(auth.getName(), "Mi rutina", null);
         return "redirect:/mvc/routines/" + r.getId();
     }
 
+    // Crear con nombre
     @PostMapping("/create")
-    public String create(@RequestParam String name) {
-        Routine r = routineService.create(currentUsername(), name, null);
+    @PreAuthorize("hasAnyRole('STUDENT','EMPLOYEE')")
+    public String create(Authentication auth, @RequestParam String name) {
+        Routine r = routineService.create(auth.getName(), name, null);
         return "redirect:/mvc/routines/" + r.getId();
     }
 
-    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
+    // Detalle por path
     @GetMapping("/{id}")
+    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     public String detail(@PathVariable String id, Model model) {
         Routine routine = routineService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Rutina no encontrada"));
@@ -59,14 +57,16 @@ public class RoutineMVCController {
         return "routines/detail";
     }
 
-    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
+    // Detalle por query param (compatibilidad)
     @GetMapping("/detail")
+    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     public String detailParam(@RequestParam("id") String id, Model model) {
         return detail(id, model);
     }
 
-    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
+    // Agregar item desde catálogo
     @PostMapping("/{id}/items/add")
+    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     public String addItem(@PathVariable String id,
                           @RequestParam("exerciseId") String exerciseId,
                           @RequestParam(name = "sets", defaultValue = "3") int sets,
@@ -96,25 +96,26 @@ public class RoutineMVCController {
         return "redirect:/mvc/routines/" + id;
     }
 
-    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
+    // Quitar item
     @PostMapping("/{id}/items/remove")
-    public String removeItem(@PathVariable String id,
-                             @RequestParam("itemId") String itemId) {
+    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
+    public String removeItem(@PathVariable String id, @RequestParam("itemId") String itemId) {
         routineService.removeItem(id, itemId);
         return "redirect:/mvc/routines/" + id;
     }
 
+    // Reordenar items (usa el nombre correcto del servicio)
+    @PostMapping("/{id}/reorder")
     @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
-    @PostMapping("/{id}/rename")
-    public String rename(@PathVariable String id,
-                         @RequestParam("name") String newName) {
-        routineService.rename(id, newName);
+    public String reorder(@PathVariable String id, @RequestParam("orderedIds") List<String> orderedIds) {
+        routineService.reorderExercises(id, orderedIds);
         return "redirect:/mvc/routines/" + id;
     }
 
-    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
+    // Eliminar rutina (usa deleteById del servicio)
     @PostMapping("/{id}/delete")
-    public String delete(@PathVariable String id) {
+    @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
+    public String deleteRoutine(@PathVariable String id) {
         routineService.deleteById(id);
         return "redirect:/mvc/routines";
     }

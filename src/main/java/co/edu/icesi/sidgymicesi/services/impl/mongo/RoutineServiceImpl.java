@@ -8,7 +8,6 @@ import co.edu.icesi.sidgymicesi.repository.mongo.IRoutineRepository;
 import co.edu.icesi.sidgymicesi.repository.mongo.IRoutineTemplateRepository;
 import co.edu.icesi.sidgymicesi.services.mongo.IRoutineService;
 import co.edu.icesi.sidgymicesi.services.postgres.IUserMonthlyStatsService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +17,17 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class RoutineServiceImpl implements IRoutineService {
+
+    private static final int MAX_EXERCISES = 50;
+    private static final Set<String> ALLOWED_TYPES = Set.of("cardio", "fuerza", "movilidad");
 
     private final IRoutineRepository routineRepo;
     private final IRoutineTemplateRepository templateRepo;
     private final IExerciseRepository exerciseRepo;
     private final IUserMonthlyStatsService userStatsService;
 
+    // ========== CREATE ==========
     @Override
     public Routine create(String ownerUsername, String name, String originTemplateId) {
         if (ownerUsername == null || ownerUsername.isBlank()) throw new IllegalArgumentException("ownerUsername requerido");
@@ -34,14 +36,13 @@ public class RoutineServiceImpl implements IRoutineService {
         Routine r = Routine.builder()
                 .ownerUsername(ownerUsername.trim())
                 .name(name.trim())
-                .sourceTemplateId(originTemplateId)
+                .sourceTemplateId(isBlank(originTemplateId) ? null : originTemplateId)
                 .createdAt(Instant.now())
                 .status(true)
                 .exercises(new ArrayList<>())
                 .build();
 
-        // Si clona desde plantilla: copiar ejercicios + targets
-        if (originTemplateId != null && !originTemplateId.isBlank()) {
+        if (!isBlank(originTemplateId)) {
             RoutineTemplate tpl = templateRepo.findById(originTemplateId)
                     .orElseThrow(() -> new NoSuchElementException("Plantilla no encontrada: " + originTemplateId));
 
@@ -71,81 +72,158 @@ public class RoutineServiceImpl implements IRoutineService {
             r.setExercises(items);
         }
 
+        // Guardar rutina y actualizar estadísticas con compensación
         Routine saved = routineRepo.save(r);
-        userStatsService.incrementRoutinesStarted(ownerUsername, YearMonth.now());
+        try {
+            userStatsService.incrementRoutinesStarted(ownerUsername, YearMonth.now());
+        } catch (RuntimeException ex) {
+            // Compensación: revertir rutina creada si falla Postgres
+            routineRepo.deleteById(saved.getId());
+            throw ex;
+        }
         return saved;
     }
 
+    // ========== READ ==========
     @Override public Optional<Routine> findById(String id) { return routineRepo.findById(id); }
-    @Override public List<Routine> listByOwner(String ownerUsername) { return routineRepo.findByOwnerUsernameOrderByCreatedAtDesc(ownerUsername); }
 
+    @Override
+    public List<Routine> listByOwner(String ownerUsername) {
+        return routineRepo.findByOwnerUsernameOrderByCreatedAtDesc(ownerUsername);
+    }
+
+    // ========== UPDATE: ADD ITEM ==========
     @Override
     public Routine addItem(String routineId, Routine.RoutineExercise newItem) {
-        Routine r = routineRepo.findById(routineId).orElseThrow(() -> new NoSuchElementException("Rutina no encontrada"));
+        Routine r = routineRepo.findById(routineId)
+                .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada: " + routineId));
 
-        // Enriquecer metadatos del ejercicio si viene exerciseId
-        if (newItem.getExerciseId() != null && !newItem.getExerciseId().isBlank()) {
-            exerciseRepo.findById(newItem.getExerciseId()).ifPresent(ex -> {
-                newItem.setName(ex.getName());
-                newItem.setType(ex.getType());
-                newItem.setDescription(ex.getDescription());
-                newItem.setDurationSeconds(ex.getDurationSeconds());
-                newItem.setDifficulty(ex.getDifficulty());
-                newItem.setDemoVideos(ex.getDemoVideos());
-            });
+        if (r.getExercises() == null) r.setExercises(new ArrayList<>());
+        if (r.getExercises().size() >= MAX_EXERCISES) {
+            throw new IllegalStateException("La rutina ya tiene el máximo de " + MAX_EXERCISES + " ejercicios");
         }
-        newItem.setId(UUID.randomUUID().toString());
-        newItem.setOrder(nextOrder(r));
-        validateItem(newItem);
 
+        // Si viene de catálogo, rellenar campos desde Exercise (si faltan)
+        if (!isBlank(newItem.getExerciseId())) {
+            Exercise ex = exerciseRepo.findById(newItem.getExerciseId())
+                    .orElseThrow(() -> new NoSuchElementException("Ejercicio no encontrado: " + newItem.getExerciseId()));
+            if (newItem.getName() == null) newItem.setName(ex.getName());
+            if (newItem.getType() == null) newItem.setType(ex.getType());
+            if (newItem.getDescription() == null) newItem.setDescription(ex.getDescription());
+            if (newItem.getDurationSeconds() == null) newItem.setDurationSeconds(ex.getDurationSeconds());
+            if (newItem.getDifficulty() == null) newItem.setDifficulty(ex.getDifficulty());
+            if (newItem.getDemoVideos() == null) newItem.setDemoVideos(ex.getDemoVideos());
+        } else {
+            // Personalizado: requiere name + type
+            if (isBlank(newItem.getName()) || isBlank(newItem.getType())) {
+                throw new IllegalArgumentException("Ejercicio personalizado requiere name y type");
+            }
+        }
+
+        // Asignar id y orden
+        if (isBlank(newItem.getId())) newItem.setId(UUID.randomUUID().toString());
+        newItem.setOrder(nextOrder(r));
+
+        validateItem(newItem);
         r.getExercises().add(newItem);
+
         return routineRepo.save(r);
     }
 
+    // ========== UPDATE: REMOVE ITEM ==========
     @Override
     public Routine removeItem(String routineId, String itemId) {
-        Routine r = routineRepo.findById(routineId).orElseThrow(() -> new NoSuchElementException("Rutina no encontrada"));
-        r.getExercises().removeIf(e -> Objects.equals(e.getId(), itemId));
-        recompactOrders(r);
+        Routine r = routineRepo.findById(routineId)
+                .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada: " + routineId));
+
+        boolean removed = r.getExercises() != null && r.getExercises().removeIf(it -> Objects.equals(it.getId(), itemId));
+        if (!removed) throw new NoSuchElementException("Ejercicio no encontrado en la rutina: " + itemId);
+
+        normalizeOrder(r.getExercises());
         return routineRepo.save(r);
     }
 
+    // ========== UPDATE: REORDER ==========
     @Override
     public Routine reorderExercises(String routineId, List<String> orderedIds) {
-        Routine r = routineRepo.findById(routineId).orElseThrow(() -> new NoSuchElementException("Rutina no encontrada"));
-        Map<String, Integer> pos = new LinkedHashMap<>();
-        int i = 1;
-        for (String id : orderedIds) pos.put(id, i++);
-        r.getExercises().forEach(e -> e.setOrder(pos.getOrDefault(e.getId(), e.getOrder())));
-        r.getExercises().sort(Comparator.comparingInt(Routine.RoutineExercise::getOrder));
+        Routine r = routineRepo.findById(routineId)
+                .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada: " + routineId));
+        if (r.getExercises() == null) r.setExercises(new ArrayList<>());
+
+        // Validar conjuntos iguales (sin duplicados)
+        Set<String> current = new HashSet<>();
+        for (Routine.RoutineExercise e : r.getExercises()) current.add(e.getId());
+        Set<String> target = new HashSet<>(orderedIds);
+
+        if (current.size() != orderedIds.size() || !current.equals(target)) {
+            throw new IllegalArgumentException("La lista de IDs no coincide con los ejercicios actuales");
+        }
+
+        Map<String, Routine.RoutineExercise> byId = new HashMap<>();
+        for (Routine.RoutineExercise e : r.getExercises()) byId.put(e.getId(), e);
+
+        List<Routine.RoutineExercise> reordered = new ArrayList<>();
+        int order = 1;
+        for (String id : orderedIds) {
+            Routine.RoutineExercise e = byId.get(id);
+            e.setOrder(order++);
+            reordered.add(e);
+        }
+
+        r.setExercises(reordered);
         return routineRepo.save(r);
     }
 
+    // ========== UPDATE: RENAME ==========
     @Override
     public Routine rename(String routineId, String newName) {
-        Routine r = routineRepo.findById(routineId).orElseThrow(() -> new NoSuchElementException("Rutina no encontrada"));
-        if (newName == null || newName.isBlank()) throw new IllegalArgumentException("newName requerido");
+        if (isBlank(newName)) throw new IllegalArgumentException("newName requerido");
+        Routine r = routineRepo.findById(routineId)
+                .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada: " + routineId));
         r.setName(newName.trim());
         return routineRepo.save(r);
     }
 
-    @Override public void deleteById(String id) { routineRepo.deleteById(id); }
+    // ========== DELETE ==========
+    @Override
+    public void deleteById(String id) {
+        routineRepo.deleteById(id);
+    }
 
-    // --- helpers ---
+    // ======= Helpers =======
+    private static boolean isBlank(String s) { return s == null || s.isBlank(); }
+
     private static int nextOrder(Routine r) {
-        return r.getExercises().stream().mapToInt(Routine.RoutineExercise::getOrder).max().orElse(0) + 1;
+        return (r.getExercises() == null || r.getExercises().isEmpty())
+                ? 1
+                : r.getExercises().stream().mapToInt(Routine.RoutineExercise::getOrder).max().orElse(0) + 1;
     }
 
-    private static void recompactOrders(Routine r) {
-        int o = 1;
-        for (Routine.RoutineExercise e : r.getExercises().stream()
-                .sorted(Comparator.comparingInt(Routine.RoutineExercise::getOrder)).toList()) {
-            e.setOrder(o++);
+    private static void normalizeOrder(List<Routine.RoutineExercise> items) {
+        if (items == null) return;
+        items.sort(Comparator.comparingInt(Routine.RoutineExercise::getOrder));
+        int i = 1;
+        for (Routine.RoutineExercise e : items) e.setOrder(i++);
+    }
+
+    private void validateItem(Routine.RoutineExercise it) {
+        // Requeridos básicos
+        if (isBlank(it.getName())) throw new IllegalArgumentException("name requerido en el ejercicio");
+        if (isBlank(it.getType())) throw new IllegalArgumentException("type requerido en el ejercicio");
+
+        // Tipo permitido
+        if (!ALLOWED_TYPES.contains(it.getType().trim().toLowerCase())) {
+            throw new IllegalArgumentException("type inválido (permitidos: cardio, fuerza, movilidad)");
         }
-    }
 
-    private static void validateItem(Routine.RoutineExercise it) {
-        if (it.getSets() < 0 || it.getReps() < 0) throw new IllegalArgumentException("sets/reps no pueden ser negativos");
-        if (it.getDurationSeconds() != null && it.getDurationSeconds() < 0) throw new IllegalArgumentException("durationSeconds inválido");
+        // sets/reps/restSeconds son 'int' (no nullables) en el modelo; validar que no sean negativos
+        if (it.getSets() < 0) throw new IllegalArgumentException("sets no puede ser negativo");
+        if (it.getReps() < 0) throw new IllegalArgumentException("reps no puede ser negativo");
+        if (it.getRestSeconds() < 0) throw new IllegalArgumentException("restSeconds no puede ser negativo");
+
+        // durationSeconds sí es Integer → solo si viene, que no sea negativo
+        if (it.getDurationSeconds() != null && it.getDurationSeconds() < 0) {
+            throw new IllegalArgumentException("durationSeconds no puede ser negativo");
+        }
     }
 }
