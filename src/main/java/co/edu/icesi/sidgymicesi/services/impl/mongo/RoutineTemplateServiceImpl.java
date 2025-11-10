@@ -2,7 +2,7 @@ package co.edu.icesi.sidgymicesi.services.impl.mongo;
 
 import co.edu.icesi.sidgymicesi.model.mongo.RoutineTemplate;
 import co.edu.icesi.sidgymicesi.repository.mongo.IRoutineTemplateRepository;
-import co.edu.icesi.sidgymicesi.services.mongo.IRoutineTemplateMongoService;
+import co.edu.icesi.sidgymicesi.services.mongo.IRoutineTemplateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +13,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class RoutineTemplateMongoServiceImpl implements IRoutineTemplateMongoService {
+public class RoutineTemplateServiceImpl implements IRoutineTemplateService {
 
     private final IRoutineTemplateRepository routineTemplateRepository;
 

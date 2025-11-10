@@ -1,4 +1,4 @@
-package co.edu.icesi.sidgymicesi.controller;
+package co.edu.icesi.sidgymicesi.controller.mvc.mongo;
 
 import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
 import co.edu.icesi.sidgymicesi.model.mongo.Routine;

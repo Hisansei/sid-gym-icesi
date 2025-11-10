@@ -1,4 +1,4 @@
-package co.edu.icesi.sidgymicesi.controller;
+package co.edu.icesi.sidgymicesi.controller.mvc.mongo;
 
 import java.util.List;
 import java.util.Arrays;
