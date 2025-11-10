@@ -1,1 +1,136 @@
-[]
+[
+  {
+    "_id": "r_laura_full_body",
+    "ownerUsername": "laura.s",
+    "origin_template_id": "tpl_full_body",
+    "name": "Full Body Starter — personalizada",
+    "description": "Cuerpo completo 3 días/sem",
+    "level": "BEGINNER",
+    "created_at": "2025-11-01T10:00:00Z",
+    "status": true,
+    "exercises": [
+      {
+        "id": "item-001",
+        "order": 1,
+        "exercise_id": "ex_pushups",
+        "name": "Push Ups",
+        "type": "fuerza",
+        "description": "Flexiones básicas de pecho",
+        "duration_seconds": 60,
+        "difficulty": "MEDIA",
+        "demo_videos": ["https://youtu.be/demo1"],
+        "sets": 3,
+        "reps": 12,
+        "rest_seconds": 60
+      },
+      {
+        "id": "item-002",
+        "order": 2,
+        "exercise_id": "ex_plank",
+        "name": "Plank",
+        "type": "fuerza",
+        "description": "Plancha isométrica (core)",
+        "duration_seconds": 45,
+        "difficulty": "MEDIA",
+        "demo_videos": ["https://youtu.be/demo2"],
+        "sets": 3,
+        "reps": 1,
+        "rest_seconds": 45
+      },
+      {
+        "id": "item-003",
+        "order": 3,
+        "exercise_id": "ex_treadmill_walk",
+        "name": "Caminadora (caminata)",
+        "type": "cardio",
+        "description": "Caminata suave en caminadora",
+        "duration_seconds": 900,
+        "difficulty": "BAJA",
+        "demo_videos": [],
+        "sets": 1,
+        "reps": 1,
+        "rest_seconds": 0
+      }
+    ]
+  },
+  {
+    "_id": "r_carlos_mobility_am",
+    "ownerUsername": "carlos.m",
+    "origin_template_id": "tpl_mobility_basic",
+    "name": "Movilidad matutina",
+    "description": "Desbloqueo suave AM",
+    "level": "BEGINNER",
+    "created_at": "2025-11-02T08:30:00Z",
+    "status": true,
+    "exercises": [
+      {
+        "id": "item-101",
+        "order": 1,
+        "exercise_id": "ex_hip_mobility",
+        "name": "Movilidad de cadera",
+        "type": "movilidad",
+        "description": "Secuencia corta de movilidad de cadera",
+        "duration_seconds": 300,
+        "difficulty": "BAJA",
+        "demo_videos": [],
+        "sets": 1,
+        "reps": 1,
+        "rest_seconds": 0
+      },
+      {
+        "id": "item-102",
+        "order": 2,
+        "exercise_id": "ex_plank",
+        "name": "Plank",
+        "type": "fuerza",
+        "description": "Plancha isométrica (core)",
+        "duration_seconds": 45,
+        "difficulty": "MEDIA",
+        "demo_videos": ["https://youtu.be/demo2"],
+        "sets": 2,
+        "reps": 1,
+        "rest_seconds": 45
+      }
+    ]
+  },
+  {
+    "_id": "r_sara_cardio_intervals",
+    "ownerUsername": "sara.r",
+    "origin_template_id": null,
+    "name": "Cardio — Intervalos",
+    "description": "Sesiones de intervalos suaves",
+    "level": "BEGINNER",
+    "created_at": "2025-11-03T19:00:00Z",
+    "status": true,
+    "exercises": [
+      {
+        "id": "item-201",
+        "order": 1,
+        "exercise_id": "ex_rower",
+        "name": "Remo en máquina",
+        "type": "cardio",
+        "description": "Remo continuo a ritmo moderado",
+        "duration_seconds": 600,
+        "difficulty": "MEDIA",
+        "demo_videos": [],
+        "sets": 1,
+        "reps": 1,
+        "rest_seconds": 0
+      },
+      {
+        "id": "item-202",
+        "order": 2,
+        "exercise_id": "ex_treadmill_walk",
+        "name": "Caminadora (caminata)",
+        "type": "cardio",
+        "description": "Caminata suave en caminadora",
+        "duration_seconds": 900,
+        "difficulty": "BAJA",
+        "demo_videos": [],
+        "sets": 1,
+        "reps": 1,
+        "rest_seconds": 0
+      }
+    ]
+  }
+]

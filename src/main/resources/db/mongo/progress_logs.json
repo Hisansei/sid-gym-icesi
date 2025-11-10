@@ -1,1 +1,33 @@
-[]
+{
+  "ownerUsername": "laura.s",
+  "routine_id": "r_laura_full_body",
+  "date": "ISODate('2025-11-07T00:00:00Z')",
+  "entries": [
+    {
+      "exercise_id": "ex_pushups",
+      "is_completed": true,
+      "sets": [1, 1, 1],
+      "reps": [12, 12, 10],
+      "weight_kg": [0, 0, 0],
+      "effort_level": "7",
+      "notes_user": "Última serie costó"
+    },
+    {
+      "exercise_id": "ex_plank",
+      "is_completed": true,
+      "sets": [1, 1, 1],
+      "reps": [1, 1, 1],
+      "weight_kg": [],
+      "effort_level": "6",
+      "notes_user": null
+    }
+  ],
+  "trainer_feedback": [
+    {
+      "trainer_id": "juan.p",
+      "message": "Buena técnica, sube a 3x13 en push ups",
+      "created_at": "ISODate('2025-11-07T18:30:00Z')"
+    }
+  ],
+  "created_at": "ISODate('2025-11-07T18:25:00Z')"
+}
