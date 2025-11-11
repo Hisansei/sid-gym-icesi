@@ -32,10 +32,12 @@ public class RoutineMVCController {
         return "routine/list";
     }
 
-    @GetMapping("/create")
+    @PostMapping("/create")
     @PreAuthorize("isAuthenticated()")
-    public String quickCreate(Authentication auth) {
-        Routine r = routineService.create(auth.getName(), "Nueva rutina", null);
+    public String quickCreate(Authentication auth,
+                              @RequestParam(value = "name", required = false) String name) {
+        String n = (name == null || name.isBlank()) ? "Nueva rutina" : name.trim();
+        Routine r = routineService.create(auth.getName(), n, null);
         return "redirect:/mvc/routines/" + r.getId();
     }
 
@@ -44,7 +46,6 @@ public class RoutineMVCController {
     public String detail(@PathVariable String id, Model model) {
         Routine routine = routineService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Routine not found"));
-        // Opciones para “agregar ejercicio”
         List<Exercise> exerciseOptions = exerciseService.findAll();
         Map<String, Exercise> exerciseMap = exerciseOptions.stream()
                 .collect(Collectors.toMap(Exercise::getId, e -> e));
@@ -61,17 +62,19 @@ public class RoutineMVCController {
         return "redirect:/mvc/routines/" + id;
     }
 
+    // Agregar ejercicio a la rutina (desde catálogo o personalizado)
     @PostMapping("/{id}/items/add")
     @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     public String addItem(@PathVariable String id,
-                          @RequestParam String exerciseId,
+                          @RequestParam(required = false) String exerciseId,
+                          @RequestParam(required = false) String name, // nombre personalizado si aplica
                           @RequestParam(required = false) Integer sets,
                           @RequestParam(required = false) Integer reps,
                           @RequestParam(required = false) Integer durationSec,
-                          @RequestParam(required = false) Integer restSeconds,
-                          @RequestParam(required = false) String notes) {
+                          @RequestParam(required = false) Integer restSeconds) {
         Routine.RoutineExercise newItem = new Routine.RoutineExercise();
-        newItem.setExerciseId(exerciseId);
+        if (exerciseId != null && !exerciseId.isBlank()) newItem.setExerciseId(exerciseId.trim());
+        if (name != null && !name.isBlank()) newItem.setName(name.trim());
         newItem.setSets(sets);
         newItem.setReps(reps);
         newItem.setDurationSeconds(durationSec);
@@ -87,6 +90,7 @@ public class RoutineMVCController {
         return "redirect:/mvc/routines/" + id;
     }
 
+    // Reordenar ejercicios
     @PostMapping("/{id}/reorder")
     @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     public String reorder(@PathVariable String id, @RequestParam("order") List<String> orderedIds) {
@@ -96,7 +100,7 @@ public class RoutineMVCController {
 
     @PostMapping("/{id}/delete")
     @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
-    public String delete(@PathVariable String id, Authentication auth) {
+    public String deleteRoutine(@PathVariable String id) {
         routineService.deleteById(id);
         return "redirect:/mvc/routines";
     }

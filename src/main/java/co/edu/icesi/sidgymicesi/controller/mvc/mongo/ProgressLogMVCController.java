@@ -5,7 +5,6 @@ import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 import co.edu.icesi.sidgymicesi.services.mongo.IProgressLogService;
 import co.edu.icesi.sidgymicesi.services.mongo.IRoutineService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -21,14 +20,21 @@ import java.util.NoSuchElementException;
 
 @Controller
 @RequestMapping("/mvc/progress")
-@RequiredArgsConstructor
 public class ProgressLogMVCController {
 
     private final IRoutineService routineService;
     private final IProgressLogService progressService;
     private final IExerciseService exerciseService;
 
-    // /mvc/progress/history  --> muestra rutinas del usuario para elegir
+    public ProgressLogMVCController(IRoutineService routineService,
+                                    IProgressLogService progressService,
+                                    IExerciseService exerciseService) {
+        this.routineService = routineService;
+        this.progressService = progressService;
+        this.exerciseService = exerciseService;
+    }
+
+    // Selección de rutina si no viene routineId (evita 400)
     @GetMapping(value = "/history", params = "!routineId")
     @PreAuthorize("isAuthenticated()")
     public String historySelector(Authentication auth, Model model) {
@@ -37,7 +43,7 @@ public class ProgressLogMVCController {
         return "progress/history-select";
     }
 
-    // Histórico básico: /mvc/progress/history?routineId=.
+    // Historial por rutina
     @GetMapping(value = "/history", params = "routineId")
     @PreAuthorize("@authz.isOwnerOfRoutine(#routineId, authentication)")
     public String history(@RequestParam("routineId") String routineId, Model model) {
@@ -48,14 +54,14 @@ public class ProgressLogMVCController {
         return "progress/history";
     }
 
-    // Formulario por query param: /mvc/progress/log?routineId=.
+    // Form por query param
     @GetMapping("/log")
     @PreAuthorize("@authz.isOwnerOfRoutine(#routineId, authentication)")
     public String logFormByParam(@RequestParam("routineId") String routineId, Model model) {
         return showLogForm(routineId, model);
     }
 
-    // Formulario por path: /mvc/progress/{routineId}
+    // Form por path
     @GetMapping("/{routineId}")
     @PreAuthorize("@authz.isOwnerOfRoutine(#routineId, authentication)")
     public String logForm(@PathVariable String routineId, Model model) {
@@ -71,7 +77,7 @@ public class ProgressLogMVCController {
         return "progress/log";
     }
 
-    // Compatibilidad POST por query param
+    // POST por query param
     @PostMapping("/log")
     @PreAuthorize("@authz.isOwnerOfRoutine(#routineId, authentication)")
     public String submitLogByParam(Authentication auth,
@@ -80,7 +86,7 @@ public class ProgressLogMVCController {
         return doSubmitLog(auth, routineId, form);
     }
 
-    // POST por path: /mvc/progress/{routineId}
+    // POST por path
     @PostMapping("/{routineId}")
     @PreAuthorize("@authz.isOwnerOfRoutine(#routineId, authentication)")
     public String submitLog(Authentication auth,
@@ -94,10 +100,11 @@ public class ProgressLogMVCController {
                 .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada"));
 
         List<ProgressLog.Entry> entries = new ArrayList<>();
+
         for (Routine.RoutineExercise it : routine.getExercises()) {
-            String key = it.getId();
+            String key = it.getId(); // id del item dentro de la rutina
             Integer reps = parseInt(form.get("reps_" + key));
-            Integer secs = parseInt(form.get("time_" + key));
+            Integer secs = parseInt(form.get("time_" + key)); // el modelo de Entry no tiene duration; solo usamos para 'completed'
             String rpe = form.get("rpe_" + key);
             String notes = form.getOrDefault("notes_" + key, "").trim();
 
@@ -106,26 +113,28 @@ public class ProgressLogMVCController {
                     || (rpe != null && !rpe.isBlank())
                     || (!notes.isBlank());
 
-            ProgressLog.Entry entry = ProgressLog.Entry.builder()
-                    .exerciseId(it.getExerciseId())
-                    .completed(completed)
-                    .reps(reps != null ? List.of(reps) : null)
-                    .sets(null)
-                    .weightKg(null)
-                    .effortLevel(rpe)
-                    .notesUser(notes)
-                    .build();
+            ProgressLog.Entry e = new ProgressLog.Entry();
+            e.setExerciseId(it.getExerciseId());
+            e.setCompleted(completed);
+            e.setReps(reps != null ? List.of(reps) : null);    // <== List<Integer>, no Integer
+            e.setSets(null);
+            e.setWeightKg(null);
+            e.setEffortLevel(rpe);
+            e.setNotesUser(notes);
 
-            entries.add(entry);
+            entries.add(e);
         }
 
-        ProgressLog log = ProgressLog.builder()
-                .ownerUsername(auth.getName())
-                .routineId(routineId)
-                .date(LocalDate.now())
-                .entries(entries)
-                .createdAt(Instant.now())
-                .build();
+        if (entries.isEmpty()) {
+            return "redirect:/mvc/progress/" + routineId;
+        }
+
+        ProgressLog log = new ProgressLog();
+        log.setOwnerUsername(auth.getName());
+        log.setRoutineId(routineId);
+        log.setDate(LocalDate.now());
+        log.setEntries(entries);
+        log.setCreatedAt(Instant.now());
 
         progressService.addLog(log);
         return "redirect:/mvc/progress/history?routineId=" + routineId;

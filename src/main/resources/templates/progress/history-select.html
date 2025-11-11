@@ -1,34 +1,32 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Seleccionar rutina - Progreso</title>
-    <link rel="stylesheet" th:href="@{/css/components/base.css}">
+    <meta charset="UTF-8"/>
+    <title>Selecciona rutina • Historial</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <style>
+        body{font-family:system-ui,Arial,sans-serif;max-width:800px;margin:24px auto;padding:0 16px}
+        ul{list-style:none;padding:0;margin:0}
+        li{border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+        .btn{display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none}
+    </style>
 </head>
 <body>
-<div th:replace="~{components/base :: page('Mi progreso', ~{::content})}"></div>
+<h1>Historial de progreso</h1>
+<p>Elige una rutina para ver su historial o registrar progreso.</p>
 
-<section id="content">
-    <div class="container">
-        <h1 class="page-title">Selecciona una rutina</h1>
-
-        <div th:if="${#lists.isEmpty(routines)}" class="empty-state">
-            <p>No tienes rutinas creadas aún.</p>
-            <a th:href="@{/mvc/routines}" class="btn">Crear una rutina</a>
+<ul>
+    <li th:if="${#lists.isEmpty(routines)}">No tienes rutinas.</li>
+    <li th:each="r : ${routines}">
+        <div>
+            <strong th:text="${r.name}">Rutina</strong>
+            <div style="color:#6b7280" th:text="${r.id}">id</div>
         </div>
-
-        <div th:if="${!#lists.isEmpty(routines)}" class="list">
-            <ul>
-                <li th:each="r : ${routines}">
-                    <a th:href="@{|/mvc/progress/history?routineId=${r.id}|}">
-                        <strong th:text="${r.name}">Nombre</strong>
-                        <span class="muted" th:text="${r.description}">Descripción</span>
-                    </a>
-                </li>
-            </ul>
+        <div>
+            <a class="btn" th:href="@{'/mvc/progress/history'(routineId=${r.id})}">Ver historial</a>
+            <a class="btn" th:href="@{'/mvc/progress/' + ${r.id}}">Registrar progreso</a>
         </div>
-
-    </div>
-</section>
+    </li>
+</ul>
 </body>
 </html>

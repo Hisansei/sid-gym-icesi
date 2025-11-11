@@ -1,131 +1,98 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8"/>
-  <title th:text="${template.id == null ? 'Nueva plantilla' : 'Editar plantilla'}">Plantilla</title>
+  <title th:text="${template.id} != null ? 'Editar plantilla' : 'Nueva plantilla'">Plantilla</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <style>
-    .rows { margin-top: 12px; }
-    .row { border: 1px solid #ccc; padding: 8px; margin-bottom: 6px; display: grid; grid-template-columns: 1fr repeat(4, 120px) 32px; gap: 8px; align-items: center; }
-    .row .drag { cursor: move; text-align: center; }
-    .row input[type=number] { width: 100%; }
+    body{font-family:system-ui,Arial,sans-serif;max-width:980px;margin:24px auto;padding:0 16px}
+    .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    input[type=text], input[type=number], select{padding:8px;border:1px solid #d1d5db;border-radius:6px}
+    button{padding:8px 12px;border:0;border-radius:6px;background:#111827;color:white;cursor:pointer}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{border:1px solid #e5e7eb;padding:8px;text-align:left}
+    .btn{display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none}
   </style>
 </head>
 <body>
-<h1 th:text="${template.id == null ? 'Nueva plantilla' : 'Editar plantilla'}">Plantilla</h1>
+<h1 th:text="${template.id} != null ? 'Editar plantilla' : 'Nueva plantilla'">Plantilla</h1>
+<a class="btn" href="/mvc/routine-templates">Volver</a>
 
-<form th:action="${template.id == null} ? @{/mvc/routine-templates/create} : @{'/mvc/routine-templates/' + ${template.id} + '/edit'}"
-      method="post" th:object="${template}">
+<form th:action="${template.id} != null ? @{/mvc/routine-templates/{id}/edit(id=${template.id})} : @{/mvc/routine-templates/create}" method="post">
+  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
 
-  <div>
-    <label>Nombre</label><br/>
-    <input type="text" th:field="*{name}" required/>
+  <div class="row" style="margin:12px 0">
+    <label>Nombre:
+      <input type="text" name="name" th:value="${template.name}" required/>
+    </label>
   </div>
 
-  <div>
-    <label>Descripción</label><br/>
-    <textarea th:field="*{description}" rows="3"></textarea>
+  <h2>Ejercicios de la plantilla</h2>
+  <table id="tbl">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Ejercicio (catálogo)</th>
+      <th>Series</th>
+      <th>Reps</th>
+      <th>Descanso (s)</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody id="rows">
+    <!-- Fila por cada item existente -->
+    <tr th:each="it,idx : ${template.exercises}">
+      <td><input type="number" th:name="${'exercises[' + idx.index + '].order'}" th:value="${it.order}" min="0"/></td>
+      <td>
+        <select th:name="${'exercises[' + idx.index + '].exerciseId'}">
+          <option th:each="ex : ${exercises}" th:value="${ex.id}" th:selected="${ex.id == it.exerciseId}" th:text="${ex.name}">Ejercicio</option>
+        </select>
+      </td>
+      <td><input type="number" min="0" th:name="${'exercises[' + idx.index + '].sets'}" th:value="${it.sets}"/></td>
+      <td><input type="number" min="0" th:name="${'exercises[' + idx.index + '].reps'}" th:value="${it.reps}"/></td>
+      <td><input type="number" min="0" th:name="${'exercises[' + idx.index + '].restSeconds'}" th:value="${it.restSeconds}"/></td>
+      <td><button type="button" onclick="removeRow(this)" style="background:#b91c1c">Quitar</button></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="row" style="margin-top:12px">
+    <button type="button" onclick="addRow()">Agregar fila</button>
+    <button type="submit">Guardar</button>
   </div>
-
-  <div>
-    <label><input type="checkbox" th:field="*{active}"/> Activa</label>
-  </div>
-
-  <hr/>
-
-  <h3>Ejercicios de la plantilla</h3>
-
-  <div>
-    <select id="exerciseSelect">
-      <option value="">-- Seleccionar ejercicio --</option>
-      <option th:each="e : ${exercises}" th:value="${e.id}" th:text="${e.name + ' (' + e.type + ')'}"></option>
-    </select>
-    <button type="button" onclick="addRow()">Agregar</button>
-  </div>
-
-  <div id="rows" class="rows">
-    <div th:each="it,idx : ${template.exercises}" class="row" draggable="true" ondragstart="drag(event)" ondragover="allowDrop(event)" ondrop="drop(event)">
-      <div class="drag">☰</div>
-
-      <input type="hidden" th:name="${'exercises[' + idx.index + '].exerciseId'}" th:value="${it.exerciseId}"/>
-      <input type="hidden" th:name="${'exercises[' + idx.index + '].order'}" th:value="${it.order}"/>
-
-      <div>
-        <span th:text="${#lists.contains(#maps.keys(exerciseMap), it.exerciseId) ? exerciseMap.get(it.exerciseId).name : it.exerciseId}">Nombre</span>
-      </div>
-
-      <div>
-        <label>Sets</label>
-        <input type="number" min="1" th:name="${'exercises[' + idx.index + '].sets'}" th:value="${it.sets}"/>
-      </div>
-
-      <div>
-        <label>Reps</label>
-        <input type="number" min="1" th:name="${'exercises[' + idx.index + '].reps'}" th:value="${it.reps}"/>
-      </div>
-
-      <div>
-        <label>Descanso (s)</label>
-        <input type="number" min="0" th:name="${'exercises[' + idx.index + '].restSeconds'}" th:value="${it.restSeconds}"/>
-      </div>
-
-      <button type="button" onclick="this.parentElement.remove()">✕</button>
-    </div>
-  </div>
-
-  <br/>
-  <button type="submit" onclick="beforeSubmit()">Guardar</button>
-  <a th:href="@{/mvc/routine-templates}">Cancelar</a>
 </form>
 
-<script th:inline="javascript">
-  /*<![CDATA[*/
-  let dragEl;
-
-  function addRow() {
-    const sel = document.getElementById('exerciseSelect');
-    if (!sel.value) return;
-    const rows = document.getElementById('rows');
-    const idx = rows.children.length;
-    const name = sel.options[sel.selectedIndex].text;
-
-    const div = document.createElement('div');
-    div.className = 'row';
-    div.setAttribute('draggable', 'true');
-    div.setAttribute('ondragstart', 'drag(event)');
-    div.setAttribute('ondragover', 'allowDrop(event)');
-    div.setAttribute('ondrop', 'drop(event)');
-    div.innerHTML =
-            '<div class="drag">☰</div>' +
-            `<input type="hidden" name="exercises[${idx}].exerciseId" value="${sel.value}"/>` +
-            `<input type="hidden" name="exercises[${idx}].order" value="${idx+1}"/>` +
-            `<div><span>${name}</span></div>` +
-            `<div><label>Sets</label><input type="number" min="1" name="exercises[${idx}].sets" value="3"/></div>` +
-            `<div><label>Reps</label><input type="number" min="1" name="exercises[${idx}].reps" value="10"/></div>` +
-            `<div><label>Descanso (s)</label><input type="number" min="0" name="exercises[${idx}].restSeconds" value="60"/></div>` +
-            `<button type="button" onclick="this.parentElement.remove()">✕</button>`;
-    rows.appendChild(div);
+<script>
+  function removeRow(btn){ btn.closest('tr').remove(); renumber(); }
+  function addRow(){
+    const tbody = document.getElementById('rows');
+    const idx = tbody.querySelectorAll('tr').length;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="number" name="exercises[${idx}].order" min="0"/></td>
+      <td>
+        <select name="exercises[${idx}].exerciseId">
+          ${document.querySelectorAll('select[name$=".exerciseId"]:first-of-type option').length
+            ? [...document.querySelectorAll('select[name$=".exerciseId"]:first-of-type option')]
+                    .map(o=>'<option value="'+o.value+'">'+o.text+'</option>').join('')
+            : '<option value="">—</option>'}
+        </select>
+      </td>
+      <td><input type="number" min="0" name="exercises[${idx}].sets"/></td>
+      <td><input type="number" min="0" name="exercises[${idx}].reps"/></td>
+      <td><input type="number" min="0" name="exercises[${idx}].restSeconds"/></td>
+      <td><button type="button" onclick="removeRow(this)" style="background:#b91c1c">Quitar</button></td>
+    `;
+    tbody.appendChild(tr);
   }
-
-  function drag(ev) { dragEl = ev.currentTarget; }
-  function allowDrop(ev) { ev.preventDefault(); }
-  function drop(ev) {
-    ev.preventDefault();
-    const rows = document.getElementById('rows');
-    const target = ev.currentTarget;
-    if (dragEl && target && dragEl !== target) {
-      rows.insertBefore(dragEl, target);
-    }
-  }
-
-  function beforeSubmit() {
-    // Recalcular order según posición visual
-    const rows = document.querySelectorAll('#rows .row');
-    rows.forEach((row, i) => {
-      const orderInput = row.querySelector('input[name$=".order"]');
-      if (orderInput) orderInput.value = String(i+1);
+  function renumber(){
+    const rows=[...document.querySelectorAll('#rows tr')];
+    rows.forEach((tr,i)=>{
+      tr.querySelectorAll('input,select').forEach(el=>{
+        el.name = el.name.replace(/exercises\[\d+]/,'exercises['+i+']');
+      });
     });
   }
-  /*]]>*/
 </script>
 </body>
 </html>

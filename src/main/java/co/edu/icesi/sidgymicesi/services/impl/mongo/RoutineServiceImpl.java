@@ -30,8 +30,10 @@ public class RoutineServiceImpl implements IRoutineService {
     // ========== CREATE ==========
     @Override
     public Routine create(String ownerUsername, String name, String originTemplateId) {
-        if (ownerUsername == null || ownerUsername.isBlank()) throw new IllegalArgumentException("ownerUsername requerido");
-        if (name == null || name.isBlank()) throw new IllegalArgumentException("name requerido");
+        if (ownerUsername == null || ownerUsername.isBlank())
+            throw new IllegalArgumentException("ownerUsername requerido");
+        if (name == null || name.isBlank())
+            throw new IllegalArgumentException("name requerido");
 
         Routine r = Routine.builder()
                 .ownerUsername(ownerUsername.trim())
@@ -85,7 +87,8 @@ public class RoutineServiceImpl implements IRoutineService {
     }
 
     // ========== READ ==========
-    @Override public Optional<Routine> findById(String id) { return routineRepo.findById(id); }
+    @Override
+    public Optional<Routine> findById(String id) { return routineRepo.findById(id); }
 
     @Override
     public List<Routine> listByOwner(String ownerUsername) {
@@ -207,21 +210,15 @@ public class RoutineServiceImpl implements IRoutineService {
     }
 
     private void validateItem(Routine.RoutineExercise it) {
-        // Requeridos básicos
-        if (isBlank(it.getName())) throw new IllegalArgumentException("name requerido en el ejercicio");
-        if (isBlank(it.getType())) throw new IllegalArgumentException("type requerido en el ejercicio");
-
-        // Tipo permitido
-        if (!ALLOWED_TYPES.contains(it.getType().trim().toLowerCase())) {
+        // Tipo permitido si viene
+        if (it.getType() != null && !ALLOWED_TYPES.contains(it.getType().trim().toLowerCase())) {
             throw new IllegalArgumentException("type inválido (permitidos: cardio, fuerza, movilidad)");
         }
-
-        // sets/reps/restSeconds son 'int' (no nullables) en el modelo; validar que no sean negativos
+        // sets/reps/restSeconds son int (no nullables) en el modelo; validar no-negativos
         if (it.getSets() < 0) throw new IllegalArgumentException("sets no puede ser negativo");
         if (it.getReps() < 0) throw new IllegalArgumentException("reps no puede ser negativo");
         if (it.getRestSeconds() < 0) throw new IllegalArgumentException("restSeconds no puede ser negativo");
-
-        // durationSeconds sí es Integer → solo si viene, que no sea negativo
+        // durationSeconds es Integer: si viene, no-negativo
         if (it.getDurationSeconds() != null && it.getDurationSeconds() < 0) {
             throw new IllegalArgumentException("durationSeconds no puede ser negativo");
         }

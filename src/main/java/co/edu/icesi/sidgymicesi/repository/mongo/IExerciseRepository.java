@@ -20,4 +20,6 @@ public interface IExerciseRepository extends MongoRepository<Exercise, String> {
 
     // Borrado
     void deleteById(String id);
+
+    List<Exercise> findByTypeIgnoreCase(String type);
 }

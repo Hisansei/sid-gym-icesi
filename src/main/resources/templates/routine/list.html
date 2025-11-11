@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Mis rutinas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <style>
+        body{font-family:system-ui,Arial,sans-serif;max-width:980px;margin:24px auto;padding:0 16px}
+        header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+        ul{list-style:none;padding:0;margin:0}
+        li{border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:10px}
+        .row{display:flex;gap:8px;align-items:center}
+        input[type=text]{padding:8px;border:1px solid #d1d5db;border-radius:6px}
+        button{padding:8px 12px;border:0;border-radius:6px;background:#111827;color:white;cursor:pointer}
+        a.btn{display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6}
+    </style>
+</head>
+<body>
+<header>
+    <h1>Mis rutinas</h1>
+    <a class="btn" href="/mvc/routine-templates">Ver plantillas</a>
+</header>
+
+<section>
+    <ul>
+        <li th:if="${#lists.isEmpty(routines)}">No tienes rutinas aún.</li>
+        <li th:each="r : ${routines}">
+            <div class="row" style="justify-content:space-between;">
+                <div>
+                    <strong th:text="${r.name}">Nombre rutina</strong>
+                    <div style="color:#6b7280" th:text="${r.id}">id</div>
+                </div>
+                <div>
+                    <a class="btn" th:href="@{'/mvc/routines/' + ${r.id}}">Abrir</a>
+                </div>
+            </div>
+        </li>
+    </ul>
+</section>
+
+<hr style="margin:24px 0"/>
+
+<section>
+    <h2>Crear nueva rutina</h2>
+    <form th:action="@{/mvc/routines/create}" method="post" class="row">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+        <input type="text" name="name" placeholder="Nombre de la rutina (opcional)"/>
+        <button type="submit">Crear</button>
+    </form>
+</section>
+
+</body>
+</html>
