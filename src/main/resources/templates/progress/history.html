@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="'Historial • ' + ${routine.name}">Historial</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <style>
+        body{font-family:system-ui,Arial,sans-serif;max-width:980px;margin:24px auto;padding:0 16px}
+        .btn{display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none}
+        .log{border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin:12px 0}
+        .muted{color:#6b7280}
+        table{width:100%;border-collapse:collapse;margin-top:6px}
+        th,td{border:1px solid #e5e7eb;padding:6px;text-align:left}
+    </style>
+</head>
+<body>
+<header style="display:flex;justify-content:space-between;align-items:center;">
+    <div>
+        <h1 th:text="'Historial • ' + ${routine.name}">Historial</h1>
+        <a class="btn" href="/mvc/progress/history">Elegir otra rutina</a>
+    </div>
+    <a class="btn" th:href="@{'/mvc/progress/' + ${routine.id}}">Registrar progreso</a>
+</header>
+
+<section th:if="${#lists.isEmpty(logs)}" class="muted">No hay registros todavía.</section>
+
+<section th:each="log : ${logs}" class="log">
+    <strong th:text="${#temporals.format(log.date, 'yyyy-MM-dd')}">2025-01-01</strong>
+    <div class="muted" th:text="${#temporals.format(log.createdAt, 'yyyy-MM-dd HH:mm')}">Fecha creación</div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Ejercicio</th>
+            <th>Series</th>
+            <th>Reps</th>
+            <th>Peso (kg)</th>
+            <th>Esfuerzo</th>
+            <th>Notas</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="e : ${log.entries}">
+            <td th:text="${e.exerciseId}">exerciseId</td>
+            <td th:text="${#lists.isEmpty(e.sets) ? '-' : #strings.arrayJoin(e.sets, ', ')}">sets</td>
+            <td th:text="${#lists.isEmpty(e.reps) ? '-' : #strings.arrayJoin(e.reps, ', ')}">reps</td>
+            <td th:text="${#lists.isEmpty(e.weightKg) ? '-' : #strings.arrayJoin(e.weightKg, ', ')}">peso</td>
+            <td th:text="${e.effortLevel}">RPE</td>
+            <td th:text="${e.notesUser}">Notas</td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+</body>
+</html>

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 public interface IExerciseService {
     Exercise save(Exercise exercise);
+    Exercise update(Exercise exercise);
 
     List<Exercise> findAll();
     Optional<Exercise> findById(String id);

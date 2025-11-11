@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${routine.name}">Detalle rutina</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <style>
+        body{font-family:system-ui,Arial,sans-serif;max-width:980px;margin:24px auto;padding:0 16px}
+        header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+        .muted{color:#6b7280}
+        .card{border:1px solid #e5e7eb;border-radius:10px;padding:14px;margin:12px 0}
+        .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+        input[type=text], input[type=number], select{padding:8px;border:1px solid #d1d5db;border-radius:6px}
+        button{padding:8px 12px;border:0;border-radius:6px;background:#111827;color:white;cursor:pointer}
+        .btn{display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none}
+        ol{padding-left:20px}
+        li[data-id]{margin:8px 0;padding:10px;border:1px solid #e5e7eb;border-radius:8px;background:#fafafa}
+        .actions{display:flex;gap:8px}
+    </style>
+</head>
+<body>
+<header>
+    <div>
+        <h1 th:text="${routine.name}">Nombre rutina</h1>
+        <div class="muted" th:text="'ID: ' + ${routine.id}">ID</div>
+    </div>
+    <div class="row">
+        <a class="btn" href="/mvc/routines">Volver</a>
+        <form th:action="@{'/mvc/routines/' + ${routine.id} + '/delete'}" method="post" onsubmit="return confirm('¿Eliminar esta rutina?');">
+            <input th:if="${_csrf}" type="hidden"
+       th:name="${_csrf.parameterName}"
+       th:value="${_csrf.token}"/>            <button type="submit" style="background:#b91c1c">Eliminar rutina</button>
+        </form>
+    </div>
+</header>
+
+<section class="card">
+    <h2>Renombrar</h2>
+    <form class="row" th:action="@{'/mvc/routines/' + ${routine.id} + '/rename'}" method="post">
+        <input th:if="${_csrf}" type="hidden"
+       th:name="${_csrf.parameterName}"
+       th:value="${_csrf.token}"/>        <input type="text" name="name" th:value="${routine.name}" placeholder="Nuevo nombre"/>
+        <button type="submit">Guardar</button>
+    </form>
+</section>
+
+<section class="card">
+    <h2>Ejercicios</h2>
+    <p class="muted">Puedes reordenar con ▲/▼ y luego guardar el orden.</p>
+
+    <ol id="items">
+        <li th:each="it,iter : ${routine.exercises}" th:attr="data-id=${it.id}">
+            <div class="row" style="justify-content:space-between;align-items:flex-start;">
+                <div>
+                    <strong th:text="${it.name != null && !#strings.isEmpty(it.name) ? it.name : (#maps.get(exerciseMap, it.exerciseId) != null ? #maps.get(exerciseMap, it.exerciseId).name : 'Personalizado')}">Nombre</strong>
+                    <div class="muted">
+                        <span th:if="${it.exerciseId != null}">Catálogo: <span th:text="${it.exerciseId}">ex</span> · </span>
+                        <span th:text="'Series: ' + (${it.sets} != null ? ${it.sets} : 0)"></span>
+                        <span th:text="' · Reps: ' + (${it.reps} != null ? ${it.reps} : 0)"></span>
+                        <span th:if="${it.durationSeconds != null}" th:text="' · Duración: ' + ${it.durationSeconds} + 's'"></span>
+                        <span th:if="${it.restSeconds != null}" th:text="' · Descanso: ' + ${it.restSeconds} + 's'"></span>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button type="button" onclick="moveUp(this)">▲</button>
+                    <button type="button" onclick="moveDown(this)">▼</button>
+                    <form th:action="@{'/mvc/routines/' + ${routine.id} + '/items/' + ${it.id} + '/delete'}" method="post" onsubmit="return confirm('¿Quitar este ejercicio?');">
+                        <input th:if="${_csrf}" type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}"/>
+                        <button type="submit" style="background:#b91c1c">Quitar</button>
+                    </form>
+                </div>
+            </div>
+        </li>
+    </ol>
+
+    <form id="reorderForm" th:action="@{'/mvc/routines/' + ${routine.id} + '/reorder'}" method="post" style="margin-top:12px;">
+        <input th:if="${_csrf}" type="hidden"
+       th:name="${_csrf.parameterName}"
+       th:value="${_csrf.token}"/>        <!-- Aquí se insertarán múltiples inputs hidden name="order" por JS -->
+        <button type="button" onclick="submitOrder()">Guardar orden</button>
+    </form>
+</section>
+
+<section class="card">
+    <h2>Agregar ejercicio</h2>
+    <form th:action="@{'/mvc/routines/' + ${routine.id} + '/items/add'}" method="post" class="row">
+        <input th:if="${_csrf}" type="hidden"
+       th:name="${_csrf.parameterName}"
+       th:value="${_csrf.token}"/>
+        <label>
+            Catálogo:
+            <select name="exerciseId">
+                <option value="">— Selecciona del catálogo —</option>
+                <option th:each="ex : ${exerciseOptions}" th:value="${ex.id}" th:text="${ex.name}">Ejercicio</option>
+            </select>
+        </label>
+
+        <span class="muted">o</span>
+
+        <input type="text" name="name" placeholder="Nombre personalizado (opcional)"/>
+
+        <input type="number" name="sets" placeholder="Series" min="0"/>
+        <input type="number" name="reps" placeholder="Reps" min="0"/>
+        <input type="number" name="durationSec" placeholder="Duración (s)" min="0"/>
+        <input type="number" name="restSeconds" placeholder="Descanso (s)" min="0"/>
+        <button type="submit">Agregar</button>
+    </form>
+</section>
+
+<script>
+    function moveUp(btn){
+        const li = btn.closest('li');
+        const prev = li.previousElementSibling;
+        if(prev) li.parentNode.insertBefore(li, prev);
+    }
+    function moveDown(btn){
+        const li = btn.closest('li');
+        const next = li.nextElementSibling;
+        if(next) li.parentNode.insertBefore(next, li);
+    }
+    function submitOrder(){
+        const form = document.getElementById('reorderForm');
+        // Limpia inputs previos
+        [...form.querySelectorAll('input[name="order"]')].forEach(i => i.remove());
+        // Crea un input hidden name=order por cada item en orden
+        document.querySelectorAll('#items > li[data-id]').forEach(li=>{
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = 'order';
+            hidden.value = li.getAttribute('data-id');
+            form.appendChild(hidden);
+        });
+        form.submit();
+    }
+</script>
+</body>
+</html>

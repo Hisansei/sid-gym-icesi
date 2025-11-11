@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Plantillas de rutina</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    body{font-family:system-ui,Arial,sans-serif;max-width:980px;margin:24px auto;padding:0 16px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+    ul{list-style:none;padding:0;margin:0}
+    li{border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+    .row{display:flex;gap:8px;align-items:center}
+    .btn{display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none}
+    button{padding:8px 12px;border:0;border-radius:6px;background:#111827;color:white;cursor:pointer}
+  </style>
+</head>
+<body>
+<header>
+  <h1>Plantillas</h1>
+  <div class="row">
+    <a class="btn" href="/mvc/routines">Mis rutinas</a>
+    <a class="btn" href="/mvc/routine-templates/create">Nueva plantilla</a>
+  </div>
+</header>
+
+<ul>
+  <li th:if="${#lists.isEmpty(templates)}">No hay plantillas.</li>
+  <li th:each="t : ${templates}">
+    <div>
+      <strong th:text="${t.name}">Nombre plantilla</strong>
+      <div style="color:#6b7280" th:text="${t.id}">id</div>
+    </div>
+    <div class="row">
+      <a class="btn" th:href="@{'/mvc/routine-templates/' + ${t.id}}">Ver</a>
+      <form th:action="@{'/mvc/routine-templates/' + ${t.id} + '/adopt'}" method="post">
+        <input th:if="${_csrf}" type="hidden"
+                 th:name="${_csrf.parameterName}"
+                 th:value="${_csrf.token}"/>
+        <button type="submit">Adoptar</button>
+      </form>
+    </div>
+  </li>
+</ul>
+
+</body>
+</html>

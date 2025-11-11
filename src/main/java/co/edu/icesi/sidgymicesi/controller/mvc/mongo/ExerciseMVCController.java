@@ -8,12 +8,12 @@ import org.springframework.ui.Model;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
 import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
@@ -24,7 +24,6 @@ import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 public class ExerciseMVCController {
 
     // Ruta: http://localhost:8081/sid-gym-icesi/mvc/exercises
-
     private final IExerciseService exerciseService;
 
     @GetMapping
@@ -55,12 +54,14 @@ public class ExerciseMVCController {
         return "exercises/list";
     }
 
+    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN')")
     @GetMapping("/add")
     public String addExerciseForm(Model model) {
         model.addAttribute("exercise", new Exercise());
         return "exercises/add";
     }
 
+    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN')")
     @PostMapping("/add")
     public String addExercise(@ModelAttribute("exercise") Exercise exercise,
                               @RequestParam(value = "videosText", required = false) String videosText,
@@ -89,6 +90,7 @@ public class ExerciseMVCController {
         return "exercises/detail";
     }
 
+    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN')")
     @GetMapping("/edit")
     public String editForm(@RequestParam String id, Model model) {
         Exercise actual = exerciseService.findById(id).orElse(null);
@@ -100,38 +102,26 @@ public class ExerciseMVCController {
         return "exercises/edit";
     }
 
+    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN')")
     @PostMapping("/edit")
-    public String editExercise(@ModelAttribute("actualExercise") Exercise form,
+    public String edit(@ModelAttribute("exercise") Exercise updated,
                        @RequestParam(value = "videosText", required = false) String videosText,
-                       Model model,
-                       RedirectAttributes ra) {
+                       Model model) {
         try {
-            Exercise existing = exerciseService.findById(form.getId())
-            .orElseThrow(() -> new IllegalArgumentException("Ejercicio no encontrado."));
-
             if (videosText != null) {
                 List<String> vids = Arrays.stream(videosText.split("\n"))
                         .map(String::trim)
                         .filter(s -> !s.isEmpty())
                         .collect(Collectors.toList());
-                form.setDemoVideos(vids);
+                updated.setDemoVideos(vids);
             }
-
-            exerciseService.save(form);
-            ra.addFlashAttribute("message", "Ejercicio actualizado correctamente.");
-            return "redirect:/mvc/exercises/detail?id=" + form.getId();
+            exerciseService.update(updated);
+            return "redirect:/mvc/exercises/detail?id=" + updated.getId();
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            model.addAttribute("actualExercise", form);
-            model.addAttribute("videosText", videosText != null ? videosText : "");
+            model.addAttribute("actualExercise", updated);
+            model.addAttribute("videosText", videosText == null ? "" : videosText);
             return "exercises/edit";
         }
-    }
-
-    @GetMapping("/delete")
-    public String deleteExercise(@RequestParam String id, RedirectAttributes ra) {
-        exerciseService.deleteById(id);
-        ra.addFlashAttribute("message", "Ejercicio eliminado correctamente.");
-        return "redirect:/mvc/exercises";
     }
 }
