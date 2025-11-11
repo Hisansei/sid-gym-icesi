@@ -9,11 +9,20 @@
 <main class="container narrow card space-y">
     <h1>Reasignar entrenador</h1>
 
+    <!-- Mensajes flash -->
+    <div th:if="${msg_success}" class="alert success" th:text="${msg_success}"></div>
+    <div th:if="${msg_warn}" class="alert warning" th:text="${msg_warn}"></div>
+    <div th:if="${msg_error}" class="alert danger" th:text="${msg_error}"></div>
+
     <div class="muted">
         <div>Usuario: <strong th:text="${userUsername}"></strong></div>
         <div th:if="${current != null}">
-            Actual: <strong th:text="${current.trainerUsername}"></strong>
+            Actual:
+            <strong th:text="${current.trainerId}"></strong>
             (desde <span th:text="${#temporals.format(current.assignedAt, 'yyyy-MM-dd HH:mm')}"></span>)
+        </div>
+        <div th:if="${current == null}">
+            No tiene asignación vigente.
         </div>
     </div>
 

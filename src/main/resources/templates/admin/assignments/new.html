@@ -8,6 +8,12 @@
 <body>
 <main class="container narrow card space-y">
     <h1>Nueva asignación</h1>
+
+    <!-- Mensajes flash -->
+    <div th:if="${msg_success}" class="alert success" th:text="${msg_success}"></div>
+    <div th:if="${msg_warn}" class="alert warning" th:text="${msg_warn}"></div>
+    <div th:if="${msg_error}" class="alert danger" th:text="${msg_error}"></div>
+
     <form th:action="@{/mvc/admin/assignments}" method="post" class="form">
         <label>Usuario (username)
             <input name="userUsername" type="text" required placeholder="p.ej. jdoe"/>

@@ -17,47 +17,97 @@
 </header>
 
 <main class="container space-y">
-    <div th:if="${message}" class="alert success" th:text="${message}"></div>
 
-    <section class="card">
-        <h2>Asignaciones activas</h2>
+    <!-- Mensajes flash -->
+    <div th:if="${msg_success}" class="alert success" th:text="${msg_success}"></div>
+    <div th:if="${msg_warn}" class="alert warning" th:text="${msg_warn}"></div>
+    <div th:if="${msg_error}" class="alert danger" th:text="${msg_error}"></div>
+
+    <!-- Si llegamos con ?user=... resaltamos ese usuario -->
+    <section class="card" th:if="${selectedUser}">
+        <h2>
+            Usuario seleccionado:
+            <span class="badge" th:text="${selectedUser}"></span>
+        </h2>
+
+        <div th:if="${userActiveAssignment != null}" class="muted">
+            Asignación vigente:
+            <strong th:text="${userActiveAssignment.trainerId}"></strong>
+            (desde <span th:text="${#temporals.format(userActiveAssignment.assignedAt, 'yyyy-MM-dd HH:mm')}"></span>)
+        </div>
+        <div th:if="${userActiveAssignment == null}" class="muted">
+            No tiene asignación vigente.
+        </div>
+
+        <h3>Histórico del usuario</h3>
         <table class="table">
-            <thead><tr><th>Usuario</th><th>Entrenador</th><th>Desde</th><th></th></tr></thead>
+            <thead>
+            <tr><th>Entrenador</th><th>Desde</th><th>Hasta</th><th>Estado</th></tr>
+            </thead>
             <tbody>
-            <tr th:each="a : ${active}">
-                <td th:text="${a.userUsername}"></td>
-                <td th:text="${a.trainerUsername}"></td>
-                <td th:text="${#temporals.format(a.assignedAt, 'yyyy-MM-dd HH:mm')}"></td>
-                <td class="table-actions">
-                    <a class="btn btn-small"
-                       th:href="@{/mvc/admin/assignments/reassign(userUsername=${a.userUsername})}">Reasignar</a>
-                    <form th:action="@{/mvc/admin/assignments/close}" method="post" class="inline">
-                        <input type="hidden" name="id" th:value="${a.id}">
-                        <button class="btn btn-small btn-danger" type="submit">Cerrar</button>
-                    </form>
+            <tr th:each="ua : ${userHistory}">
+                <td th:text="${ua.trainerId}"></td>
+                <td th:text="${#temporals.format(ua.assignedAt, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${ua.endedAt != null ? #temporals.format(ua.endedAt, 'yyyy-MM-dd HH:mm') : '-'}"></td>
+                <td>
+                    <span th:text="${ua.active ? 'ACTIVA' : 'CERRADA'}"
+                          th:classappend="${ua.active} ? 'badge success' : 'badge'"></span>
                 </td>
             </tr>
-            <tr th:if="${#lists.isEmpty(active)}"><td colspan="4" class="muted">Sin asignaciones activas</td></tr>
+            <tr th:if="${#lists.isEmpty(userHistory)}">
+                <td colspan="4" class="muted">Sin histórico</td>
+            </tr>
             </tbody>
         </table>
     </section>
 
     <section class="card">
-        <h2>Histórico</h2>
+        <h2>Asignaciones activas</h2>
         <table class="table">
-            <thead><tr><th>Usuario</th><th>Entrenador</th><th>Desde</th><th>Hasta</th><th>Estado</th></tr></thead>
+            <thead>
+            <tr><th>Usuario</th><th>Entrenador</th><th>Desde</th><th></th></tr>
+            </thead>
             <tbody>
-            <tr th:each="a : ${history}">
+            <tr th:each="a : ${active}">
                 <td th:text="${a.userUsername}"></td>
-                <td th:text="${a.trainerUsername}"></td>
+                <td th:text="${a.trainerId}"></td>
                 <td th:text="${#temporals.format(a.assignedAt, 'yyyy-MM-dd HH:mm')}"></td>
-                <td th:text="${a.endedAt != null ? #temporals.format(a.endedAt, 'yyyy-MM-dd HH:mm') : '-'}"></td>
-                <td>
-          <span th:text="${a.active ? 'ACTIVA' : 'CERRADA'}"
-                th:classappend="${a.active} ? 'badge success' : 'badge'"></span>
+                <td class="table-actions">
+                    <a class="btn btn-small"
+                       th:href="@{/mvc/admin/assignments/reassign(userUsername=${a.userUsername})}">Reasignar</a>
+                    <form th:action="@{/mvc/admin/assignments/close}" method="post" class="inline">
+                        <input type="hidden" name="assignmentId" th:value="${a.id}">
+                        <button class="btn btn-small btn-danger" type="submit">Cerrar</button>
+                    </form>
                 </td>
             </tr>
-            <tr th:if="${#lists.isEmpty(history)}"><td colspan="5" class="muted">Sin histórico</td></tr>
+            <tr th:if="${#lists.isEmpty(active)}">
+                <td colspan="4" class="muted">Sin asignaciones activas</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="card">
+        <h2>Histórico (todas)</h2>
+        <table class="table">
+            <thead>
+            <tr><th>Usuario</th><th>Entrenador</th><th>Desde</th><th>Hasta</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="h : ${history}">
+                <td th:text="${h.userUsername}"></td>
+                <td th:text="${h.trainerId}"></td>
+                <td th:text="${#temporals.format(h.assignedAt, 'yyyy-MM-dd HH:mm')}"></td>
+                <td th:text="${h.endedAt != null ? #temporals.format(h.endedAt, 'yyyy-MM-dd HH:mm') : '-'}"></td>
+                <td>
+                    <span th:text="${h.active ? 'ACTIVA' : 'CERRADA'}"
+                          th:classappend="${h.active} ? 'badge success' : 'badge'"></span>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(history)}">
+                <td colspan="5" class="muted">Sin histórico</td>
+            </tr>
             </tbody>
         </table>
     </section>
@@ -71,10 +121,13 @@
                     <thead><tr><th>Periodo</th><th># nuevas</th></tr></thead>
                     <tbody>
                     <tr th:each="s : ${entry.value}">
-                        <td th:text="${s.period}"></td>
+                        <!-- s es TrainerMonthlyStat -->
+                        <td th:text="${s.id != null ? s.id.period : '-'}"></td>
                         <td th:text="${s.newAssignments}"></td>
                     </tr>
-                    <tr th:if="${#lists.isEmpty(entry.value)}"><td colspan="2" class="muted">–</td></tr>
+                    <tr th:if="${#lists.isEmpty(entry.value)}">
+                        <td colspan="2" class="muted">–</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>

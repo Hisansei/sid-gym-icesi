@@ -17,6 +17,8 @@ public interface ITrainerAssignmentService {
 
     Optional<TrainerAssignment> findActiveByUser(String userUsername);
 
+    List<TrainerAssignment> listHistoryByUser(String userUsername);
+
     TrainerAssignment save(TrainerAssignment assignment);
     List<TrainerAssignment> findAll();
     List<TrainerAssignment> findAllActive();
