@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Plantillas de Rutina</title>
+</head>
+<body>
+<h1>Plantillas de Rutina</h1>
+
+<div>
+  <a th:href="@{/mvc/routine-templates/create}">Nueva plantilla</a>
+</div>
+
+<table border="1" cellpadding="6" cellspacing="0">
+  <thead>
+  <tr>
+    <th>Nombre</th>
+    <th>Descripción</th>
+    <th>Activa</th>
+    <th>Acciones</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="tpl : ${templates}">
+    <td th:text="${tpl.name}">Nombre</td>
+    <td th:text="${tpl.description}">Descripción</td>
+    <td th:text="${tpl.active}">true</td>
+    <td>
+      <a th:href="@{'/mvc/routine-templates/' + ${tpl.id}}">Ver</a>
+      <a th:href="@{'/mvc/routine-templates/' + ${tpl.id} + '/edit'}">Editar</a>
+      <form th:action="@{'/mvc/routine-templates/' + ${tpl.id} + '/delete'}" method="post" style="display:inline">
+        <button type="submit" onclick="return confirm('¿Eliminar plantilla?')">Eliminar</button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

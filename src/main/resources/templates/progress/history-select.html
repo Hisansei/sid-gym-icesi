@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Seleccionar rutina - Progreso</title>
+    <link rel="stylesheet" th:href="@{/css/components/base.css}">
+</head>
+<body>
+<div th:replace="~{components/base :: page('Mi progreso', ~{::content})}"></div>
+
+<section id="content">
+    <div class="container">
+        <h1 class="page-title">Selecciona una rutina</h1>
+
+        <div th:if="${#lists.isEmpty(routines)}" class="empty-state">
+            <p>No tienes rutinas creadas aún.</p>
+            <a th:href="@{/mvc/routines}" class="btn">Crear una rutina</a>
+        </div>
+
+        <div th:if="${!#lists.isEmpty(routines)}" class="list">
+            <ul>
+                <li th:each="r : ${routines}">
+                    <a th:href="@{|/mvc/progress/history?routineId=${r.id}|}">
+                        <strong th:text="${r.name}">Nombre</strong>
+                        <span class="muted" th:text="${r.description}">Descripción</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</section>
+</body>
+</html>

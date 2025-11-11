@@ -1,11 +1,62 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{components/base :: page(
-          title='Home',
-          content=~{::content}
-      )}">
-<section th:fragment="content">
-    <h1>Bienvenido</h1>
-    <p>Contenido de inicio.</p>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>SID Gym ICESI - Home</title>
+    <link rel="stylesheet" th:href="@{/css/components/base.css}">
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+</head>
+<body>
+<div th:replace="~{components/base :: page('Inicio', ~{::content})}"></div>
+
+<section id="content">
+    <div class="container">
+
+        <h1 class="page-title">Bienvenido 👋</h1>
+        <p class="muted">Selecciona una opción para comenzar.</p>
+
+        <div class="grid-cards">
+            <a th:href="@{/mvc/routines}" class="card big">
+                <div class="card-body">
+                    <h2>Mis rutinas</h2>
+                    <p>Crea, edita y organiza tus rutinas.</p>
+                </div>
+            </a>
+
+            <a th:href="@{/mvc/progress/history}" class="card big">
+                <div class="card-body">
+                    <h2>Mi progreso</h2>
+                    <p>Consulta el histórico y registra avances.</p>
+                </div>
+            </a>
+
+            <a th:href="@{/mvc/exercises}" class="card big" sec:authorize="hasAnyRole('EMPLOYEE','ADMIN','STUDENT')">
+                <div class="card-body">
+                    <h2>Catálogo de ejercicios</h2>
+                    <p>Explora ejercicios disponibles en el sistema.</p>
+                </div>
+            </a>
+
+            <a th:href="@{/mvc/routine-templates/list}" class="card big">
+                <div class="card-body">
+                    <h2>Plantillas de rutina</h2>
+                    <p>Explora y adopta rutinas prediseñadas.</p>
+                </div>
+            </a>
+        </div>
+
+        <div class="tips">
+            <ul>
+                <li>¿No ves tus rutinas? Crea una nueva desde <strong>Mis rutinas</strong>.</li>
+                <li>Desde <strong>Mi progreso</strong> puedes elegir la rutina y ver su historial.</li>
+                <li>En <strong>Plantillas de rutina</strong> puedes adoptar una y personalizarla.</li>
+            </ul>
+        </div>
+
+    </div>
 </section>
+
+<script th:src="@{/js/components/base.js}"></script>
+</body>
 </html>

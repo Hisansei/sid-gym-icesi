@@ -1,95 +1,108 @@
-<section th:fragment="content">
-    <div class="container">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-            <h2 th:text="${routine != null ? routine.name : 'Rutina'}">Rutina</h2>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title th:text="${'Rutina: ' + routine.name}">Rutina</title>
+    <style>
+        .rows { margin-top: 12px; }
+        .row { border: 1px solid #ccc; padding: 8px; margin-bottom: 6px; display: grid; grid-template-columns: 1fr repeat(4, 120px) 120px 32px; gap: 8px; align-items: center; }
+        .row .drag { cursor: move; text-align: center; }
+    </style>
+</head>
+<body>
+<h1 th:text="${routine.name}">Rutina</h1>
+
+<form th:action="@{'/mvc/routines/' + ${routine.id} + '/rename'}" method="post">
+    <input type="text" name="name" th:value="${routine.name}" required/>
+    <button type="submit">Renombrar</button>
+</form>
+
+<h3>Agregar ejercicio</h3>
+<form th:action="@{'/mvc/routines/' + ${routine.id} + '/items/add'}" method="post">
+    <select name="exerciseId" required>
+        <option value="">-- Seleccionar --</option>
+        <option th:each="e : ${exerciseOptions}" th:value="${e.id}" th:text="${e.name + ' (' + e.type + ')'}"></option>
+    </select>
+    <input type="number" name="sets" placeholder="Sets" min="1"/>
+    <input type="number" name="reps" placeholder="Reps" min="1"/>
+    <input type="number" name="durationSec" placeholder="Duración (s)" min="0"/>
+    <input type="number" name="restSeconds" placeholder="Descanso (s)" min="0"/>
+    <input type="text" name="notes" placeholder="Notas"/>
+    <button type="submit">Agregar</button>
+</form>
+
+<h3>Ejercicios</h3>
+<form th:action="@{'/mvc/routines/' + ${routine.id} + '/reorder'}" method="post" id="reorderForm">
+    <div id="rows" class="rows">
+        <div th:each="it : ${routine.exercises}" class="row" draggable="true" ondragstart="drag(event)" ondragover="allowDrop(event)" ondrop="drop(event)" th:attr="data-id=${it.id}">
+            <div class="drag">☰</div>
+
             <div>
-                <form th:action="@{|/mvc/routines/${routine.id}/rename|}" method="post" style="display:inline">
-                    <input type="text" name="name" th:value="${routine.name}" required>
-                    <button class="btn ghost">Renombrar</button>
-                </form>
-                <a class="btn" th:href="@{|/mvc/progress/log?routineId=${routine.id}|}">Registrar progreso</a>
-                <a class="btn ghost" th:href="@{|/mvc/progress/history?routineId=${routine.id}|}">Ver histórico</a>
+                <b th:text="${exerciseMap.containsKey(it.exerciseId) ? exerciseMap.get(it.exerciseId).name : it.exerciseId}">Nombre</b>
+                <div>
+                    <small th:text="${exerciseMap.containsKey(it.exerciseId) ? exerciseMap.get(it.exerciseId).type : '-'}">Tipo</small>
+                </div>
             </div>
-        </div>
 
-        <table class="table" th:if="${routine != null}">
-            <thead>
-            <tr><th>#</th><th>Nombre</th><th>Tipo</th><th>Objetivo</th><th></th></tr>
-            </thead>
-            <tbody>
-            <tr th:each="it : ${routine.exercises}">
-                <td th:text="${it.order}">1</td>
-                <td>
-                    <span th:if="${it.name != null}" th:text="${it.name}">Ejercicio</span>
-                    <span th:if="${it.name == null and it.exerciseId != null}"
-                            th:text="${#lists.findFirst(catalog, ex -> ex.id == it.exerciseId)?.name}">Ejercicio</span>
-                    <span th:if="${it.name == null and it.exerciseId == null}">Personalizado</span>
-                </td>
-                <td th:text="${it.type}">fuerza</td>
-                <td>
-                    <span th:if="${it.reps != null}" th:text="${it.reps + ' reps'}"></span>
-                    <span th:if="${it.sets != null}" th:text="${(it.reps != null ? ' / ' : '') + it.sets + ' sets'}"></span>
-                    <span th:if="${it.durationSeconds != null}"
-                            th:text="${((it.reps != null or it.sets != null) ? ' / ' : '') + T(java.lang.Math).round(it.durationSeconds/60.0) + ' min'}"></span>
-                </td>
-                <td style="text-align:right">
-                    <form th:action="@{|/mvc/routines/${routine.id}/items/${it.id}/remove|}" method="post" style="display:inline">
-                        <button class="btn ghost" onclick="return confirm('¿Eliminar ítem?')">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(routine.exercises)}">
-                <td colspan="5" style="text-align:center;color:var(--muted)">Aún no hay ejercicios en esta rutina.</td>
-            </tr>
-            </tbody>
-        </table>
+            <div>
+                <label>Sets</label>
+                <span th:text="${it.sets}">3</span>
+            </div>
 
-        <div style="margin-top:24px">
-            <h3>Agregar ejercicio</h3>
-            <form th:action="@{|/mvc/routines/${routine.id}/items/add|}" method="post" class="form" style="gap:12px">
-                <fieldset>
-                    <legend>Desde el catálogo</legend>
-                    <select name="exerciseId">
-                        <option value="">-- Elegir --</option>
-                        <option th:each="ex : ${catalog}" th:value="${ex.id}"
-                                th:text="${ex.name + ' (' + ex.type + ')'}">Sentadilla</option>
-                    </select>
-                </fieldset>
+            <div>
+                <label>Reps</label>
+                <span th:text="${it.reps}">10</span>
+            </div>
 
-                <p style="margin:8px 0; color:var(--muted)">o define uno personalizado:</p>
+            <div>
+                <label>Duración (s)</label>
+                <span th:text="${it.durationSeconds}">0</span>
+            </div>
 
-                <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px">
-                    <div>
-                        <label>Nombre personalizado</label>
-                        <input type="text" name="name" placeholder="Ej. Remo con banda">
-                    </div>
-                    <div>
-                        <label>Tipo</label>
-                        <select name="type">
-                            <option value="">-- Tipo --</option>
-                            <option value="fuerza">fuerza</option>
-                            <option value="cardio">cardio</option>
-                            <option value="movilidad">movilidad</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Reps</label>
-                        <input type="number" name="reps" min="1" step="1">
-                    </div>
-                    <div>
-                        <label>Sets</label>
-                        <input type="number" name="sets" min="1" step="1">
-                    </div>
-                    <div>
-                        <label>Duración (seg.)</label>
-                        <input type="number" name="durationSeconds" min="0" step="1">
-                    </div>
-                </div>
+            <div>
+                <label>Descanso (s)</label>
+                <span th:text="${it.restSeconds}">60</span>
+            </div>
 
-                <div style="margin-top:12px">
-                    <button class="btn">Agregar</button>
-                </div>
+            <form th:action="@{'/mvc/routines/' + ${routine.id} + '/items/' + ${it.id} + '/delete'}" method="post" style="display:inline">
+                <button type="submit">Quitar</button>
             </form>
         </div>
     </div>
-</section>
+
+    <div id="orderHiddenInputs"></div>
+    <button type="button" onclick="submitReorder()">Guardar orden</button>
+</form>
+
+<p><a th:href="@{/mvc/routines}">Volver</a></p>
+
+<script>
+    let dragEl;
+
+    function drag(ev){ dragEl = ev.currentTarget; }
+    function allowDrop(ev){ ev.preventDefault(); }
+    function drop(ev){
+        ev.preventDefault();
+        const target = ev.currentTarget;
+        const parent = document.getElementById('rows');
+        if (dragEl && target && dragEl !== target) {
+            parent.insertBefore(dragEl, target);
+        }
+    }
+
+    function submitReorder(){
+        const ids = Array.from(document.querySelectorAll('#rows .row')).map(r => r.getAttribute('data-id'));
+        const hiddenContainer = document.getElementById('orderHiddenInputs');
+        hiddenContainer.innerHTML = '';
+        ids.forEach(id => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'order';
+            input.value = id;
+            hiddenContainer.appendChild(input);
+        });
+        document.getElementById('reorderForm').submit();
+    }
+</script>
+</body>
+</html>

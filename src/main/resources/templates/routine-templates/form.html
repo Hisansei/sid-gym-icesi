@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="${template.id == null ? 'Nueva plantilla' : 'Editar plantilla'}">Plantilla</title>
+  <style>
+    .rows { margin-top: 12px; }
+    .row { border: 1px solid #ccc; padding: 8px; margin-bottom: 6px; display: grid; grid-template-columns: 1fr repeat(4, 120px) 32px; gap: 8px; align-items: center; }
+    .row .drag { cursor: move; text-align: center; }
+    .row input[type=number] { width: 100%; }
+  </style>
+</head>
+<body>
+<h1 th:text="${template.id == null ? 'Nueva plantilla' : 'Editar plantilla'}">Plantilla</h1>
+
+<form th:action="${template.id == null} ? @{/mvc/routine-templates/create} : @{'/mvc/routine-templates/' + ${template.id} + '/edit'}"
+      method="post" th:object="${template}">
+
+  <div>
+    <label>Nombre</label><br/>
+    <input type="text" th:field="*{name}" required/>
+  </div>
+
+  <div>
+    <label>Descripción</label><br/>
+    <textarea th:field="*{description}" rows="3"></textarea>
+  </div>
+
+  <div>
+    <label><input type="checkbox" th:field="*{active}"/> Activa</label>
+  </div>
+
+  <hr/>
+
+  <h3>Ejercicios de la plantilla</h3>
+
+  <div>
+    <select id="exerciseSelect">
+      <option value="">-- Seleccionar ejercicio --</option>
+      <option th:each="e : ${exercises}" th:value="${e.id}" th:text="${e.name + ' (' + e.type + ')'}"></option>
+    </select>
+    <button type="button" onclick="addRow()">Agregar</button>
+  </div>
+
+  <div id="rows" class="rows">
+    <div th:each="it,idx : ${template.exercises}" class="row" draggable="true" ondragstart="drag(event)" ondragover="allowDrop(event)" ondrop="drop(event)">
+      <div class="drag">☰</div>
+
+      <input type="hidden" th:name="${'exercises[' + idx.index + '].exerciseId'}" th:value="${it.exerciseId}"/>
+      <input type="hidden" th:name="${'exercises[' + idx.index + '].order'}" th:value="${it.order}"/>
+
+      <div>
+        <span th:text="${#lists.contains(#maps.keys(exerciseMap), it.exerciseId) ? exerciseMap.get(it.exerciseId).name : it.exerciseId}">Nombre</span>
+      </div>
+
+      <div>
+        <label>Sets</label>
+        <input type="number" min="1" th:name="${'exercises[' + idx.index + '].sets'}" th:value="${it.sets}"/>
+      </div>
+
+      <div>
+        <label>Reps</label>
+        <input type="number" min="1" th:name="${'exercises[' + idx.index + '].reps'}" th:value="${it.reps}"/>
+      </div>
+
+      <div>
+        <label>Descanso (s)</label>
+        <input type="number" min="0" th:name="${'exercises[' + idx.index + '].restSeconds'}" th:value="${it.restSeconds}"/>
+      </div>
+
+      <button type="button" onclick="this.parentElement.remove()">✕</button>
+    </div>
+  </div>
+
+  <br/>
+  <button type="submit" onclick="beforeSubmit()">Guardar</button>
+  <a th:href="@{/mvc/routine-templates}">Cancelar</a>
+</form>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  let dragEl;
+
+  function addRow() {
+    const sel = document.getElementById('exerciseSelect');
+    if (!sel.value) return;
+    const rows = document.getElementById('rows');
+    const idx = rows.children.length;
+    const name = sel.options[sel.selectedIndex].text;
+
+    const div = document.createElement('div');
+    div.className = 'row';
+    div.setAttribute('draggable', 'true');
+    div.setAttribute('ondragstart', 'drag(event)');
+    div.setAttribute('ondragover', 'allowDrop(event)');
+    div.setAttribute('ondrop', 'drop(event)');
+    div.innerHTML =
+            '<div class="drag">☰</div>' +
+            `<input type="hidden" name="exercises[${idx}].exerciseId" value="${sel.value}"/>` +
+            `<input type="hidden" name="exercises[${idx}].order" value="${idx+1}"/>` +
+            `<div><span>${name}</span></div>` +
+            `<div><label>Sets</label><input type="number" min="1" name="exercises[${idx}].sets" value="3"/></div>` +
+            `<div><label>Reps</label><input type="number" min="1" name="exercises[${idx}].reps" value="10"/></div>` +
+            `<div><label>Descanso (s)</label><input type="number" min="0" name="exercises[${idx}].restSeconds" value="60"/></div>` +
+            `<button type="button" onclick="this.parentElement.remove()">✕</button>`;
+    rows.appendChild(div);
+  }
+
+  function drag(ev) { dragEl = ev.currentTarget; }
+  function allowDrop(ev) { ev.preventDefault(); }
+  function drop(ev) {
+    ev.preventDefault();
+    const rows = document.getElementById('rows');
+    const target = ev.currentTarget;
+    if (dragEl && target && dragEl !== target) {
+      rows.insertBefore(dragEl, target);
+    }
+  }
+
+  function beforeSubmit() {
+    // Recalcular order según posición visual
+    const rows = document.querySelectorAll('#rows .row');
+    rows.forEach((row, i) => {
+      const orderInput = row.querySelector('input[name$=".order"]');
+      if (orderInput) orderInput.value = String(i+1);
+    });
+  }
+  /*]]>*/
+</script>
+</body>
+</html>

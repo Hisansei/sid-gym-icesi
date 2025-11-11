@@ -3,7 +3,6 @@ package co.edu.icesi.sidgymicesi.config;
 import co.edu.icesi.sidgymicesi.security.CustomUserDetailsService;
 import co.edu.icesi.sidgymicesi.security.filters.CustomAuthenticationFilter;
 import co.edu.icesi.sidgymicesi.security.filters.JwtAuthenticationFilter;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -29,13 +28,19 @@ public class WebSecurityConfig {
         this.customUserDetailsService = customUserDetailsService;
     }
 
+    // Encoder para contraseñas de USERS (PostgreSQL)
     @Bean
-    public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-    // Presente pero NO se agrega a la cadena (usamos sesión/form-login por ahora)
+    // Declarado pero NO agregado a la cadena (seguimos con sesión/form-login)
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() { return new JwtAuthenticationFilter(); }
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
+    }
 
+    // Autenticación con nuestro UserDetailsService (DaoAuthenticationProvider)
     @Bean
     @SuppressWarnings("deprecation")
     public AuthenticationProvider authenticationProvider() {
@@ -45,11 +50,13 @@ public class WebSecurityConfig {
         return provider;
     }
 
+    // SecurityContext en sesión (form-login)
     @Bean
     public SecurityContextRepository securityContextRepository() {
         return new HttpSessionSecurityContextRepository();
     }
 
+    // Filtro de logging que ya tienes en el proyecto
     @Bean
     public CustomAuthenticationFilter customAuthenticationFilter() {
         return new CustomAuthenticationFilter();
@@ -61,13 +68,16 @@ public class WebSecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
+
                 .authenticationProvider(authenticationProvider())
                 .securityContext(ctx -> ctx.securityContextRepository(securityContextRepository()))
+
                 .addFilterAfter(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+
                 .authorizeHttpRequests(auth -> auth
-                        // Público y estáticos
-                        .requestMatchers("/", "/public/**", "/mvc/public/auth/login").permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+                        // Público y archivos estáticos
+                        .requestMatchers("/", "/public/**", "/mvc/public/auth/login", "/error").permitAll()
+                        .requestMatchers("/css/**", "/js/**", "/img/**", "/images/**", "/webjars/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
 
                         // Áreas por rol (MVC y API)
@@ -75,21 +85,28 @@ public class WebSecurityConfig {
                         .requestMatchers("/mvc/trainer/**", "/api/trainer/**").hasAnyRole("EMPLOYEE","ADMIN")
                         .requestMatchers("/mvc/student/**", "/api/student/**").hasAnyRole("STUDENT","ADMIN")
 
-                        // Catálogo de ejercicios visible autenticado; altas/edición solo entrenador o admin
+                        // *** Fase 3: RUTINAS + PROGRESO ***
+                        // Cualquier usuario autenticado del sistema (STUDENT/EMPLOYEE/ADMIN) puede entrar:
+                        .requestMatchers("/mvc/routines/**").hasAnyRole("STUDENT","EMPLOYEE","ADMIN")
+                        .requestMatchers("/mvc/progress/**").hasAnyRole("STUDENT","EMPLOYEE","ADMIN")
+
+                        // Catálogo de ejercicios: lectura autenticada; altas/edición solo entrenador o admin
                         .requestMatchers(HttpMethod.GET, "/mvc/exercises/**").authenticated()
                         .requestMatchers("/mvc/exercises/add/**", "/mvc/exercises/edit/**").hasAnyRole("EMPLOYEE","ADMIN")
 
-                        // RUTINE TEMPLATES: listar/detalle autenticado; crear/editar/borrar solo EMPLOYEE/ADMIN
+                        // Plantillas de rutina: lectura autenticada; CRUD solo entrenador/admin
                         .requestMatchers(HttpMethod.GET, "/mvc/routine-templates/**").authenticated()
                         .requestMatchers("/mvc/routine-templates/create/**",
                                 "/mvc/routine-templates/edit/**",
                                 "/mvc/routine-templates/*/delete").hasAnyRole("EMPLOYEE","ADMIN")
 
-                        // Página principal
+                        // Home y resto autenticado
                         .requestMatchers("/mvc/home").authenticated()
                         .anyRequest().authenticated()
                 )
+
                 .exceptionHandling(ex -> ex.accessDeniedPage("/mvc/public/auth/access-denied"))
+
                 .formLogin(form -> form
                         .loginPage("/mvc/public/auth/login")
                         .loginProcessingUrl("/mvc/auth/login")
@@ -99,6 +116,7 @@ public class WebSecurityConfig {
                         .passwordParameter("password")
                         .permitAll()
                 )
+
                 .logout(log -> log
                         .logoutUrl("/mvc/auth/logout")
                         .logoutSuccessUrl("/mvc/public/auth/login?logout=true")

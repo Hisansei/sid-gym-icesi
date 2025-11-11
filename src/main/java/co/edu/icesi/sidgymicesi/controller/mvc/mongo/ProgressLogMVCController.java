@@ -28,7 +28,27 @@ public class ProgressLogMVCController {
     private final IProgressLogService progressService;
     private final IExerciseService exerciseService;
 
-    // Formulario por query param: /mvc/progress/log?routineId=...
+    // /mvc/progress/history  --> muestra rutinas del usuario para elegir
+    @GetMapping(value = "/history", params = "!routineId")
+    @PreAuthorize("isAuthenticated()")
+    public String historySelector(Authentication auth, Model model) {
+        List<Routine> routines = routineService.listByOwner(auth.getName());
+        model.addAttribute("routines", routines);
+        return "progress/history-select";
+    }
+
+    // Histórico básico: /mvc/progress/history?routineId=.
+    @GetMapping(value = "/history", params = "routineId")
+    @PreAuthorize("@authz.isOwnerOfRoutine(#routineId, authentication)")
+    public String history(@RequestParam("routineId") String routineId, Model model) {
+        Routine routine = routineService.findById(routineId)
+                .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada"));
+        model.addAttribute("routine", routine);
+        model.addAttribute("logs", progressService.listByRoutine(routineId));
+        return "progress/history";
+    }
+
+    // Formulario por query param: /mvc/progress/log?routineId=.
     @GetMapping("/log")
     @PreAuthorize("@authz.isOwnerOfRoutine(#routineId, authentication)")
     public String logFormByParam(@RequestParam("routineId") String routineId, Model model) {
@@ -47,7 +67,6 @@ public class ProgressLogMVCController {
                 .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada"));
         model.addAttribute("routine", routine);
         model.addAttribute("today", LocalDate.now());
-        // Si tu vista usa catálogo para mostrar nombres, mantenlo:
         model.addAttribute("catalog", exerciseService.findAll());
         return "progress/log";
     }
@@ -77,9 +96,9 @@ public class ProgressLogMVCController {
         List<ProgressLog.Entry> entries = new ArrayList<>();
         for (Routine.RoutineExercise it : routine.getExercises()) {
             String key = it.getId();
-            Integer reps = parseInt(form.get("reps_" + key));          // ej: "10"
-            Integer secs = parseInt(form.get("time_" + key));          // ej: "300" (no se persiste en el modelo actual)
-            String rpe = form.get("rpe_" + key);                       // ej: "7"
+            Integer reps = parseInt(form.get("reps_" + key));
+            Integer secs = parseInt(form.get("time_" + key));
+            String rpe = form.get("rpe_" + key);
             String notes = form.getOrDefault("notes_" + key, "").trim();
 
             boolean completed = (reps != null && reps > 0)
@@ -90,7 +109,6 @@ public class ProgressLogMVCController {
             ProgressLog.Entry entry = ProgressLog.Entry.builder()
                     .exerciseId(it.getExerciseId())
                     .completed(completed)
-                    // el modelo guarda listas; si el formulario trae un valor simple lo guardamos como lista de 1
                     .reps(reps != null ? List.of(reps) : null)
                     .sets(null)
                     .weightKg(null)
@@ -110,19 +128,7 @@ public class ProgressLogMVCController {
                 .build();
 
         progressService.addLog(log);
-        // Lleva al histórico simple de la rutina
         return "redirect:/mvc/progress/history?routineId=" + routineId;
-    }
-
-    // Histórico básico: /mvc/progress/history?routineId=...
-    @GetMapping("/history")
-    @PreAuthorize("@authz.isOwnerOfRoutine(#routineId, authentication)")
-    public String history(@RequestParam("routineId") String routineId, Model model) {
-        Routine routine = routineService.findById(routineId)
-                .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada"));
-        model.addAttribute("routine", routine);
-        model.addAttribute("logs", progressService.listByRoutine(routineId));
-        return "progress/history";
     }
 
     private Integer parseInt(String v) {

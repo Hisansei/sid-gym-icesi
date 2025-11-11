@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="${'Plantilla: ' + template.name}">Plantilla</title>
+</head>
+<body>
+<h1 th:text="${template.name}">Nombre de la plantilla</h1>
+<p th:text="${template.description}">Descripción</p>
+
+<h3>Ejercicios</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <thead>
+  <tr>
+    <th>#</th>
+    <th>Ejercicio</th>
+    <th>Tipo</th>
+    <th>Sets</th>
+    <th>Reps</th>
+    <th>Descanso (s)</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="it : ${items}">
+    <td th:text="${it.order}">1</td>
+    <td th:text="${exerciseMap.containsKey(it.exerciseId) ? exerciseMap.get(it.exerciseId).name : it.exerciseId}">Nombre</td>
+    <td th:text="${exerciseMap.containsKey(it.exerciseId) ? exerciseMap.get(it.exerciseId).type : '-'}">Tipo</td>
+    <td th:text="${it.sets}">3</td>
+    <td th:text="${it.reps}">10</td>
+    <td th:text="${it.restSeconds}">60</td>
+  </tr>
+  </tbody>
+</table>
+
+<p>
+  <a th:href="@{'/mvc/routine-templates/' + ${template.id} + '/edit'}">Editar</a>
+</p>
+
+<form th:action="@{'/mvc/routine-templates/' + ${template.id} + '/adopt'}" method="post" style="display:inline">
+  <button type="submit">Adoptar como mi rutina</button>
+</form>
+
+<form th:action="@{'/mvc/routine-templates/' + ${template.id} + '/delete'}" method="post" style="display:inline">
+  <button type="submit" onclick="return confirm('¿Eliminar plantilla?')">Eliminar</button>
+</form>
+
+<p><a th:href="@{/mvc/routine-templates}">Volver</a></p>
+</body>
+</html>

@@ -1,32 +1,38 @@
-<section th:fragment="content">
-    <div class="container">
-        <h2>Mis rutinas</h2>
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Mis rutinas</title>
+</head>
+<body>
+<h1>Mis rutinas</h1>
 
-        <div th:if="${#lists.isEmpty(routines)}" class="alert-info">
-            Aún no tienes rutinas. ¡Crea la primera!
-        </div>
+<p>
+    <a th:href="@{/mvc/routines/create}">Nueva rutina</a>
+    &nbsp;|&nbsp;
+    <a th:href="@{/mvc/routine-templates}">Ver plantillas</a>
+</p>
 
-        <div style="margin:12px 0">
-            <a class="btn" th:href="@{/mvc/routines/create}">Nueva rutina</a>
-        </div>
-
-        <table class="table" th:if="${!#lists.isEmpty(routines)}">
-            <thead>
-            <tr><th>Nombre</th><th>Creada</th><th>Items</th><th></th></tr>
-            </thead>
-            <tbody>
-            <tr th:each="r : ${routines}">
-                <td th:text="${r.name}">Full Body</td>
-                <td th:text="${#temporals.format(r.createdAt, 'yyyy-MM-dd HH:mm')}">fecha</td>
-                <td th:text="${#lists.size(r.exercises)}">0</td>
-                <td style="text-align:right">
-                    <a class="btn" th:href="@{|/mvc/routines/detail?id=${r.id}|}">Abrir</a>
-                    <form th:action="@{|/mvc/routines/${r.id}/delete|}" method="post" style="display:inline">
-                        <button class="btn ghost" onclick="return confirm('¿Eliminar rutina?')">Eliminar</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-</section>
+<table border="1" cellpadding="6" cellspacing="0">
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>Ejercicios</th>
+        <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="r : ${routines}">
+        <td th:text="${r.name}">Nombre</td>
+        <td th:text="${#lists.size(r.exercises)}">0</td>
+        <td>
+            <a th:href="@{'/mvc/routines/' + ${r.id}}">Abrir</a>
+            <form th:action="@{'/mvc/routines/' + ${r.id} + '/delete'}" method="post" style="display:inline">
+                <button type="submit" onclick="return confirm('¿Eliminar rutina?')">Eliminar</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
