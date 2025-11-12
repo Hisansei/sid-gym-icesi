@@ -1,7 +1,7 @@
 [
   {
     "_id": "r_laura_full_body",
-    "ownerUsername": "laura.s",
+    "ownerUsername": "laura.h",
     "origin_template_id": "tpl_full_body",
     "name": "Full Body Starter — personalizada",
     "description": "Cuerpo completo 3 días/sem",
@@ -10,7 +10,7 @@
     "status": true,
     "exercises": [
       {
-        "id": "item-001",
+        "id": "item-ex_pushups-1",
         "order": 1,
         "exercise_id": "ex_pushups",
         "name": "Push Ups",
@@ -19,13 +19,15 @@
         "duration_seconds": 60,
         "difficulty": "MEDIA",
         "status": true,
-        "demo_videos": ["https://youtu.be/demo1"],
+        "demo_videos": [
+          "https://youtu.be/demo1"
+        ],
         "sets": 3,
         "reps": 12,
         "rest_seconds": 60
       },
       {
-        "id": "item-002",
+        "id": "item-ex_plank-2",
         "order": 2,
         "exercise_id": "ex_plank",
         "name": "Plank",
@@ -34,13 +36,15 @@
         "duration_seconds": 45,
         "difficulty": "MEDIA",
         "status": true,
-        "demo_videos": ["https://youtu.be/demo2"],
+        "demo_videos": [
+          "https://youtu.be/demo2"
+        ],
         "sets": 3,
         "reps": 1,
         "rest_seconds": 45
       },
       {
-        "id": "item-003",
+        "id": "item-ex_treadmill_walk-3",
         "order": 3,
         "exercise_id": "ex_treadmill_walk",
         "name": "Caminadora (caminata)",
@@ -57,8 +61,67 @@
     ]
   },
   {
-    "_id": "r_carlos_mobility_am",
-    "ownerUsername": "carlos.m",
+    "_id": "r_laura_core_mob",
+    "ownerUsername": "laura.h",
+    "origin_template_id": "tpl_core_stability",
+    "name": "Core + Movilidad",
+    "description": "Core ligero post-clase",
+    "level": "BEGINNER",
+    "created_at": "2025-11-06T17:30:00Z",
+    "status": true,
+    "exercises": [
+      {
+        "id": "item-ex_plank-1",
+        "order": 1,
+        "exercise_id": "ex_plank",
+        "name": "Plank",
+        "type": "fuerza",
+        "description": "Plancha isométrica (core)",
+        "duration_seconds": 45,
+        "difficulty": "MEDIA",
+        "status": true,
+        "demo_videos": [
+          "https://youtu.be/demo2"
+        ],
+        "sets": 3,
+        "reps": 1,
+        "rest_seconds": 45
+      },
+      {
+        "id": "item-ex_bicycle_crunch-2",
+        "order": 2,
+        "exercise_id": "ex_bicycle_crunch",
+        "name": "Bicycle Crunch",
+        "type": "fuerza",
+        "description": "Abdominales bicicleta",
+        "duration_seconds": 45,
+        "difficulty": "MEDIA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 3,
+        "reps": 20,
+        "rest_seconds": 45
+      },
+      {
+        "id": "item-ex_hip_mobility-3",
+        "order": 3,
+        "exercise_id": "ex_hip_mobility",
+        "name": "Movilidad de cadera",
+        "type": "movilidad",
+        "description": "Secuencia corta de movilidad de cadera",
+        "duration_seconds": 300,
+        "difficulty": "BAJA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 1,
+        "reps": 1,
+        "rest_seconds": 0
+      }
+    ]
+  },
+  {
+    "_id": "r_pedro_mobility_am",
+    "ownerUsername": "pedro.m",
     "origin_template_id": "tpl_mobility_basic",
     "name": "Movilidad matutina",
     "description": "Desbloqueo suave AM",
@@ -67,7 +130,7 @@
     "status": true,
     "exercises": [
       {
-        "id": "item-101",
+        "id": "item-ex_hip_mobility-1",
         "order": 1,
         "exercise_id": "ex_hip_mobility",
         "name": "Movilidad de cadera",
@@ -82,7 +145,7 @@
         "rest_seconds": 0
       },
       {
-        "id": "item-102",
+        "id": "item-ex_plank-2",
         "order": 2,
         "exercise_id": "ex_plank",
         "name": "Plank",
@@ -91,17 +154,220 @@
         "duration_seconds": 45,
         "difficulty": "MEDIA",
         "status": true,
-        "demo_videos": ["https://youtu.be/demo2"],
+        "demo_videos": [
+          "https://youtu.be/demo2"
+        ],
         "sets": 2,
         "reps": 1,
+        "rest_seconds": 45
+      },
+      {
+        "id": "item-ex_hamstring_stretch-3",
+        "order": 3,
+        "exercise_id": "ex_hamstring_stretch",
+        "name": "Estiramiento de isquiotibiales",
+        "type": "movilidad",
+        "description": "Estiramiento posterior de pierna",
+        "duration_seconds": 120,
+        "difficulty": "BAJA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 1,
+        "reps": 1,
+        "rest_seconds": 0
+      }
+    ]
+  },
+  {
+    "_id": "r_pedro_hiit",
+    "ownerUsername": "pedro.m",
+    "origin_template_id": "tpl_hiit_short",
+    "name": "HIIT express",
+    "description": "12 min de intensidad",
+    "level": "INTERMEDIATE",
+    "created_at": "2025-11-04T07:00:00Z",
+    "status": true,
+    "exercises": [
+      {
+        "id": "item-ex_jumping_jacks-1",
+        "order": 1,
+        "exercise_id": "ex_jumping_jacks",
+        "name": "Jumping Jacks",
+        "type": "cardio",
+        "description": "Saltos de tijera rítmicos",
+        "duration_seconds": 60,
+        "difficulty": "BAJA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 3,
+        "reps": 45,
+        "rest_seconds": 30
+      },
+      {
+        "id": "item-ex_burpees-2",
+        "order": 2,
+        "exercise_id": "ex_burpees",
+        "name": "Burpees",
+        "type": "cardio",
+        "description": "Burpees completos",
+        "duration_seconds": 60,
+        "difficulty": "ALTA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 3,
+        "reps": 12,
+        "rest_seconds": 60
+      },
+      {
+        "id": "item-ex_mountain_climbers-3",
+        "order": 3,
+        "exercise_id": "ex_mountain_climbers",
+        "name": "Mountain Climbers",
+        "type": "cardio",
+        "description": "Escaladores en plancha",
+        "duration_seconds": 45,
+        "difficulty": "MEDIA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 3,
+        "reps": 45,
+        "rest_seconds": 30
+      }
+    ]
+  },
+  {
+    "_id": "r_ana_upper",
+    "ownerUsername": "ana.s",
+    "origin_template_id": "tpl_upper_strength",
+    "name": "Upper Strength",
+    "description": "Pecho/espalda/hombro",
+    "level": "INTERMEDIATE",
+    "created_at": "2025-10-29T19:20:00Z",
+    "status": true,
+    "exercises": [
+      {
+        "id": "item-ex_bench_press-1",
+        "order": 1,
+        "exercise_id": "ex_bench_press",
+        "name": "Press de banca",
+        "type": "fuerza",
+        "description": "Press de banca con barra o mancuernas",
+        "duration_seconds": 60,
+        "difficulty": "ALTA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 4,
+        "reps": 8,
+        "rest_seconds": 90
+      },
+      {
+        "id": "item-ex_seated_row-2",
+        "order": 2,
+        "exercise_id": "ex_seated_row",
+        "name": "Remo sentado",
+        "type": "fuerza",
+        "description": "Remo en máquina o polea",
+        "duration_seconds": 60,
+        "difficulty": "MEDIA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 4,
+        "reps": 10,
+        "rest_seconds": 90
+      },
+      {
+        "id": "item-ex_shoulder_press-3",
+        "order": 3,
+        "exercise_id": "ex_shoulder_press",
+        "name": "Press militar",
+        "type": "fuerza",
+        "description": "Press por encima de la cabeza",
+        "duration_seconds": 60,
+        "difficulty": "ALTA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 3,
+        "reps": 10,
+        "rest_seconds": 90
+      },
+      {
+        "id": "item-ex_bicycle_crunch-4",
+        "order": 4,
+        "exercise_id": "ex_bicycle_crunch",
+        "name": "Bicycle Crunch",
+        "type": "fuerza",
+        "description": "Abdominales bicicleta",
+        "duration_seconds": 45,
+        "difficulty": "MEDIA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 3,
+        "reps": 20,
         "rest_seconds": 45
       }
     ]
   },
   {
-    "_id": "r_sara_cardio_intervals",
-    "ownerUsername": "sara.r",
-    "origin_template_id": null,
+    "_id": "r_luis_lower",
+    "ownerUsername": "luis.r",
+    "origin_template_id": "tpl_lower_strength",
+    "name": "Lower Strength",
+    "description": "Piernas y glúteo",
+    "level": "INTERMEDIATE",
+    "created_at": "2025-10-30T18:10:00Z",
+    "status": true,
+    "exercises": [
+      {
+        "id": "item-ex_squats-1",
+        "order": 1,
+        "exercise_id": "ex_squats",
+        "name": "Sentadillas",
+        "type": "fuerza",
+        "description": "Sentadilla con peso corporal",
+        "duration_seconds": 60,
+        "difficulty": "MEDIA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 4,
+        "reps": 10,
+        "rest_seconds": 90
+      },
+      {
+        "id": "item-ex_deadlift-2",
+        "order": 2,
+        "exercise_id": "ex_deadlift",
+        "name": "Peso muerto (kettlebell)",
+        "type": "fuerza",
+        "description": "Hinge de cadera con kettlebell",
+        "duration_seconds": 60,
+        "difficulty": "MEDIA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 4,
+        "reps": 8,
+        "rest_seconds": 120
+      },
+      {
+        "id": "item-ex_lunges-3",
+        "order": 3,
+        "exercise_id": "ex_lunges",
+        "name": "Zancadas",
+        "type": "fuerza",
+        "description": "Zancadas alternas",
+        "duration_seconds": 60,
+        "difficulty": "MEDIA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 3,
+        "reps": 12,
+        "rest_seconds": 60
+      }
+    ]
+  },
+  {
+    "_id": "r_sofia_cardio_intervals",
+    "ownerUsername": "sofia.g",
+    "origin_template_id": "tpl_cardio_intervals",
     "name": "Cardio — Intervalos",
     "description": "Sesiones de intervalos suaves",
     "level": "BEGINNER",
@@ -109,7 +375,7 @@
     "status": true,
     "exercises": [
       {
-        "id": "item-201",
+        "id": "item-ex_rower-1",
         "order": 1,
         "exercise_id": "ex_rower",
         "name": "Remo en máquina",
@@ -124,13 +390,171 @@
         "rest_seconds": 0
       },
       {
-        "id": "item-202",
+        "id": "item-ex_treadmill_walk-2",
         "order": 2,
         "exercise_id": "ex_treadmill_walk",
         "name": "Caminadora (caminata)",
         "type": "cardio",
         "description": "Caminata suave en caminadora",
         "duration_seconds": 900,
+        "difficulty": "BAJA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 1,
+        "reps": 1,
+        "rest_seconds": 0
+      },
+      {
+        "id": "item-ex_elliptical-3",
+        "order": 3,
+        "exercise_id": "ex_elliptical",
+        "name": "Elíptica",
+        "type": "cardio",
+        "description": "Elíptica moderada",
+        "duration_seconds": 900,
+        "difficulty": "BAJA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 1,
+        "reps": 1,
+        "rest_seconds": 0
+      }
+    ]
+  },
+  {
+    "_id": "r_sofia_yoga",
+    "ownerUsername": "sofia.g",
+    "origin_template_id": "tpl_desk_mobility",
+    "name": "Yoga Flow suave",
+    "description": "Recuperación activa",
+    "level": "BEGINNER",
+    "created_at": "2025-11-05T20:30:00Z",
+    "status": true,
+    "exercises": [
+      {
+        "id": "item-ex_yoga_flow-1",
+        "order": 1,
+        "exercise_id": "ex_yoga_flow",
+        "name": "Yoga Flow (suave)",
+        "type": "movilidad",
+        "description": "Flujo de posturas suave",
+        "duration_seconds": 600,
+        "difficulty": "BAJA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 1,
+        "reps": 1,
+        "rest_seconds": 0
+      },
+      {
+        "id": "item-ex_hamstring_stretch-2",
+        "order": 2,
+        "exercise_id": "ex_hamstring_stretch",
+        "name": "Estiramiento de isquiotibiales",
+        "type": "movilidad",
+        "description": "Estiramiento posterior de pierna",
+        "duration_seconds": 120,
+        "difficulty": "BAJA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 1,
+        "reps": 1,
+        "rest_seconds": 0
+      }
+    ]
+  },
+  {
+    "_id": "r_ana_cardio_light",
+    "ownerUsername": "ana.s",
+    "origin_template_id": "tpl_cardio_intervals",
+    "name": "Cardio Ligero",
+    "description": "Cardio de recuperación",
+    "level": "BEGINNER",
+    "created_at": "2025-11-02T18:00:00Z",
+    "status": true,
+    "exercises": [
+      {
+        "id": "item-ex_treadmill_walk-1",
+        "order": 1,
+        "exercise_id": "ex_treadmill_walk",
+        "name": "Caminadora (caminata)",
+        "type": "cardio",
+        "description": "Caminata suave en caminadora",
+        "duration_seconds": 900,
+        "difficulty": "BAJA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 1,
+        "reps": 1,
+        "rest_seconds": 0
+      },
+      {
+        "id": "item-ex_elliptical-2",
+        "order": 2,
+        "exercise_id": "ex_elliptical",
+        "name": "Elíptica",
+        "type": "cardio",
+        "description": "Elíptica moderada",
+        "duration_seconds": 900,
+        "difficulty": "BAJA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 1,
+        "reps": 1,
+        "rest_seconds": 0
+      }
+    ]
+  },
+  {
+    "_id": "r_luis_core",
+    "ownerUsername": "luis.r",
+    "origin_template_id": "tpl_core_stability",
+    "name": "Core Stability — Luis",
+    "description": "Core y movilidad complementaria",
+    "level": "BEGINNER",
+    "created_at": "2025-11-01T07:30:00Z",
+    "status": true,
+    "exercises": [
+      {
+        "id": "item-ex_plank-1",
+        "order": 1,
+        "exercise_id": "ex_plank",
+        "name": "Plank",
+        "type": "fuerza",
+        "description": "Plancha isométrica (core)",
+        "duration_seconds": 45,
+        "difficulty": "MEDIA",
+        "status": true,
+        "demo_videos": [
+          "https://youtu.be/demo2"
+        ],
+        "sets": 3,
+        "reps": 1,
+        "rest_seconds": 45
+      },
+      {
+        "id": "item-ex_bicycle_crunch-2",
+        "order": 2,
+        "exercise_id": "ex_bicycle_crunch",
+        "name": "Bicycle Crunch",
+        "type": "fuerza",
+        "description": "Abdominales bicicleta",
+        "duration_seconds": 45,
+        "difficulty": "MEDIA",
+        "status": true,
+        "demo_videos": [],
+        "sets": 3,
+        "reps": 20,
+        "rest_seconds": 45
+      },
+      {
+        "id": "item-ex_hip_mobility-3",
+        "order": 3,
+        "exercise_id": "ex_hip_mobility",
+        "name": "Movilidad de cadera",
+        "type": "movilidad",
+        "description": "Secuencia corta de movilidad de cadera",
+        "duration_seconds": 300,
         "difficulty": "BAJA",
         "status": true,
         "demo_videos": [],

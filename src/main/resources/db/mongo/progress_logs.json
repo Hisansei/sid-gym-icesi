@@ -1,23 +1,43 @@
 [
   {
-    "ownerUsername": "laura.s",
+    "ownerUsername": "laura.h",
     "routine_id": "r_laura_full_body",
-    "date": "ISODate('2025-11-07T00:00:00Z')",
+    "date": "2025-11-07",
     "entries": [
       {
         "exercise_id": "ex_pushups",
         "is_completed": true,
-        "sets": [1, 1, 1],
-        "reps": [12, 12, 10],
-        "weight_kg": [0, 0, 0],
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          12,
+          12,
+          10
+        ],
+        "weight_kg": [
+          0,
+          0,
+          0
+        ],
         "effort_level": "7",
         "notes_user": "Última serie costó"
       },
       {
         "exercise_id": "ex_plank",
         "is_completed": true,
-        "sets": [1, 1, 1],
-        "reps": [1, 1, 1],
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          1,
+          1,
+          1
+        ],
         "weight_kg": [],
         "effort_level": "6",
         "notes_user": null
@@ -25,11 +45,2026 @@
     ],
     "trainer_feedback": [
       {
-        "trainer_id": "juan.p",
-        "message": "Buena técnica, sube a 3x13 en push ups",
-        "created_at": "ISODate('2025-11-07T18:30:00Z')"
+        "trainer_id": "andres.c",
+        "message": "Sube a 3x13 en push ups",
+        "created_at": "2025-11-07T18:30:00Z"
       }
     ],
-    "created_at": "ISODate('2025-11-07T18:25:00Z')"
+    "created_at": "2025-11-07T18:25:00Z"
+  },
+  {
+    "ownerUsername": "laura.h",
+    "routine_id": "r_laura_full_body",
+    "date": "2025-11-10",
+    "entries": [
+      {
+        "exercise_id": "ex_pushups",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          13,
+          12,
+          12
+        ],
+        "weight_kg": [
+          0,
+          0,
+          0
+        ],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_plank",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          1,
+          1,
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_treadmill_walk",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": "10 min finales extra"
+      }
+    ],
+    "trainer_feedback": [
+      {
+        "trainer_id": "andres.c",
+        "message": "Buen progreso en reps",
+        "created_at": "2025-11-10T20:10:00Z"
+      }
+    ],
+    "created_at": "2025-11-10T19:40:00Z"
+  },
+  {
+    "ownerUsername": "laura.h",
+    "routine_id": "r_laura_core_mob",
+    "date": "2025-11-08",
+    "entries": [
+      {
+        "exercise_id": "ex_plank",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          1,
+          1,
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_bicycle_crunch",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          20,
+          20,
+          18
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_hip_mobility",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "4",
+        "notes_user": "Se siente bien"
+      }
+    ],
+    "trainer_feedback": [
+      {
+        "trainer_id": "paula.r",
+        "message": "Mantén respiración nasal",
+        "created_at": "2025-11-08T18:00:00Z"
+      }
+    ],
+    "created_at": "2025-11-08T17:15:00Z"
+  },
+  {
+    "ownerUsername": "pedro.m",
+    "routine_id": "r_pedro_mobility_am",
+    "date": "2025-11-06",
+    "entries": [
+      {
+        "exercise_id": "ex_hip_mobility",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": "Mejor rango"
+      },
+      {
+        "exercise_id": "ex_plank",
+        "is_completed": true,
+        "sets": [
+          1,
+          1
+        ],
+        "reps": [
+          1,
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_hamstring_stretch",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "4",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-06T07:45:00Z"
+  },
+  {
+    "ownerUsername": "pedro.m",
+    "routine_id": "r_pedro_hiit",
+    "date": "2025-11-07",
+    "entries": [
+      {
+        "exercise_id": "ex_jumping_jacks",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          45,
+          45,
+          45
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_burpees",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          12,
+          12,
+          10
+        ],
+        "weight_kg": [],
+        "effort_level": "9",
+        "notes_user": "Muy exigente"
+      },
+      {
+        "exercise_id": "ex_mountain_climbers",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          45,
+          45,
+          40
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [
+      {
+        "trainer_id": "andres.c",
+        "message": "Baja 10% en burpees si te falta aire",
+        "created_at": "2025-11-07T12:00:00Z"
+      }
+    ],
+    "created_at": "2025-11-07T11:30:00Z"
+  },
+  {
+    "ownerUsername": "pedro.m",
+    "routine_id": "r_pedro_hiit",
+    "date": "2025-11-10",
+    "entries": [
+      {
+        "exercise_id": "ex_jumping_jacks",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          45,
+          45,
+          45
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_burpees",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          12,
+          12,
+          12
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_mountain_climbers",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          45,
+          45,
+          45
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-10T06:50:00Z"
+  },
+  {
+    "ownerUsername": "ana.s",
+    "routine_id": "r_ana_upper",
+    "date": "2025-11-01",
+    "entries": [
+      {
+        "exercise_id": "ex_bench_press",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          8,
+          8,
+          8,
+          8
+        ],
+        "weight_kg": [
+          20.0,
+          20.0,
+          20.0,
+          20.0
+        ],
+        "effort_level": "7",
+        "notes_user": "Controlado"
+      },
+      {
+        "exercise_id": "ex_seated_row",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          10,
+          10,
+          10,
+          10
+        ],
+        "weight_kg": [
+          35.0,
+          35.0,
+          35.0,
+          35.0
+        ],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_shoulder_press",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          10,
+          10,
+          8
+        ],
+        "weight_kg": [
+          12.5,
+          12.5,
+          12.5
+        ],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_bicycle_crunch",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          20,
+          20,
+          20
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [
+      {
+        "trainer_id": "andres.c",
+        "message": "Suma 2.5kg al press de banca próxima sesión",
+        "created_at": "2025-11-01T21:00:00Z"
+      }
+    ],
+    "created_at": "2025-11-01T20:40:00Z"
+  },
+  {
+    "ownerUsername": "ana.s",
+    "routine_id": "r_ana_upper",
+    "date": "2025-11-08",
+    "entries": [
+      {
+        "exercise_id": "ex_bench_press",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          8,
+          8,
+          8,
+          8
+        ],
+        "weight_kg": [
+          22.5,
+          22.5,
+          22.5,
+          22.5
+        ],
+        "effort_level": "8",
+        "notes_user": "Última pesada"
+      },
+      {
+        "exercise_id": "ex_seated_row",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          10,
+          10,
+          10,
+          10
+        ],
+        "weight_kg": [
+          40.0,
+          40.0,
+          40.0,
+          40.0
+        ],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_shoulder_press",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          10,
+          10,
+          10
+        ],
+        "weight_kg": [
+          12.5,
+          12.5,
+          12.5
+        ],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_bicycle_crunch",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          20,
+          20,
+          20
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-08T19:30:00Z"
+  },
+  {
+    "ownerUsername": "luis.r",
+    "routine_id": "r_luis_lower",
+    "date": "2025-11-02",
+    "entries": [
+      {
+        "exercise_id": "ex_squats",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          10,
+          10,
+          10,
+          10
+        ],
+        "weight_kg": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_deadlift",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          8,
+          8,
+          8,
+          8
+        ],
+        "weight_kg": [
+          40.0,
+          40.0,
+          40.0,
+          40.0
+        ],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_lunges",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          12,
+          12,
+          12
+        ],
+        "weight_kg": [
+          0,
+          0,
+          0
+        ],
+        "effort_level": "6",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [
+      {
+        "trainer_id": "paula.r",
+        "message": "Enfoca la técnica del hinge",
+        "created_at": "2025-11-02T16:00:00Z"
+      }
+    ],
+    "created_at": "2025-11-02T15:30:00Z"
+  },
+  {
+    "ownerUsername": "luis.r",
+    "routine_id": "r_luis_lower",
+    "date": "2025-11-09",
+    "entries": [
+      {
+        "exercise_id": "ex_squats",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          10,
+          10,
+          10,
+          12
+        ],
+        "weight_kg": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_deadlift",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          8,
+          8,
+          8,
+          8
+        ],
+        "weight_kg": [
+          45.0,
+          45.0,
+          45.0,
+          45.0
+        ],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_lunges",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          12,
+          12,
+          12
+        ],
+        "weight_kg": [
+          0,
+          0,
+          0
+        ],
+        "effort_level": "6",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-09T10:10:00Z"
+  },
+  {
+    "ownerUsername": "sofia.g",
+    "routine_id": "r_sofia_cardio_intervals",
+    "date": "2025-11-05",
+    "entries": [
+      {
+        "exercise_id": "ex_rower",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": "Ritmo constante"
+      },
+      {
+        "exercise_id": "ex_treadmill_walk",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": "Sin molestias"
+      },
+      {
+        "exercise_id": "ex_elliptical",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [
+      {
+        "trainer_id": "paula.r",
+        "message": "Agrega 5 min extra la próxima",
+        "created_at": "2025-11-05T20:00:00Z"
+      }
+    ],
+    "created_at": "2025-11-05T19:30:00Z"
+  },
+  {
+    "ownerUsername": "sofia.g",
+    "routine_id": "r_sofia_cardio_intervals",
+    "date": "2025-11-11",
+    "entries": [
+      {
+        "exercise_id": "ex_rower",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_treadmill_walk",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_elliptical",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-11T18:45:00Z"
+  },
+  {
+    "ownerUsername": "sofia.g",
+    "routine_id": "r_sofia_yoga",
+    "date": "2025-11-06",
+    "entries": [
+      {
+        "exercise_id": "ex_yoga_flow",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "4",
+        "notes_user": "Muy relajante"
+      },
+      {
+        "exercise_id": "ex_hamstring_stretch",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "3",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-06T21:00:00Z"
+  },
+  {
+    "ownerUsername": "laura.h",
+    "routine_id": "r_laura_full_body",
+    "date": "2025-11-01",
+    "entries": [
+      {
+        "exercise_id": "ex_pushups",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          11,
+          11,
+          11
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_plank",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          1,
+          1,
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_treadmill_walk",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-01T18:00:00Z"
+  },
+  {
+    "ownerUsername": "laura.h",
+    "routine_id": "r_laura_full_body",
+    "date": "2025-11-04",
+    "entries": [
+      {
+        "exercise_id": "ex_pushups",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          11,
+          11,
+          11
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_plank",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          2,
+          2,
+          2
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_treadmill_walk",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          2
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-04T18:00:00Z"
+  },
+  {
+    "ownerUsername": "laura.h",
+    "routine_id": "r_laura_core_mob",
+    "date": "2025-11-01",
+    "entries": [
+      {
+        "exercise_id": "ex_plank",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          1,
+          1,
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_bicycle_crunch",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          20,
+          20,
+          20
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_hip_mobility",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-01T18:00:00Z"
+  },
+  {
+    "ownerUsername": "laura.h",
+    "routine_id": "r_laura_core_mob",
+    "date": "2025-11-04",
+    "entries": [
+      {
+        "exercise_id": "ex_plank",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          2,
+          2,
+          2
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_bicycle_crunch",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          20,
+          20,
+          20
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_hip_mobility",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-04T18:00:00Z"
+  },
+  {
+    "ownerUsername": "laura.h",
+    "routine_id": "r_laura_core_mob",
+    "date": "2025-11-07",
+    "entries": [
+      {
+        "exercise_id": "ex_plank",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          1,
+          1,
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_bicycle_crunch",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          21,
+          21,
+          21
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_hip_mobility",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-07T18:00:00Z"
+  },
+  {
+    "ownerUsername": "pedro.m",
+    "routine_id": "r_pedro_mobility_am",
+    "date": "2025-11-01",
+    "entries": [
+      {
+        "exercise_id": "ex_hip_mobility",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_plank",
+        "is_completed": true,
+        "sets": [
+          1,
+          1
+        ],
+        "reps": [
+          1,
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_hamstring_stretch",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-01T18:00:00Z"
+  },
+  {
+    "ownerUsername": "pedro.m",
+    "routine_id": "r_pedro_mobility_am",
+    "date": "2025-11-04",
+    "entries": [
+      {
+        "exercise_id": "ex_hip_mobility",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          2
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_plank",
+        "is_completed": true,
+        "sets": [
+          1,
+          1
+        ],
+        "reps": [
+          1,
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_hamstring_stretch",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-04T18:00:00Z"
+  },
+  {
+    "ownerUsername": "pedro.m",
+    "routine_id": "r_pedro_mobility_am",
+    "date": "2025-11-07",
+    "entries": [
+      {
+        "exercise_id": "ex_hip_mobility",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_plank",
+        "is_completed": true,
+        "sets": [
+          1,
+          1
+        ],
+        "reps": [
+          2,
+          2
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_hamstring_stretch",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-07T18:00:00Z"
+  },
+  {
+    "ownerUsername": "pedro.m",
+    "routine_id": "r_pedro_hiit",
+    "date": "2025-11-01",
+    "entries": [
+      {
+        "exercise_id": "ex_jumping_jacks",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          44,
+          44,
+          44
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_burpees",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          12,
+          12,
+          12
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_mountain_climbers",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          45,
+          45,
+          45
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-01T18:00:00Z"
+  },
+  {
+    "ownerUsername": "pedro.m",
+    "routine_id": "r_pedro_hiit",
+    "date": "2025-11-04",
+    "entries": [
+      {
+        "exercise_id": "ex_jumping_jacks",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          46,
+          46,
+          46
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_burpees",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          12,
+          12,
+          12
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_mountain_climbers",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          45,
+          45,
+          45
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-04T18:00:00Z"
+  },
+  {
+    "ownerUsername": "ana.s",
+    "routine_id": "r_ana_upper",
+    "date": "2025-11-04",
+    "entries": [
+      {
+        "exercise_id": "ex_bench_press",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          8,
+          8,
+          8,
+          8
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_seated_row",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          9,
+          9,
+          9,
+          9
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_shoulder_press",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          10,
+          10,
+          10
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-04T18:00:00Z"
+  },
+  {
+    "ownerUsername": "ana.s",
+    "routine_id": "r_ana_upper",
+    "date": "2025-11-07",
+    "entries": [
+      {
+        "exercise_id": "ex_bench_press",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          8,
+          8,
+          8,
+          8
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_seated_row",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          10,
+          10,
+          10,
+          10
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_shoulder_press",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          10,
+          10,
+          10
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-07T18:00:00Z"
+  },
+  {
+    "ownerUsername": "luis.r",
+    "routine_id": "r_luis_lower",
+    "date": "2025-11-01",
+    "entries": [
+      {
+        "exercise_id": "ex_squats",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          10,
+          10,
+          10,
+          10
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_deadlift",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          7,
+          7,
+          7,
+          7
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_lunges",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          11,
+          11,
+          11
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-01T18:00:00Z"
+  },
+  {
+    "ownerUsername": "luis.r",
+    "routine_id": "r_luis_lower",
+    "date": "2025-11-04",
+    "entries": [
+      {
+        "exercise_id": "ex_squats",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          10,
+          10,
+          10,
+          10
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_deadlift",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          8,
+          8,
+          8,
+          8
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_lunges",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          12,
+          12,
+          12
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-04T18:00:00Z"
+  },
+  {
+    "ownerUsername": "luis.r",
+    "routine_id": "r_luis_lower",
+    "date": "2025-11-07",
+    "entries": [
+      {
+        "exercise_id": "ex_squats",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          9,
+          9,
+          9,
+          9
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_deadlift",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          8,
+          8,
+          8,
+          8
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_lunges",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          11,
+          11,
+          11
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-07T18:00:00Z"
+  },
+  {
+    "ownerUsername": "sofia.g",
+    "routine_id": "r_sofia_cardio_intervals",
+    "date": "2025-11-01",
+    "entries": [
+      {
+        "exercise_id": "ex_rower",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_treadmill_walk",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_elliptical",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-01T18:00:00Z"
+  },
+  {
+    "ownerUsername": "sofia.g",
+    "routine_id": "r_sofia_cardio_intervals",
+    "date": "2025-11-04",
+    "entries": [
+      {
+        "exercise_id": "ex_rower",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_treadmill_walk",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_elliptical",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          2
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-04T18:00:00Z"
+  },
+  {
+    "ownerUsername": "sofia.g",
+    "routine_id": "r_sofia_cardio_intervals",
+    "date": "2025-11-07",
+    "entries": [
+      {
+        "exercise_id": "ex_rower",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "8",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_treadmill_walk",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_elliptical",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          2
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-07T18:00:00Z"
+  },
+  {
+    "ownerUsername": "sofia.g",
+    "routine_id": "r_sofia_yoga",
+    "date": "2025-11-01",
+    "entries": [
+      {
+        "exercise_id": "ex_yoga_flow",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_hamstring_stretch",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-01T18:00:00Z"
+  },
+  {
+    "ownerUsername": "sofia.g",
+    "routine_id": "r_sofia_yoga",
+    "date": "2025-11-04",
+    "entries": [
+      {
+        "exercise_id": "ex_yoga_flow",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_hamstring_stretch",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-04T18:00:00Z"
+  },
+  {
+    "ownerUsername": "sofia.g",
+    "routine_id": "r_sofia_yoga",
+    "date": "2025-11-07",
+    "entries": [
+      {
+        "exercise_id": "ex_yoga_flow",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "5",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_hamstring_stretch",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-07T18:00:00Z"
+  },
+  {
+    "ownerUsername": "ana.s",
+    "routine_id": "r_ana_cardio_light",
+    "date": "2025-11-03",
+    "entries": [
+      {
+        "exercise_id": "ex_treadmill_walk",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "4",
+        "notes_user": "Recuperación"
+      },
+      {
+        "exercise_id": "ex_elliptical",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "4",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [],
+    "created_at": "2025-11-03T18:40:00Z"
+  },
+  {
+    "ownerUsername": "luis.r",
+    "routine_id": "r_luis_core",
+    "date": "2025-11-04",
+    "entries": [
+      {
+        "exercise_id": "ex_plank",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          1,
+          1,
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "6",
+        "notes_user": null
+      },
+      {
+        "exercise_id": "ex_bicycle_crunch",
+        "is_completed": true,
+        "sets": [
+          1,
+          1,
+          1
+        ],
+        "reps": [
+          20,
+          20,
+          18
+        ],
+        "weight_kg": [],
+        "effort_level": "7",
+        "notes_user": "Falla técnica leve"
+      },
+      {
+        "exercise_id": "ex_hip_mobility",
+        "is_completed": true,
+        "sets": [
+          1
+        ],
+        "reps": [
+          1
+        ],
+        "weight_kg": [],
+        "effort_level": "4",
+        "notes_user": null
+      }
+    ],
+    "trainer_feedback": [
+      {
+        "trainer_id": "paula.r",
+        "message": "Buen control lumbar",
+        "created_at": "2025-11-04T09:10:00Z"
+      }
+    ],
+    "created_at": "2025-11-04T08:55:00Z"
   }
 ]

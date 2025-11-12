@@ -7,7 +7,9 @@
     "duration_seconds": 60,
     "difficulty": "MEDIA",
     "status": true,
-    "demo_videos": ["https://youtu.be/demo1"]
+    "demo_videos": [
+      "https://youtu.be/demo1"
+    ]
   },
   {
     "_id": "ex_plank",
@@ -17,7 +19,9 @@
     "duration_seconds": 45,
     "difficulty": "MEDIA",
     "status": true,
-    "demo_videos": ["https://youtu.be/demo2"]
+    "demo_videos": [
+      "https://youtu.be/demo2"
+    ]
   },
   {
     "_id": "ex_treadmill_walk",
@@ -45,6 +49,166 @@
     "type": "movilidad",
     "description": "Secuencia corta de movilidad de cadera",
     "duration_seconds": 300,
+    "difficulty": "BAJA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_squats",
+    "name": "Sentadillas",
+    "type": "fuerza",
+    "description": "Sentadilla con peso corporal",
+    "duration_seconds": 60,
+    "difficulty": "MEDIA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_lunges",
+    "name": "Zancadas",
+    "type": "fuerza",
+    "description": "Zancadas alternas",
+    "duration_seconds": 60,
+    "difficulty": "MEDIA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_deadlift",
+    "name": "Peso muerto (kettlebell)",
+    "type": "fuerza",
+    "description": "Hinge de cadera con kettlebell",
+    "duration_seconds": 60,
+    "difficulty": "MEDIA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_bench_press",
+    "name": "Press de banca",
+    "type": "fuerza",
+    "description": "Press de banca con barra o mancuernas",
+    "duration_seconds": 60,
+    "difficulty": "ALTA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_shoulder_press",
+    "name": "Press militar",
+    "type": "fuerza",
+    "description": "Press por encima de la cabeza",
+    "duration_seconds": 60,
+    "difficulty": "ALTA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_jumping_jacks",
+    "name": "Jumping Jacks",
+    "type": "cardio",
+    "description": "Saltos de tijera rítmicos",
+    "duration_seconds": 60,
+    "difficulty": "BAJA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_burpees",
+    "name": "Burpees",
+    "type": "cardio",
+    "description": "Burpees completos",
+    "duration_seconds": 60,
+    "difficulty": "ALTA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_bicycle_crunch",
+    "name": "Bicycle Crunch",
+    "type": "fuerza",
+    "description": "Abdominales bicicleta",
+    "duration_seconds": 45,
+    "difficulty": "MEDIA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_mountain_climbers",
+    "name": "Mountain Climbers",
+    "type": "cardio",
+    "description": "Escaladores en plancha",
+    "duration_seconds": 45,
+    "difficulty": "MEDIA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_yoga_flow",
+    "name": "Yoga Flow (suave)",
+    "type": "movilidad",
+    "description": "Flujo de posturas suave",
+    "duration_seconds": 600,
+    "difficulty": "BAJA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_hamstring_stretch",
+    "name": "Estiramiento de isquiotibiales",
+    "type": "movilidad",
+    "description": "Estiramiento posterior de pierna",
+    "duration_seconds": 120,
+    "difficulty": "BAJA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_kb_swing",
+    "name": "Kettlebell Swing",
+    "type": "fuerza",
+    "description": "Balanceo con kettlebell",
+    "duration_seconds": 45,
+    "difficulty": "ALTA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_pullups",
+    "name": "Dominadas",
+    "type": "fuerza",
+    "description": "Dominadas en barra",
+    "duration_seconds": 45,
+    "difficulty": "ALTA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_seated_row",
+    "name": "Remo sentado",
+    "type": "fuerza",
+    "description": "Remo en máquina o polea",
+    "duration_seconds": 60,
+    "difficulty": "MEDIA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_elliptical",
+    "name": "Elíptica",
+    "type": "cardio",
+    "description": "Elíptica moderada",
+    "duration_seconds": 900,
+    "difficulty": "BAJA",
+    "status": true,
+    "demo_videos": []
+  },
+  {
+    "_id": "ex_bike",
+    "name": "Bicicleta estática",
+    "type": "cardio",
+    "description": "Pedaleo suave",
+    "duration_seconds": 900,
     "difficulty": "BAJA",
     "status": true,
     "demo_videos": []
