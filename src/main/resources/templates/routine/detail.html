@@ -1,143 +1,193 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{components/base :: page(
-          title='Detalle de rutina',
+          title=${routine.name} != null ? ${routine.name} : 'Detalle de rutina',
           content=~{::content}
       )}">
-<head>
-    <meta charset="UTF-8"/>
-    <title th:text="${routine.name}">Detalle rutina</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <style>
-        body{font-family:system-ui,Arial,sans-serif;max-width:980px;margin:24px auto;padding:0 16px}
-        header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-        .muted{color:#6b7280}
-        .card{border:1px solid #e5e7eb;border-radius:10px;padding:14px;margin:12px 0}
-        .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-        input[type=text], input[type=number], select{padding:8px;border:1px solid #d1d5db;border-radius:6px}
-        button{padding:8px 12px;border:0;border-radius:6px;background:#111827;color:white;cursor:pointer}
-        .btn{display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none}
-        ol{padding-left:20px}
-        li[data-id]{margin:8px 0;padding:10px;border:1px solid #e5e7eb;border-radius:8px;background:#fafafa}
-        .actions{display:flex;gap:8px}
-    </style>
-</head>
-<body>
-<header>
-    <div>
-        <h1 th:text="${routine.name}">Nombre rutina</h1>
-        <div class="muted" th:text="'ID: ' + ${routine.id}">ID</div>
-    </div>
-    <div class="row">
-        <a class="btn" href="/mvc/routines">Volver</a>
-        <form th:action="@{'/mvc/routines/' + ${routine.id} + '/delete'}" method="post" onsubmit="return confirm('¿Eliminar esta rutina?');">
-            <input th:if="${_csrf}" type="hidden"
-       th:name="${_csrf.parameterName}"
-       th:value="${_csrf.token}"/>            <button type="submit" style="background:#b91c1c">Eliminar rutina</button>
-        </form>
-    </div>
-</header>
 
-<section class="card">
-    <h2>Renombrar</h2>
-    <form class="row" th:action="@{'/mvc/routines/' + ${routine.id} + '/rename'}" method="post">
-        <input th:if="${_csrf}" type="hidden"
-       th:name="${_csrf.parameterName}"
-       th:value="${_csrf.token}"/>        <input type="text" name="name" th:value="${routine.name}" placeholder="Nuevo nombre"/>
-        <button type="submit">Guardar</button>
-    </form>
-</section>
+<section th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
 
-<section class="card">
-    <h2>Ejercicios</h2>
-    <p class="muted">Puedes reordenar con ▲/▼ y luego guardar el orden.</p>
+    <header class="site-header">
+        <div class="container actions">
+            <h1 class="page-title">
+                <span th:text="${routine.name}">Rutina</span>
+            </h1>
+            <nav class="actions">
+                <a class="btn" th:href="@{/mvc/routines}">Volver</a>
+                <a class="btn btn-secondary" th:href="@{'/mvc/progress/' + ${routine.id}}">Registrar progreso</a>
+                <form th:action="@{'/mvc/routines/' + ${routine.id} + '/delete'}" method="post" style="display:inline"
+                      onsubmit="return confirm('¿Eliminar esta rutina?');">
+                    <button class="btn btn-danger" type="submit">Eliminar</button>
+                </form>
+            </nav>
+        </div>
+    </header>
 
-    <ol id="items">
-        <li th:each="it,iter : ${routine.exercises}" th:attr="data-id=${it.id}">
-            <div class="row" style="justify-content:space-between;align-items:flex-start;">
-                <div>
-                    <strong th:text="${it.name != null && !#strings.isEmpty(it.name) ? it.name : (#maps.get(exerciseMap, it.exerciseId) != null ? #maps.get(exerciseMap, it.exerciseId).name : 'Personalizado')}">Nombre</strong>
-                    <div class="muted">
-                        <span th:if="${it.exerciseId != null}">Catálogo: <span th:text="${it.exerciseId}">ex</span> · </span>
-                        <span th:text="'Series: ' + (${it.sets} != null ? ${it.sets} : 0)"></span>
-                        <span th:text="' · Reps: ' + (${it.reps} != null ? ${it.reps} : 0)"></span>
-                        <span th:if="${it.durationSeconds != null}" th:text="' · Duración: ' + ${it.durationSeconds} + 's'"></span>
-                        <span th:if="${it.restSeconds != null}" th:text="' · Descanso: ' + ${it.restSeconds} + 's'"></span>
-                    </div>
+    <main class="container space-y">
+        <!-- Renombrar rutina -->
+        <section class="card">
+            <form class="form row" th:action="@{'/mvc/routines/' + ${routine.id} + '/rename'}" method="post">
+                <label class="grow">Nombre de la rutina
+                    <input type="text" name="name" th:value="${routine.name}" required/>
+                </label>
+                <button class="btn" type="submit">Guardar nombre</button>
+            </form>
+        </section>
+
+        <section class="card">
+            <h2>Agregar ejercicio</h2>
+            <form class="form grid grid-2" th:action="@{'/mvc/routines/' + ${routine.id} + '/items/add'}" method="post">
+                <label>Del catálogo
+                    <select name="exerciseId">
+                        <option value="">— Selecciona un ejercicio —</option>
+                        <option th:each="ex : ${exerciseOptions}" th:value="${ex.id}" th:text="${ex.name}">Ejercicio</option>
+                    </select>
+                </label>
+
+                <div class="muted" style="align-self:end">o ingresa uno personalizado</div>
+
+                <label>Nombre personalizado
+                    <input type="text" name="name" placeholder="p. ej. Caminata ligera"/>
+                </label>
+
+                <label>Series
+                    <input type="number" name="sets" min="0" step="1" placeholder="p. ej. 3"/>
+                </label>
+
+                <label>Repeticiones
+                    <input type="number" name="reps" min="0" step="1" placeholder="p. ej. 12"/>
+                </label>
+
+                <label>Duración (seg)
+                    <!-- OJO: el controlador espera durationSec -->
+                    <input type="number" name="durationSec" min="0" step="1" placeholder="p. ej. 60"/>
+                </label>
+
+                <label>Descanso (seg)
+                    <input type="number" name="restSeconds" min="0" step="1" placeholder="p. ej. 60"/>
+                </label>
+
+                <div class="col-span-2">
+                    <button class="btn" type="submit">Agregar</button>
+                    <p class="muted" style="margin-top:.5rem">
+                        Si eliges un ejercicio del catálogo, el nombre personalizado se ignora. Si lo dejas en blanco, puedes crear
+                        un ejercicio personalizado con su nombre.
+                    </p>
                 </div>
-                <div class="actions">
-                    <button type="button" onclick="moveUp(this)">▲</button>
-                    <button type="button" onclick="moveDown(this)">▼</button>
-                    <form th:action="@{'/mvc/routines/' + ${routine.id} + '/items/' + ${it.id} + '/delete'}" method="post" onsubmit="return confirm('¿Quitar este ejercicio?');">
-                        <input th:if="${_csrf}" type="hidden"
-                               th:name="${_csrf.parameterName}"
-                               th:value="${_csrf.token}"/>
-                        <button type="submit" style="background:#b91c1c">Quitar</button>
-                    </form>
+            </form>
+        </section>
+
+        <!-- Lista + Reordenar ejercicios -->
+        <section class="card">
+            <div class="actions" style="display:flex;justify-content:space-between;align-items:center;">
+                <h2>Ejercicios de la rutina</h2>
+                <div>
+                    <button class="btn btn-small" type="button" onclick="moveSelected(-1)">Subir</button>
+                    <button class="btn btn-small" type="button" onclick="moveSelected(1)">Bajar</button>
+                    <button class="btn" type="button" onclick="submitOrder()">Guardar orden</button>
                 </div>
             </div>
-        </li>
-    </ol>
 
-    <form id="reorderForm" th:action="@{'/mvc/routines/' + ${routine.id} + '/reorder'}" method="post" style="margin-top:12px;">
-        <input th:if="${_csrf}" type="hidden"
-       th:name="${_csrf.parameterName}"
-       th:value="${_csrf.token}"/>        <!-- Aquí se insertarán múltiples inputs hidden name="order" por JS -->
-        <button type="button" onclick="submitOrder()">Guardar orden</button>
-    </form>
+            <!-- Form para enviar el orden al endpoint /reorder -->
+            <form id="reorderForm" th:action="@{'/mvc/routines/' + ${routine.id} + '/reorder'}" method="post"></form>
+
+            <table class="table" id="itemsTable">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Ejercicio</th>
+                    <th>Series</th>
+                    <th>Reps</th>
+                    <th>Duración (s)</th>
+                    <th>Descanso (s)</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(routine.exercises)}">
+                    <td class="muted" colspan="7">Aún no hay ejercicios. Agrega el primero arriba.</td>
+                </tr>
+
+                <tr th:each="it,idx : ${routine.exercises}"
+                    th:data-id="${it.id}"
+                    onclick="selectRow(this)"
+                    style="cursor:pointer;">
+                    <td th:text="${idx.index + 1}">1</td>
+
+                    <td>
+            <span th:if="${it.exerciseId != null}"
+                  th:text="${(exerciseMap[it.exerciseId] != null ? exerciseMap[it.exerciseId].name : it.exerciseId)}">Nombre</span>
+                        <span th:if="${it.exerciseId == null}"
+                              th:text="${it.name}">Personalizado</span>
+                    </td>
+
+                    <td th:text="${it.sets}">0</td>
+                    <td th:text="${it.reps}">0</td>
+                    <td th:text="${it.durationSeconds}">0</td>
+                    <td th:text="${it.restSeconds}">0</td>
+
+                    <td class="table-actions">
+                        <form th:action="@{'/mvc/routines/' + ${routine.id} + '/items/' + ${it.id} + '/delete'}"
+                              method="post" style="display:inline"
+                              onsubmit="return confirm('¿Quitar este ejercicio?');">
+                            <button class="btn btn-small btn-danger" type="submit">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <script>
+        let selectedRow = null;
+
+        function selectRow(tr) {
+            if (selectedRow) selectedRow.classList.remove('selected');
+            selectedRow = tr;
+            selectedRow.classList.add('selected');
+        }
+
+        function moveSelected(delta) {
+            if (!selectedRow) return;
+            const tbody = selectedRow.parentElement;
+            const rows = Array.from(tbody.children).filter(r => r.dataset.id); // ignora fila vacía
+            const idx = rows.indexOf(selectedRow);
+            const newIdx = idx + delta;
+            if (newIdx < 0 || newIdx >= rows.length) return;
+            if (delta < 0) {
+                tbody.insertBefore(selectedRow, rows[newIdx]);
+            } else {
+                tbody.insertBefore(selectedRow, rows[newIdx].nextSibling);
+            }
+            renumber(tbody);
+        }
+
+        function renumber(tbody) {
+            Array.from(tbody.children)
+                .filter(r => r.dataset.id)
+                .forEach((r, i) => r.children[0].innerText = i + 1);
+        }
+
+        // Envía el orden actual como múltiples parámetros "order"
+        function submitOrder() {
+            const tbody = document.getElementById('itemsTable').querySelector('tbody');
+            const ids = Array.from(tbody.children)
+                .filter(r => r.dataset.id)
+                .map(r => r.dataset.id);
+
+            const form = document.getElementById('reorderForm');
+            form.innerHTML = '';
+            ids.forEach(id => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'order';
+                input.value = id;
+                form.appendChild(input);
+            });
+            form.submit();
+        }
+    </script>
 </section>
-
-<section class="card">
-    <h2>Agregar ejercicio</h2>
-    <form th:action="@{'/mvc/routines/' + ${routine.id} + '/items/add'}" method="post" class="row">
-        <input th:if="${_csrf}" type="hidden"
-       th:name="${_csrf.parameterName}"
-       th:value="${_csrf.token}"/>
-        <label>
-            Catálogo:
-            <select name="exerciseId">
-                <option value="">— Selecciona del catálogo —</option>
-                <option th:each="ex : ${exerciseOptions}" th:value="${ex.id}" th:text="${ex.name}">Ejercicio</option>
-            </select>
-        </label>
-
-        <span class="muted">o</span>
-
-        <input type="text" name="name" placeholder="Nombre personalizado (opcional)"/>
-
-        <input type="number" name="sets" placeholder="Series" min="0"/>
-        <input type="number" name="reps" placeholder="Reps" min="0"/>
-        <input type="number" name="durationSec" placeholder="Duración (s)" min="0"/>
-        <input type="number" name="restSeconds" placeholder="Descanso (s)" min="0"/>
-        <button type="submit">Agregar</button>
-    </form>
-</section>
-
-<script>
-    function moveUp(btn){
-        const li = btn.closest('li');
-        const prev = li.previousElementSibling;
-        if(prev) li.parentNode.insertBefore(li, prev);
-    }
-    function moveDown(btn){
-        const li = btn.closest('li');
-        const next = li.nextElementSibling;
-        if(next) li.parentNode.insertBefore(next, li);
-    }
-    function submitOrder(){
-        const form = document.getElementById('reorderForm');
-        // Limpia inputs previos
-        [...form.querySelectorAll('input[name="order"]')].forEach(i => i.remove());
-        // Crea un input hidden name=order por cada item en orden
-        document.querySelectorAll('#items > li[data-id]').forEach(li=>{
-            const hidden = document.createElement('input');
-            hidden.type = 'hidden';
-            hidden.name = 'order';
-            hidden.value = li.getAttribute('data-id');
-            form.appendChild(hidden);
-        });
-        form.submit();
-    }
-</script>
-</body>
 </html>

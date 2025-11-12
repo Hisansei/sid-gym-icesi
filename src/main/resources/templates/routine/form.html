@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{components/base :: page(
+          title='Nueva rutina',
+          content=~{::content}
+      )}">
+<section th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <header class="site-header">
+        <div class="container actions">
+            <h1 class="page-title">Crear rutina</h1>
+            <nav class="actions">
+                <a class="btn" th:href="@{/mvc/routines}">Volver</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container space-y card">
+        <form class="form" th:action="@{/mvc/routines/create}" method="post">
+            <div class="grid grid-2">
+                <label>Nombre de la rutina
+                    <input type="text" name="name" placeholder="Mi rutina personalizada" required>
+                </label>
+                <div></div>
+            </div>
+
+            <section class="space-y">
+                <div class="grid grid-2">
+                    <label>Buscar ejercicio
+                        <input id="search" type="text" placeholder="Filtra por nombre o tipo...">
+                    </label>
+                    <div class="form-actions" style="justify-content:flex-end;align-items:end">
+                        <label style="display:flex;gap:.5rem;align-items:center">
+                            <input id="checkAll" type="checkbox"> Seleccionar todos
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <table class="table" id="exerciseTable">
+                        <thead>
+                        <tr>
+                            <th></th>
+                            <th>Nombre</th>
+                            <th>Tipo</th>
+                            <th>Duración</th>
+                            <th>Dificultad</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${#lists.isEmpty(exercises)}">
+                            <td class="muted" colspan="5">No hay ejercicios en el catálogo.</td>
+                        </tr>
+                        <tr th:each="e : ${exercises}" data-row
+                            th:attr="data-name=${e.name}, data-type=${e.type}">
+                            <td>
+                                <input type="checkbox" name="exerciseIds" th:value="${e.id}">
+                            </td>
+                            <td th:text="${e.name}">Nombre</td>
+                            <td th:text="${e.type}">Tipo</td>
+                            <td th:text="${e.durationSeconds != null ? e.durationSeconds + ' s' : '—'}">—</td>
+                            <td th:text="${e.difficulty}">—</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <div class="form-actions">
+                <button class="btn" type="submit">Crear rutina</button>
+                <a class="btn btn-secondary" th:href="@{/mvc/routines}">Cancelar</a>
+            </div>
+        </form>
+    </main>
+
+    <script>
+        // Búsqueda
+        const q = document.getElementById('search');
+        const rows = Array.from(document.querySelectorAll('tr[data-row]'));
+        q?.addEventListener('input', () => {
+            const term = q.value.trim().toLowerCase();
+            rows.forEach(tr => {
+                const name = (tr.dataset.name||'').toLowerCase();
+                const type = (tr.dataset.type||'').toLowerCase();
+                tr.style.display = (name.includes(term) || type.includes(term)) ? '' : 'none';
+            });
+        });
+
+        // Seleccionar todos
+        const checkAll = document.getElementById('checkAll');
+        checkAll?.addEventListener('change', (ev) => {
+            const checked = ev.target.checked;
+            rows.forEach(tr => {
+                if (tr.style.display === 'none') return; // respeta filtro
+                const cb = tr.querySelector('input[type="checkbox"]');
+                if (cb) cb.checked = checked;
+            });
+        });
+    </script>
+</section>
+</html>
