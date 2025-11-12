@@ -27,6 +27,14 @@
         </tr>
       </table>
 
+      <!-- <div th:if="${actualUser.role == 'EMPLOYEE' and actualUser.employeeType == 'Instructor'}">
+          <p>
+              <a th:href="@{/mvc/admin/trainers/stats/detail(trainerUsername=${actualUser.username}, period=${#temporals.format(#dates.format('yyyy-MM'))})}">
+                  Ver Estadísticas Mensuales
+              </a>
+          </p>
+      </div> -->
+
       <div th:if="${actualUser.passwordHash}" style="display:none"></div>
 
       <p>

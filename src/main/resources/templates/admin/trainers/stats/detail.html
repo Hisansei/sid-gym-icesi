@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{components/base :: page(
+          title='Detalles de Estadísticas',
+          content=~{::content}
+      )}">
+<section th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <div class="container">
+        <h2>Detalles de las Estadísticas de Entrenador</h2>
+
+        <div th:if="${error}" class="alert-error">
+            <span th:text="${error}">Ha ocurrido un error</span>
+        </div>
+
+        <div th:if="${trainerStat != null}">
+            <h3 th:text="'Entrenador: ' + ${trainerStat.id.trainerUsername}">Entrenador</h3>
+            <p><strong>Periodo:</strong> <span th:text="${trainerStat.id.period}">YYYY-MM</span></p>
+            <p><strong>Asignaciones Nuevas:</strong> <span th:text="${trainerStat.newAssignments}">0</span></p>
+            <p><strong>Seguimientos Realizados:</strong> <span th:text="${trainerStat.followupsMade}">0</span></p>
+        </div>
+
+        <div th:if="${trainerStat == null}">
+            <p>No se encontraron estadísticas para este entrenador en el periodo seleccionado.</p>
+        </div>
+
+        <div>
+            <a th:href="@{/mvc/admin/trainers/stats}">Volver al listado</a>
+        </div>
+    </div>
+</section>
+
+</html>

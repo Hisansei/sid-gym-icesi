@@ -16,4 +16,5 @@ public class UserMonthlyStat {
 
     @Column(name = "followups_made", nullable = false)
     private int followupsMade;
+    
 }
