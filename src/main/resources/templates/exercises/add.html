@@ -1,9 +1,13 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{components/base :: page(
+          title='Agregar ejercicio',
+          content=~{::content}
+      )}">
 <section th:fragment="content">
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <div class="container">
-        <h2>Agregar ejercicio</h2>
+        <h2>Agregar nuevo ejercicio</h2>
 
         <div th:if="${error}" class="alert-error">
             <span th:text="${error}">Error message</span>
@@ -29,9 +33,9 @@
                 <label>Dificultad</label>
                 <select th:field="*{difficulty}" required>
                     <option value="">-- Seleccione --</option>
-                    <option value="fácil">Fácil</option>
-                    <option value="intermedio">Intermedio</option>
-                    <option value="avanzado">Avanzado</option>
+                    <option value="baja">Baja</option>
+                    <option value="media">Media</option>
+                    <option value="alta">Alta</option>
                 </select>
             </div>
 

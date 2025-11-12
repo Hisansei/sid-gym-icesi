@@ -6,6 +6,7 @@
     "description": "Flexiones básicas de pecho",
     "duration_seconds": 60,
     "difficulty": "MEDIA",
+    "status": true,
     "demo_videos": ["https://youtu.be/demo1"]
   },
   {
@@ -15,6 +16,7 @@
     "description": "Plancha isométrica (core)",
     "duration_seconds": 45,
     "difficulty": "MEDIA",
+    "status": true,
     "demo_videos": ["https://youtu.be/demo2"]
   },
   {
@@ -24,6 +26,7 @@
     "description": "Caminata suave en caminadora",
     "duration_seconds": 900,
     "difficulty": "BAJA",
+    "status": true,
     "demo_videos": []
   },
   {
@@ -33,6 +36,7 @@
     "description": "Remo continuo a ritmo moderado",
     "duration_seconds": 600,
     "difficulty": "MEDIA",
+    "status": true,
     "demo_videos": []
   },
   {
@@ -42,6 +46,7 @@
     "description": "Secuencia corta de movilidad de cadera",
     "duration_seconds": 300,
     "difficulty": "BAJA",
+    "status": true,
     "demo_videos": []
   }
 ]

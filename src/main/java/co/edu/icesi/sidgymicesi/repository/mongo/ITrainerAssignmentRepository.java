@@ -15,4 +15,7 @@ public interface ITrainerAssignmentRepository extends MongoRepository<TrainerAss
     List<TrainerAssignment> findByTrainerIdOrderByAssignedAtDesc(String trainerId);
 
     List<TrainerAssignment> findByTrainerIdAndActiveTrue(String trainerId);
+
+    List<TrainerAssignment> findByUserUsernameOrderByAssignedAtDesc(String userUsername);
+
 }

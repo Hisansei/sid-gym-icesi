@@ -24,7 +24,23 @@ public class TrainerAssignmentServiceImpl implements ITrainerAssignmentService {
     // ===================== NEGOCIO =====================
 
     @Override
-    public TrainerAssignment assign(String userUsername, String trainerUsername) {
+    public TrainerAssignment assign(String userUsername, String trainerId) {
+        // Validaciones
+        if (userUsername == null || userUsername.isBlank()) {
+            throw new IllegalArgumentException("userUsername es obligatorio");
+        }
+        if (trainerId == null || trainerId.isBlank()) {
+            throw new IllegalArgumentException("trainerId es obligatorio");
+        }
+
+        // Evitar reasignar al mismo entrenador si ya está activo
+        trainerAssignmentRepository.findByUserUsernameAndActiveTrue(userUsername)
+                .ifPresent(current -> {
+                    if (trainerId.equals(current.getTrainerId())) {
+                        throw new IllegalStateException("El usuario ya tiene asignado ese mismo entrenador");
+                    }
+                });
+
         trainerAssignmentRepository.findByUserUsernameAndActiveTrue(userUsername)
                 .ifPresent(a -> {
                     a.setActive(false);
@@ -34,25 +50,28 @@ public class TrainerAssignmentServiceImpl implements ITrainerAssignmentService {
 
         TrainerAssignment newA = TrainerAssignment.builder()
                 .userUsername(userUsername)
-                .trainerId(trainerUsername)
+                .trainerId(trainerId)
                 .assignedAt(LocalDateTime.now())
                 .active(true)
                 .build();
 
         newA = trainerAssignmentRepository.save(newA);
 
-        statsService.registerNewAssignment(trainerUsername, YearMonth.now());
+        statsService.registerNewAssignment(trainerId, YearMonth.now());
 
         return newA;
     }
 
     @Override
-    public TrainerAssignment reassign(String userUsername, String newTrainerUsername) {
-        return assign(userUsername, newTrainerUsername);
+    public TrainerAssignment reassign(String userUsername, String newTrainerId) {
+        return assign(userUsername, newTrainerId);
     }
 
     @Override
     public void closeAssignment(String assignmentId) {
+        if (assignmentId == null || assignmentId.isBlank()) {
+            throw new IllegalArgumentException("assignmentId es obligatorio");
+        }
         trainerAssignmentRepository.findById(assignmentId).ifPresent(a -> {
             if (a.isActive()) {
                 a.setActive(false);
@@ -73,8 +92,8 @@ public class TrainerAssignmentServiceImpl implements ITrainerAssignmentService {
     }
 
     @Override
-    public List<TrainerAssignment> listByTrainer(String trainerUsername) {
-        return trainerAssignmentRepository.findByTrainerIdOrderByAssignedAtDesc(trainerUsername);
+    public List<TrainerAssignment> listByTrainer(String trainerId) {
+        return trainerAssignmentRepository.findByTrainerIdOrderByAssignedAtDesc(trainerId);
     }
 
     @Override
@@ -82,10 +101,11 @@ public class TrainerAssignmentServiceImpl implements ITrainerAssignmentService {
         return trainerAssignmentRepository.findByUserUsernameAndActiveTrue(userUsername);
     }
 
-    // ===================== REPO-LIKE (si los usas) =====================
+    // ===================== REPO-LIKE =====================
 
     @Override
     public TrainerAssignment save(TrainerAssignment assignment) {
+        if (assignment == null) throw new IllegalArgumentException("assignment no puede ser null");
         return trainerAssignmentRepository.save(assignment);
     }
 
@@ -106,6 +126,13 @@ public class TrainerAssignmentServiceImpl implements ITrainerAssignmentService {
 
     @Override
     public void deleteById(String id) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("id es obligatorio");
+        }
         trainerAssignmentRepository.deleteById(id);
+    }
+
+    public List<TrainerAssignment> listHistoryByUser(String userUsername) {
+        return trainerAssignmentRepository.findByUserUsernameOrderByAssignedAtDesc(userUsername);
     }
 }

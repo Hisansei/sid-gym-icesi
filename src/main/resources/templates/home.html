@@ -1,11 +1,53 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{components/base :: page(
-          title='Home',
-          content=~{::content}
-      )}">
-<section th:fragment="content">
-    <h1>Bienvenido</h1>
-    <p>Contenido de inicio.</p>
-</section>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Inicio</title>
+</head>
+<body>
+<div th:replace="components/base :: page(~{::title}, ~{::section})">
+    <title>Inicio</title>
+
+    <section>
+        <div class="page-header">
+            <h1>Bienvenido a SID Gym ICESI</h1>
+            <p class="muted">Accesos rápidos a tus rutinas, plantillas y progreso.</p>
+        </div>
+
+        <div class="grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
+
+            <!-- Mis rutinas (alumnos/colaboradores/admin) -->
+            <article class="card" sec:authorize="hasAnyRole('STUDENT','EMPLOYEE','ADMIN')" style="border:1px solid #e5e7eb;border-radius:8px;padding:16px">
+                <h2 style="margin:0 0 8px 0">Mis rutinas</h2>
+                <p class="muted" style="margin:0 0 12px 0">Consulta, edita o crea tus rutinas personales.</p>
+                <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap">
+                    <a class="btn" th:href="@{/mvc/routines}" style="display:inline-block;padding:8px 12px;border-radius:6px;background:#111827;color:#fff;text-decoration:none">Ver mis rutinas</a>
+                    <a class="btn" th:href="@{/mvc/routines/create}" style="display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none">Crear rutina</a>
+                </div>
+            </article>
+
+            <!-- Plantillas de entrenadores (cualquier autenticado las puede ver; CRUD lo controla el controlador) -->
+            <article class="card" sec:authorize="isAuthenticated()" style="border:1px solid #e5e7eb;border-radius:8px;padding:16px">
+                <h2 style="margin:0 0 8px 0">Plantillas de rutinas</h2>
+                <p class="muted" style="margin:0 0 12px 0">Explora plantillas publicadas por entrenadores y adóptalas.</p>
+                <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap">
+                    <a class="btn" th:href="@{/mvc/routine-templates}" style="display:inline-block;padding:8px 12px;border-radius:6px;background:#111827;color:#fff;text-decoration:none">Ver plantillas</a>
+                    <a class="btn" sec:authorize="hasAnyRole('TRAINER','ADMIN')" th:href="@{/mvc/routine-templates/create}" style="display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none">Nueva plantilla</a>
+                </div>
+            </article>
+
+            <!-- Progreso (alumnos/colaboradores/admin)  → el controlador maneja selector si falta routineId -->
+            <article class="card" sec:authorize="hasAnyRole('STUDENT','EMPLOYEE','ADMIN')" style="border:1px solid #e5e7eb;border-radius:8px;padding:16px">
+                <h2 style="margin:0 0 8px 0">Mi progreso</h2>
+                <p class="muted" style="margin:0 0 12px 0">Registra tus avances (reps/tiempo/esfuerzo) y revisa tu historial.</p>
+                <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap">
+                    <a class="btn" th:href="@{/mvc/progress/history}" style="display:inline-block;padding:8px 12px;border-radius:6px;background:#111827;color:#fff;text-decoration:none">Ver historial</a>
+                    <a class="btn" th:href="@{/mvc/progress/history}" style="display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none">Registrar progreso</a>
+                </div>
+            </article>
+
+        </div>
+    </section>
+</div>
+</body>
 </html>
