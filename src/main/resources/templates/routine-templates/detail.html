@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title th:text="${template.name}">Plantilla</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <style>
+    body{font-family:system-ui,Arial,sans-serif;max-width:980px;margin:24px auto;padding:0 16px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .btn{display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none}
+    button{padding:8px 12px;border:0;border-radius:6px;background:#111827;color:white;cursor:pointer}
+    .card{border:1px solid #e5e7eb;border-radius:10px;padding:14px;margin:12px 0}
+    ol{padding-left:20px}
+    li{border:1px solid #e5e7eb;border-radius:8px;margin:8px 0;padding:10px;background:#fafafa}
+    .muted{color:#6b7280}
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <h1 th:text="${template.name}">Plantilla</h1>
+    <div class="muted" th:text="'ID: ' + ${template.id}">ID</div>
+  </div>
+  <div>
+    <a class="btn" href="/mvc/routine-templates">Volver</a>
+    <a class="btn" th:href="@{'/mvc/routine-templates/' + ${template.id} + '/edit'}">Editar</a>
+    <form style="display:inline" th:action="@{'/mvc/routine-templates/' + ${template.id} + '/delete'}" method="post" onsubmit="return confirm('¿Eliminar plantilla?');">
+      <button type="submit" style="background:#b91c1c">Eliminar</button>
+    </form>
+  </div>
+</header>
+
+<section class="card">
+  <h2>Contenido</h2>
+  <ol>
+    <li th:if="${#lists.isEmpty(items)}" class="muted">Esta plantilla no tiene ejercicios.</li>
+    <li th:each="it : ${items}">
+      <strong th:text="${#maps.get(exerciseMap, it.exerciseId) != null ? #maps.get(exerciseMap, it.exerciseId).name : it.exerciseId}">Ejercicio</strong>
+      <div class="muted">
+        <span th:if="${it.order != null}" th:text="'#' + ${it.order} + ' · '"></span>
+        <span th:text="'Series: ' + (${it.sets} != null ? ${it.sets} : 0)"></span>
+        <span th:text="' · Reps: ' + (${it.reps} != null ? ${it.reps} : 0)"></span>
+        <span th:if="${it.restSeconds != null}" th:text="' · Descanso: ' + ${it.restSeconds} + 's'"></span>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section class="card">
+  <h2>Adoptar esta plantilla</h2>
+  <form th:action="@{'/mvc/routine-templates/' + ${template.id} + '/adopt'}" method="post">
+    <button type="submit">Crear mi rutina basada en esta plantilla</button>
+  </form>
+</section>
+
+</body>
+</html>

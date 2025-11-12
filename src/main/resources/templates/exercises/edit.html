@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{components/base :: page(
+          title='Editar ejercicio',
+          content=~{::content}
+      )}">
 <section th:fragment="content">
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <div class="container">

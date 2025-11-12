@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{components/base :: page(
+          title='Catálogo de ejercicios',
+          content=~{::content}
+      )}">
 <section th:fragment="content">
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <div class="container">
@@ -47,9 +51,14 @@
                     <td th:text="${e.difficulty}">dif</td>
                     <td th:text="${e.durationSeconds}">0</td>
                     <td>
-                        <a th:href="@{/mvc/exercises/detail(id=${e.id})}">Detalle</a>
-                        <a th:href="@{/mvc/exercises/edit(id=${e.id})}">Editar</a>
-                        <a th:href="@{/mvc/exercises/delete(id=${e.id})}">Eliminar</a>
+                        <a th:href="@{/mvc/exercises/detail(id=${e.id})}">
+                            Detalle</a>
+                        <a th:href="@{/mvc/exercises/edit(id=${e.id})}"
+                            sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
+                            Editar</a>
+                        <a th:href="@{/mvc/exercises/delete(id=${e.id})}"
+                            sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
+                            Eliminar</a>
                     </td>
                 </tr>
                 <tr th:if="${exercises == null or exercises.isEmpty()}">
@@ -58,7 +67,9 @@
             </tbody>
         </table>
 
-        <p><a th:href="@{/mvc/exercises/add}">Agregar ejercicio</a></p>
+        <p><a th:href="@{/mvc/exercises/add}"
+            sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
+            Agregar ejercicio</a></p>
     </div>
 </section>
 </html>

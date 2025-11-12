@@ -1,6 +1,8 @@
 package co.edu.icesi.sidgymicesi.model;
 
 import java.time.LocalDateTime;
+
+import co.edu.icesi.sidgymicesi.model.postgres.Employee;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,10 +38,21 @@ public class User {
     @Column(name = "created_at", nullable = false, insertable = true, updatable = false)
     private LocalDateTime createdAt;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "employee_id", referencedColumnName = "id", insertable = false, updatable = false)
+    private Employee employee;
+
     @PrePersist
     void prePersist() {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
         }
+    }
+
+    public String getEmployeeType() {
+        if (employee != null) {
+            return employee.getEmployeeType().getName();
+        }
+        return null;
     }
 }
