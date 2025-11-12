@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{components/base :: page(
+          title='Reporte Semanal',
+          content=~{::content}
+      )}">
+<section th:fragment="content">
+
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+
+    <div class="container">
+        <h1>Reporte de Consistencia Semanal para el Usuario: <span th:text="${username}"></span></h1>
+
+        <div th:if="${#lists.isEmpty(report)}">
+            <p>No se encontraron logs de progreso o rutinas para este usuario.</p>
+        </div>
+
+        <table th:if="${not #lists.isEmpty(report)}">
+            <thead>
+                <tr>
+                    <th>Semana</th>
+                    <th>Sesiones Completadas</th>
+                    <th>Consistencia (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="entry : ${report}">
+                    <td th:text="${entry.weekStartDate}">Semana</td>
+                    <td th:text="${entry.sessionsCompleted}">Sesiones</td>
+                    <td th:text="${entry.consistencyRate}">Consistencia</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><a th:href="@{/mvc/admin/users/detail?username=${username}}">Volver al detalle del usuario</a></p>
+    </div>
+</section>
+</html>

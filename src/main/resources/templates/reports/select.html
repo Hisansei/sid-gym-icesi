@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{components/base :: page(
+          title='Seleccionar Reporte',
+          content=~{::content}
+      )}">
+<section th:fragment="content">
+
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+
+    <div class="container">
+        <h1>Selecciona el tipo de reporte para el usuario: <span th:text="${username}"></span></h1>
+
+        <form action="#" th:action="@{/mvc/reports/generateConsistencyReport}" method="post">
+            <input type="hidden" name="username" th:value="${username}">
+            <label for="numberOfWeeks">Número de semanas a mostrar:</label>
+            <input type="number" id="numberOfWeeks" name="numberOfWeeks" min="1" value="4" required>
+            <button type="submit">Generar Reporte de Consistencia Semanal</button>
+        </form>
+
+        <form action="#" th:action="@{/mvc/reports/generateExerciseTypeReport}" method="post">
+            <input type="hidden" name="username" th:value="${username}">
+            <button type="submit">Generar Reporte de Progreso de Ejercicios</button>
+        </form>
+    </div>
+</section>
+</html>
