@@ -25,7 +25,6 @@
     <a class="btn" href="/mvc/routine-templates">Volver</a>
     <a class="btn" th:href="@{'/mvc/routine-templates/' + ${template.id} + '/edit'}">Editar</a>
     <form style="display:inline" th:action="@{'/mvc/routine-templates/' + ${template.id} + '/delete'}" method="post" onsubmit="return confirm('¿Eliminar plantilla?');">
-      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
       <button type="submit" style="background:#b91c1c">Eliminar</button>
     </form>
   </div>
@@ -50,7 +49,6 @@
 <section class="card">
   <h2>Adoptar esta plantilla</h2>
   <form th:action="@{'/mvc/routine-templates/' + ${template.id} + '/adopt'}" method="post">
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
     <button type="submit">Crear mi rutina basada en esta plantilla</button>
   </form>
 </section>

@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{components/base :: page(
+          title='Historial',
+          content=~{::content}
+      )}">
 <head>
     <meta charset="UTF-8"/>
     <title th:text="'Historial • ' + ${routine.name}">Historial</title>

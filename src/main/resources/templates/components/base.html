@@ -31,7 +31,7 @@
                 <li class="nav-item">
                     <a th:href="@{/mvc/home}" class="nav-link" data-page="home">
                         <span class="material-symbols-rounded nav-icon">home</span>
-                        <span class="nav-label">Home</span>
+                        <span class="nav-label">Inicio</span>
                     </a>
                 </li>
                 <li class="nav-item" sec:authorize="hasRole('ADMIN')">
@@ -41,8 +41,7 @@
                     </a>
                 </li>
                 <li class="nav-item"
-                    sec:authorize="hasRole('EMPLOYEE')"
-                    th:if="${session.user != null and session.user.employeeType == 'Instructor'}">
+                    sec:authorize="hasAnyRole('STUDENT','EMPLOYEE','ADMIN')">
                     <a th:href="@{/mvc/exercises}" class="nav-link" data-page="exercises">
                         <span class="material-symbols-rounded nav-icon">fitness_center</span>
                         <span class="nav-label">Catálogo de ejercicios</span>
@@ -50,7 +49,7 @@
                 </li>
                 <li class="nav-item"
                     sec:authorize="hasRole('EMPLOYEE')"
-                    th:if="${session.user != null and session.user.employeeType == 'Instructor'}">
+                    th:if="${#authentication.principal != null and #authentication.principal.employeeType == 'Instructor'}">
                     <a th:href="@{/mvc/trainer/assignments}" class="nav-link" data-page="trainer-assignments">
                         <span class="material-symbols-rounded nav-icon">supervisor_account</span>
                         <span class="nav-label">Mis asignaciones</span>
@@ -58,7 +57,7 @@
                 </li>
                 <li class="nav-item"
                     sec:authorize="hasRole('EMPLOYEE')"
-                    th:if="${session.user != null and session.user.employeeType == 'Instructor'}">
+                    th:if="${#authentication.principal != null and #authentication.principal.employeeType == 'Instructor'}">
                     <a th:href="@{/mvc/routine-templates}" class="nav-link" data-page="routine-templates">
                         <span class="material-symbols-rounded nav-icon">library_books</span>
                         <span class="nav-label">Plantillas de rutinas</span>
@@ -66,7 +65,7 @@
                 </li>
                 <li class="nav-item"
                     sec:authorize="hasAnyRole('STUDENT','EMPLOYEE')"
-                    th:if="${session.user == null or session.user.employeeType == null or session.user.employeeType != 'Instructor'}">
+                    th:if="${#authentication.principal == null or #authentication.principal.employeeType == null or #authentication.principal.employeeType != 'Instructor'}">
                     <a th:href="@{/mvc/routines}" class="nav-link" data-page="routines">
                         <span class="material-symbols-rounded nav-icon">task_alt</span>
                         <span class="nav-label">Mis rutinas</span>

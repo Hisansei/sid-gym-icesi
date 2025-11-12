@@ -4,6 +4,8 @@ import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
 import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 import co.edu.icesi.sidgymicesi.services.mongo.IRoutineService;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -15,15 +17,11 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/mvc/routines")
+@RequiredArgsConstructor
 public class RoutineMVCController {
 
     private final IRoutineService routineService;
     private final IExerciseService exerciseService;
-
-    public RoutineMVCController(IRoutineService routineService, IExerciseService exerciseService) {
-        this.routineService = routineService;
-        this.exerciseService = exerciseService;
-    }
 
     @GetMapping({"", "/list"})
     @PreAuthorize("isAuthenticated()")

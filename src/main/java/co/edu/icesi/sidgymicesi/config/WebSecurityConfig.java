@@ -76,29 +76,29 @@ public class WebSecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         // Público y archivos estáticos
-                        .requestMatchers("/", "/public/**", "/mvc/public/auth/login", "/error").permitAll()
+                        .requestMatchers("/public/**", "/mvc/public/auth/login", "/error").permitAll()
                         .requestMatchers("/css/**", "/js/**", "/img/**", "/images/**", "/webjars/**").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
 
-                        // Áreas por rol (MVC y API)
-                        .requestMatchers("/mvc/admin/**", "/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/mvc/trainer/**", "/api/trainer/**").hasAnyRole("EMPLOYEE","ADMIN")
-                        .requestMatchers("/mvc/student/**", "/api/student/**").hasAnyRole("STUDENT","ADMIN")
+                        // // Áreas por rol (MVC y API)
+                        // .requestMatchers("/mvc/admin/**", "/api/admin/**").hasRole("ADMIN")
+                        // .requestMatchers("/mvc/trainer/**", "/api/trainer/**").hasAnyRole("EMPLOYEE","ADMIN")
+                        // .requestMatchers("/mvc/student/**", "/api/student/**").hasAnyRole("STUDENT","ADMIN")
 
-                        // *** Fase 3: RUTINAS + PROGRESO ***
-                        // Cualquier usuario autenticado del sistema (STUDENT/EMPLOYEE/ADMIN) puede entrar:
-                        .requestMatchers("/mvc/routines/**").hasAnyRole("STUDENT","EMPLOYEE","ADMIN")
-                        .requestMatchers("/mvc/progress/**").hasAnyRole("STUDENT","EMPLOYEE","ADMIN")
+                        // // *** Fase 3: RUTINAS + PROGRESO ***
+                        // // Cualquier usuario autenticado del sistema (STUDENT/EMPLOYEE/ADMIN) puede entrar:
+                        // .requestMatchers("/mvc/routines/**").hasAnyRole("STUDENT","EMPLOYEE","ADMIN")
+                        // .requestMatchers("/mvc/progress/**").hasAnyRole("STUDENT","EMPLOYEE","ADMIN")
 
-                        // Catálogo de ejercicios: lectura autenticada; altas/edición solo entrenador o admin
-                        .requestMatchers(HttpMethod.GET, "/mvc/exercises/**").authenticated()
-                        .requestMatchers("/mvc/exercises/add/**", "/mvc/exercises/edit/**").hasAnyRole("EMPLOYEE","ADMIN")
+                        // // Catálogo de ejercicios: lectura autenticada; altas/edición solo entrenador o admin
+                        // .requestMatchers(HttpMethod.GET, "/mvc/exercises/**").authenticated()
+                        // .requestMatchers("/mvc/exercises/add/**", "/mvc/exercises/edit/**").hasAnyRole("EMPLOYEE","ADMIN")
 
-                        // Plantillas de rutina: lectura autenticada; CRUD solo entrenador/admin
-                        .requestMatchers(HttpMethod.GET, "/mvc/routine-templates/**").authenticated()
-                        .requestMatchers("/mvc/routine-templates/create/**",
-                                "/mvc/routine-templates/edit/**",
-                                "/mvc/routine-templates/*/delete").hasAnyRole("EMPLOYEE","ADMIN")
+                        // // Plantillas de rutina: lectura autenticada; CRUD solo entrenador/admin
+                        // .requestMatchers(HttpMethod.GET, "/mvc/routine-templates/**").authenticated()
+                        // .requestMatchers("/mvc/routine-templates/create/**",
+                        //         "/mvc/routine-templates/edit/**",
+                        //         "/mvc/routine-templates/*/delete").hasAnyRole("EMPLOYEE","ADMIN")
 
                         // Home y resto autenticado
                         .requestMatchers("/mvc/home").authenticated()

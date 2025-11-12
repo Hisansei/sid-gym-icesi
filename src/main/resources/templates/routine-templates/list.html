@@ -33,9 +33,6 @@
     <div class="row">
       <a class="btn" th:href="@{'/mvc/routine-templates/' + ${t.id}}">Ver</a>
       <form th:action="@{'/mvc/routine-templates/' + ${t.id} + '/adopt'}" method="post">
-        <input th:if="${_csrf}" type="hidden"
-                 th:name="${_csrf.parameterName}"
-                 th:value="${_csrf.token}"/>
         <button type="submit">Adoptar</button>
       </form>
     </div>
