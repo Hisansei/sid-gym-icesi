@@ -1,32 +1,62 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Reasignar entrenador</title>
-    <link rel="stylesheet" th:href="@{/css/app.css}">
-</head>
-<body>
-<main class="container narrow card space-y">
-    <h1>Reasignar entrenador</h1>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="components/base :: page('Reasignar entrenador', ~{::content})">
 
-    <div class="muted">
-        <div>Usuario: <strong th:text="${userUsername}"></strong></div>
-        <div th:if="${current != null}">
-            Actual: <strong th:text="${current.trainerUsername}"></strong>
-            (desde <span th:text="${#temporals.format(current.assignedAt, 'yyyy-MM-dd HH:mm')}"></span>)
-        </div>
-    </div>
+<section th:fragment="content" class="assignments-page">
+    <link rel="stylesheet" th:href="@{/css/admin-assignments.css}" />
 
-    <form th:action="@{/mvc/admin/assignments/reassign}" method="post" class="form">
-        <input type="hidden" name="userUsername" th:value="${userUsername}">
-        <label>Nuevo entrenador (username)
-            <input name="newTrainerUsername" type="text" required placeholder="p.ej. coach2"/>
-        </label>
-        <div class="form-actions">
-            <button class="btn" type="submit">Reasignar</button>
-            <a class="btn btn-secondary" th:href="@{/mvc/admin/assignments}">Cancelar</a>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="page-title">Reasignar entrenador</h1>
+            <nav class="actions">
+                <a class="btn btn-secondary" th:href="@{/mvc/admin/assignments}">
+                    <span class="material-symbols-rounded" style="vertical-align:-6px">arrow_back</span>
+                    Volver
+                </a>
+            </nav>
         </div>
-    </form>
-</main>
-</body>
+    </header>
+
+    <main class="container narrow card space-y">
+
+        <!-- Mensajes flash -->
+        <div th:if="${msg_success}" class="alert success" th:text="${msg_success}"></div>
+        <div th:if="${msg_warn}" class="alert warning" th:text="${msg_warn}"></div>
+        <div th:if="${msg_error}" class="alert danger" th:text="${msg_error}"></div>
+
+        <div class="muted">
+            <div>Usuario: <strong th:text="${userUsername}"></strong></div>
+            <div th:if="${current != null}">
+                Actual:
+                <strong th:text="${trainerNames[current.trainerId] != null ? trainerNames[current.trainerId] : current.trainerId}"></strong>
+                <small class="muted">(<span th:text="${current.trainerId}">ID</span>)</small>
+                (desde <span th:text="${#temporals.format(current.assignedAt, 'yyyy-MM-dd HH:mm')}"></span>)
+            </div>
+            <div th:if="${current == null}">
+                No tiene asignación vigente.
+            </div>
+        </div>
+
+        <form th:action="@{/mvc/admin/assignments/reassign}" method="post" class="form">
+            <input type="hidden" name="userUsername" th:value="${userUsername}">
+            <label>Nuevo entrenador (ID)
+                <input name="newTrainerId" list="trainersList" required placeholder="p.ej. E002"/>
+                <datalist id="trainersList">
+                    <option th:each="t : ${trainers}"
+                            th:value="${t.id}"
+                            th:text="${t.firstName + ' ' + t.lastName + ' (' + t.id + ')'}">
+                    </option>
+                </datalist>
+            </label>
+            <div class="form-actions">
+                <button class="btn" type="submit">
+                    <span class="material-symbols-rounded" style="vertical-align:-6px">swap_horiz</span>
+                    Reasignar
+                </button>
+                <a class="btn btn-secondary" th:href="@{/mvc/admin/assignments}">Cancelar</a>
+            </div>
+        </form>
+    </main>
+</section>
+
 </html>
