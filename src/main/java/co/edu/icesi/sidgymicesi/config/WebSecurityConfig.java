@@ -6,7 +6,6 @@ import co.edu.icesi.sidgymicesi.security.filters.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -28,19 +27,16 @@ public class WebSecurityConfig {
         this.customUserDetailsService = customUserDetailsService;
     }
 
-    // Encoder para contraseñas de USERS (PostgreSQL)
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Declarado pero NO agregado a la cadena (seguimos con sesión/form-login)
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
     }
 
-    // Autenticación con nuestro UserDetailsService (DaoAuthenticationProvider)
     @Bean
     @SuppressWarnings("deprecation")
     public AuthenticationProvider authenticationProvider() {
@@ -50,13 +46,11 @@ public class WebSecurityConfig {
         return provider;
     }
 
-    // SecurityContext en sesión (form-login)
     @Bean
     public SecurityContextRepository securityContextRepository() {
         return new HttpSessionSecurityContextRepository();
     }
 
-    // Filtro de logging que ya tienes en el proyecto
     @Bean
     public CustomAuthenticationFilter customAuthenticationFilter() {
         return new CustomAuthenticationFilter();
@@ -67,6 +61,7 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+
                 .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()))
 
                 .authenticationProvider(authenticationProvider())
@@ -75,33 +70,14 @@ public class WebSecurityConfig {
                 .addFilterAfter(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
 
                 .authorizeHttpRequests(auth -> auth
-                        // Público y archivos estáticos
-                        .requestMatchers("/public/**", "/mvc/public/auth/login", "/error").permitAll()
-                        .requestMatchers("/css/**", "/js/**", "/img/**", "/images/**", "/webjars/**").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers(
+                                "/public/**",
+                                "/mvc/public/**",
+                                "/error",
+                                "/css/**", "/js/**", "/img/**", "/images/**", "/webjars/**",
+                                "/h2-console/**"
+                        ).permitAll()
 
-                        // // Áreas por rol (MVC y API)
-                        // .requestMatchers("/mvc/admin/**", "/api/admin/**").hasRole("ADMIN")
-                        // .requestMatchers("/mvc/trainer/**", "/api/trainer/**").hasAnyRole("EMPLOYEE","ADMIN")
-                        // .requestMatchers("/mvc/student/**", "/api/student/**").hasAnyRole("STUDENT","ADMIN")
-
-                        // // *** Fase 3: RUTINAS + PROGRESO ***
-                        // // Cualquier usuario autenticado del sistema (STUDENT/EMPLOYEE/ADMIN) puede entrar:
-                        // .requestMatchers("/mvc/routines/**").hasAnyRole("STUDENT","EMPLOYEE","ADMIN")
-                        // .requestMatchers("/mvc/progress/**").hasAnyRole("STUDENT","EMPLOYEE","ADMIN")
-
-                        // // Catálogo de ejercicios: lectura autenticada; altas/edición solo entrenador o admin
-                        // .requestMatchers(HttpMethod.GET, "/mvc/exercises/**").authenticated()
-                        // .requestMatchers("/mvc/exercises/add/**", "/mvc/exercises/edit/**").hasAnyRole("EMPLOYEE","ADMIN")
-
-                        // // Plantillas de rutina: lectura autenticada; CRUD solo entrenador/admin
-                        // .requestMatchers(HttpMethod.GET, "/mvc/routine-templates/**").authenticated()
-                        // .requestMatchers("/mvc/routine-templates/create/**",
-                        //         "/mvc/routine-templates/edit/**",
-                        //         "/mvc/routine-templates/*/delete").hasAnyRole("EMPLOYEE","ADMIN")
-
-                        // Home y resto autenticado
-                        .requestMatchers("/mvc/home").authenticated()
                         .anyRequest().authenticated()
                 )
 

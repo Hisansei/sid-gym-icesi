@@ -30,12 +30,37 @@ public class RoutineMVCController {
         return "routine/list";
     }
 
+    @GetMapping("/create")
+    @PreAuthorize("isAuthenticated()")
+    public String createForm(Model model) {
+        model.addAttribute("exercises", exerciseService.findAll());
+        return "routine/form";
+    }
+
+    // Crear rutina (funciona como quick-create o con selección de ejercicios)
     @PostMapping("/create")
     @PreAuthorize("isAuthenticated()")
-    public String quickCreate(Authentication auth,
-                              @RequestParam(value = "name", required = false) String name) {
+    public String create(Authentication auth,
+                         @RequestParam(value = "name", required = false) String name,
+                         @RequestParam(value = "exerciseIds", required = false) List<String> exerciseIds) {
+
         String n = (name == null || name.isBlank()) ? "Nueva rutina" : name.trim();
         Routine r = routineService.create(auth.getName(), n, null);
+
+        // Si viene selección, agregamos ítems por cada ejercicio marcado
+        if (exerciseIds != null && !exerciseIds.isEmpty()) {
+            for (String exId : exerciseIds) {
+                if (exId == null || exId.isBlank()) continue;
+                Routine.RoutineExercise it = new Routine.RoutineExercise();
+                it.setExerciseId(exId.trim());
+                // Defaults sensatos para pasar validaciones del servicio
+                it.setSets(3);
+                it.setReps(12);
+                it.setRestSeconds(60);
+                routineService.addItem(r.getId(), it);
+            }
+        }
+
         return "redirect:/mvc/routines/" + r.getId();
     }
 
@@ -60,12 +85,12 @@ public class RoutineMVCController {
         return "redirect:/mvc/routines/" + id;
     }
 
-    // Agregar ejercicio a la rutina (desde catálogo o personalizado)
+    // Agregar ejercicio (desde catálogo o personalizado) — se mantiene
     @PostMapping("/{id}/items/add")
     @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     public String addItem(@PathVariable String id,
                           @RequestParam(required = false) String exerciseId,
-                          @RequestParam(required = false) String name, // nombre personalizado si aplica
+                          @RequestParam(required = false) String name, // nombre personalizado
                           @RequestParam(required = false) Integer sets,
                           @RequestParam(required = false) Integer reps,
                           @RequestParam(required = false) Integer durationSec,

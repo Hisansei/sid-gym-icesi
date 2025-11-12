@@ -1,59 +1,54 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
       th:replace="~{components/base :: page(
-          title='Historial',
+          title='Historial de progreso',
           content=~{::content}
       )}">
-<head>
-    <meta charset="UTF-8"/>
-    <title th:text="'Historial • ' + ${routine.name}">Historial</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <style>
-        body{font-family:system-ui,Arial,sans-serif;max-width:980px;margin:24px auto;padding:0 16px}
-        .btn{display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none}
-        .log{border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin:12px 0}
-        .muted{color:#6b7280}
-        table{width:100%;border-collapse:collapse;margin-top:6px}
-        th,td{border:1px solid #e5e7eb;padding:6px;text-align:left}
-    </style>
-</head>
-<body>
-<header style="display:flex;justify-content:space-between;align-items:center;">
-    <div>
-        <h1 th:text="'Historial • ' + ${routine.name}">Historial</h1>
-        <a class="btn" href="/mvc/progress/history">Elegir otra rutina</a>
-    </div>
-    <a class="btn" th:href="@{'/mvc/progress/' + ${routine.id}}">Registrar progreso</a>
-</header>
+<section th:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <header class="site-header">
+        <div class="container actions">
+            <h1 class="page-title">Historial: <span th:text="${routine.name}">Rutina</span></h1>
+            <nav class="actions">
+                <a class="btn" th:href="@{/mvc/progress/history}">Cambiar rutina</a>
+                <a class="btn" th:href="@{'/mvc/progress/' + ${routine.id}}">Registrar progreso</a>
+            </nav>
+        </div>
+    </header>
 
-<section th:if="${#lists.isEmpty(logs)}" class="muted">No hay registros todavía.</section>
+    <main class="container card">
+        <table class="table">
+            <thead>
+            <tr><th>Fecha</th><th>Entradas</th><th>Detalle</th></tr>
+            </thead>
+            <tbody>
+            <tr th:if="${#lists.isEmpty(logs)}">
+                <td class="muted" colspan="3">Aún no hay registros para esta rutina.</td>
+            </tr>
 
-<section th:each="log : ${logs}" class="log">
-    <strong th:text="${#temporals.format(log.date, 'yyyy-MM-dd')}">2025-01-01</strong>
-    <div class="muted" th:text="${#temporals.format(log.createdAt, 'yyyy-MM-dd HH:mm')}">Fecha creación</div>
-
-    <table>
-        <thead>
-        <tr>
-            <th>Ejercicio</th>
-            <th>Series</th>
-            <th>Reps</th>
-            <th>Peso (kg)</th>
-            <th>Esfuerzo</th>
-            <th>Notas</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="e : ${log.entries}">
-            <td th:text="${e.exerciseId}">exerciseId</td>
-            <td th:text="${#lists.isEmpty(e.sets) ? '-' : #strings.arrayJoin(e.sets, ', ')}">sets</td>
-            <td th:text="${#lists.isEmpty(e.reps) ? '-' : #strings.arrayJoin(e.reps, ', ')}">reps</td>
-            <td th:text="${#lists.isEmpty(e.weightKg) ? '-' : #strings.arrayJoin(e.weightKg, ', ')}">peso</td>
-            <td th:text="${e.effortLevel}">RPE</td>
-            <td th:text="${e.notesUser}">Notas</td>
-        </tr>
-        </tbody>
-    </table>
+            <tr th:each="l : ${logs}">
+                <td>
+                    <div th:text="${#temporals.format(l.date, 'yyyy-MM-dd')}">2025-11-08</div>
+                    <div class="muted" th:if="${l.createdAt != null}"
+                         th:text="${'Creado: ' + #temporals.format(l.createdAt, 'yyyy-MM-dd HH:mm')}">
+                        Creado
+                    </div>
+                </td>
+                <td th:text="${#lists.size(l.entries)} + ' ejercicios'">0 ejercicios</td>
+                <td>
+                    <ul style="margin:0;padding-left:18px">
+                        <li th:each="e : ${l.entries}"
+                            th:text="${(e.completed ? '✔ ' : '• ')
+                                      + (exerciseMap[e.exerciseId] != null ? exerciseMap[e.exerciseId].name : e.exerciseId)
+                                      + (e.effortLevel != null ? (' — RPE ' + e.effortLevel) : '')
+                                      + (e.notesUser != null && !#strings.isEmpty(e.notesUser) ? (' — ' + e.notesUser) : '')}">
+                            entrada
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </main>
 </section>
-</body>
 </html>
