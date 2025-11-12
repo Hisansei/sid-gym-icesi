@@ -1,5 +1,6 @@
 package co.edu.icesi.sidgymicesi.controller.mvc.mongo;
 
+import co.edu.icesi.sidgymicesi.model.mongo.Exercise;
 import co.edu.icesi.sidgymicesi.model.mongo.ProgressLog;
 import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
@@ -13,10 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/mvc/progress")
@@ -49,8 +48,15 @@ public class ProgressLogMVCController {
     public String history(@RequestParam("routineId") String routineId, Model model) {
         Routine routine = routineService.findById(routineId)
                 .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada"));
+
         model.addAttribute("routine", routine);
         model.addAttribute("logs", progressService.listByRoutine(routineId));
+
+        Map<String, Exercise> exerciseMap = exerciseService.findAll()
+                .stream()
+                .collect(Collectors.toMap(Exercise::getId, e -> e));
+        model.addAttribute("exerciseMap", exerciseMap);
+
         return "progress/history";
     }
 
@@ -104,7 +110,7 @@ public class ProgressLogMVCController {
         for (Routine.RoutineExercise it : routine.getExercises()) {
             String key = it.getId(); // id del item dentro de la rutina
             Integer reps = parseInt(form.get("reps_" + key));
-            Integer secs = parseInt(form.get("time_" + key)); // el modelo de Entry no tiene duration; solo usamos para 'completed'
+            Integer secs = parseInt(form.get("time_" + key)); // usamos solo para 'completed'
             String rpe = form.get("rpe_" + key);
             String notes = form.getOrDefault("notes_" + key, "").trim();
 
@@ -116,7 +122,7 @@ public class ProgressLogMVCController {
             ProgressLog.Entry e = new ProgressLog.Entry();
             e.setExerciseId(it.getExerciseId());
             e.setCompleted(completed);
-            e.setReps(reps != null ? List.of(reps) : null);    // <== List<Integer>, no Integer
+            e.setReps(reps != null ? List.of(reps) : null); // List<Integer>
             e.setSets(null);
             e.setWeightKg(null);
             e.setEffortLevel(rpe);
