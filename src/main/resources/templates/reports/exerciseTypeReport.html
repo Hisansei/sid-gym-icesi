@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{components/base :: page(
+          title='Reporte de Progreso de Ejercicios',
+          content=~{::content}
+      )}">
+<section th:fragment="content">
+
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+
+    <div class="container">
+        <h1>Reporte de Progreso de Ejercicios para el Usuario: <span th:text="${username}"></span></h1>
+
+        <div th:if="${#maps.isEmpty(report)}">
+            <p>No se encontraron registros de ejercicios para este usuario.</p>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Tipo de Ejercicio</th>
+                    <th>Sesiones Completadas</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="entry : ${report}">
+                    <td th:text="${entry.key}">Tipo de Ejercicio</td>
+                    <td th:text="${entry.value}">Sesiones</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><a th:href="@{/mvc/admin/users/detail?username=${username}}">Volver al detalle del usuario</a></p>
+    </div>
+</section>
+</html>

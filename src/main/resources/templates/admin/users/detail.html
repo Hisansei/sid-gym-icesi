@@ -5,7 +5,7 @@
           content=~{::content}
       )}">
 <section th:fragment="content">
-  <link rel="stylesheet" th:href="@{/css/users/detail.css}">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
   <div class="container">
 
     <div th:if="${error}" class="alert-error">
@@ -28,6 +28,10 @@
       </table>
 
       <div th:if="${actualUser.passwordHash}" style="display:none"></div>
+
+      <p>
+          <a th:href="@{/mvc/reports/select(username=${actualUser.username})}">Generar Reportes</a>
+      </p>
 
       <p style="margin-top: 12px;">
         <a th:href="@{/mvc/admin/users}">Volver al listado</a>
