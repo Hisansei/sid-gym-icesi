@@ -8,7 +8,6 @@ import org.springframework.ui.Model;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +23,7 @@ import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 public class ExerciseMVCController {
 
     // Ruta: http://localhost:8081/sid-gym-icesi/mvc/exercises
+    
     private final IExerciseService exerciseService;
 
     @GetMapping
@@ -54,14 +54,12 @@ public class ExerciseMVCController {
         return "exercises/list";
     }
 
-    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN')")
     @GetMapping("/add")
     public String addExerciseForm(Model model) {
         model.addAttribute("exercise", new Exercise());
         return "exercises/add";
     }
 
-    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN')")
     @PostMapping("/add")
     public String addExercise(@ModelAttribute("exercise") Exercise exercise,
                               @RequestParam(value = "videosText", required = false) String videosText,
@@ -90,7 +88,6 @@ public class ExerciseMVCController {
         return "exercises/detail";
     }
 
-    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN')")
     @GetMapping("/edit")
     public String editForm(@RequestParam String id, Model model) {
         Exercise actual = exerciseService.findById(id).orElse(null);
@@ -102,7 +99,6 @@ public class ExerciseMVCController {
         return "exercises/edit";
     }
 
-    @PreAuthorize("hasAnyRole('EMPLOYEE','ADMIN')")
     @PostMapping("/edit")
     public String edit(@ModelAttribute("exercise") Exercise updated,
                        @RequestParam(value = "videosText", required = false) String videosText,

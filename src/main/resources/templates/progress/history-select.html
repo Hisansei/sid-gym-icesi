@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{components/base :: page(
+          title='Ver Historial',
+          content=~{::content}
+      )}">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Selecciona rutina • Historial</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <style>
+        body{font-family:system-ui,Arial,sans-serif;max-width:800px;margin:24px auto;padding:0 16px}
+        ul{list-style:none;padding:0;margin:0}
+        li{border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+        .btn{display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none}
+    </style>
+</head>
+<body>
+<h1>Historial de progreso</h1>
+<p>Elige una rutina para ver su historial o registrar progreso.</p>
+
+<ul>
+    <li th:if="${#lists.isEmpty(routines)}">No tienes rutinas.</li>
+    <li th:each="r : ${routines}">
+        <div>
+            <strong th:text="${r.name}">Rutina</strong>
+            <div style="color:#6b7280" th:text="${r.id}">id</div>
+        </div>
+        <div>
+            <a class="btn" th:href="@{'/mvc/progress/history'(routineId=${r.id})}">Ver historial</a>
+            <a class="btn" th:href="@{'/mvc/progress/' + ${r.id}}">Registrar progreso</a>
+        </div>
+    </li>
+</ul>
+</body>
+</html>

@@ -2,6 +2,9 @@ package co.edu.icesi.sidgymicesi.config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.bson.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -13,10 +16,13 @@ import org.springframework.stereotype.Component;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Profile("mongo")
 public class MongoDataInitializer implements CommandLineRunner {
+
+    private static final Logger log = LoggerFactory.getLogger(MongoDataInitializer.class);
 
     private final MongoTemplate mongoTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -32,7 +38,7 @@ public class MongoDataInitializer implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) throws Exception { // <-- firma correcta
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
         Resource[] resources = resolver.getResources(seedLocationPattern);
 
@@ -43,18 +49,25 @@ public class MongoDataInitializer implements CommandLineRunner {
             String collection = filename.substring(0, filename.length() - ".json".length());
 
             if (dropCollections && mongoTemplate.collectionExists(collection)) {
+                log.info("Dropping collection '{}'", collection);
                 mongoTemplate.dropCollection(collection);
             }
 
             try (InputStream is = resource.getInputStream()) {
                 List<Map<String, Object>> docs = objectMapper.readValue(
-                        is, new TypeReference<List<Map<String, Object>>>() {});
+                        is, new TypeReference<List<Map<String, Object>>>() {}
+                );
                 if (!docs.isEmpty()) {
-                    mongoTemplate.getCollection(collection).insertMany(
-                            docs.stream().map(org.bson.Document::new).toList()
-                    );
+                    List<Document> documents = docs.stream()
+                            .map(Document::new)
+                            .collect(Collectors.toList());
+                    log.info("Seeding {} docs into '{}'", documents.size(), collection);
+                    mongoTemplate.getCollection(collection).insertMany(documents);
+                } else {
+                    log.info("Seed file '{}' vacío; no se insertan docs.", filename);
                 }
             }
         }
+        log.info("Mongo seed DONE (drop={}, pattern={})", dropCollections, seedLocationPattern);
     }
 }
