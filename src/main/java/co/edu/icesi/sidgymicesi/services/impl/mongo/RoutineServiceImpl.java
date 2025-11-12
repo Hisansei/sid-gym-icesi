@@ -62,6 +62,7 @@ public class RoutineServiceImpl implements IRoutineService {
                         .description(ex != null ? ex.getDescription() : null)
                         .durationSeconds(ex != null ? ex.getDurationSeconds() : null)
                         .difficulty(ex != null ? ex.getDifficulty() : null)
+                        .status(true)
                         .demoVideos(ex != null ? ex.getDemoVideos() : null)
                         .sets(ti.getSets())
                         .reps(ti.getReps())
@@ -139,8 +140,16 @@ public class RoutineServiceImpl implements IRoutineService {
         Routine r = routineRepo.findById(routineId)
                 .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada: " + routineId));
 
-        boolean removed = r.getExercises() != null && r.getExercises().removeIf(it -> Objects.equals(it.getId(), itemId));
-        if (!removed) throw new NoSuchElementException("Ejercicio no encontrado en la rutina: " + itemId);
+        Optional<Routine.RoutineExercise> itemOpt = r.getExercises().stream()
+                .filter(it -> Objects.equals(it.getId(), itemId))
+                .findFirst();
+
+        if (!itemOpt.isPresent()) {
+            throw new NoSuchElementException("Ejercicio no encontrado en la rutina: " + itemId);
+        }
+
+        Routine.RoutineExercise item = itemOpt.get();
+        item.setStatus(false); 
 
         normalizeOrder(r.getExercises());
         return routineRepo.save(r);
@@ -190,7 +199,18 @@ public class RoutineServiceImpl implements IRoutineService {
     // ========== DELETE ==========
     @Override
     public void deleteById(String id) {
-        routineRepo.deleteById(id);
+        // Buscar la rutina por ID
+        Routine routine = routineRepo.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada: " + id));
+
+        // (Soft delete)
+        routine.setStatus(false);
+
+        for (Routine.RoutineExercise exercise : routine.getExercises()) {
+            exercise.setStatus(false);
+        }
+
+        routineRepo.save(routine);
     }
 
     // ======= Helpers =======

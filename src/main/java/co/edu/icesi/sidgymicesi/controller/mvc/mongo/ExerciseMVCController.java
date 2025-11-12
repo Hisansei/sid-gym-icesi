@@ -34,6 +34,8 @@ public class ExerciseMVCController {
 
         List<Exercise> list = exerciseService.findAll();
 
+        System.out.println("Filtrando por dificultad: " + difficulty);
+
         if (q != null && !q.isBlank()) {
             list = list.stream()
                     .filter(e -> e.getName() != null && e.getName().toLowerCase().contains(q.toLowerCase()))
@@ -46,7 +48,7 @@ public class ExerciseMVCController {
         }
         if (difficulty != null && !difficulty.isBlank()) {
             list = list.stream()
-                    .filter(e -> e.getDifficulty() != null && e.getDifficulty().equalsIgnoreCase(difficulty))
+                    .filter(e -> e.getDifficulty() != null && e.getDifficulty().equalsIgnoreCase(difficulty.trim()))
                     .collect(Collectors.toList());
         }
 

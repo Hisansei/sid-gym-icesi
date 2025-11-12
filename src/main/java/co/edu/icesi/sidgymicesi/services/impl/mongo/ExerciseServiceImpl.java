@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -61,7 +62,10 @@ public class ExerciseServiceImpl implements IExerciseService {
                 if (exercise.getDemoVideos() == null) {
                     exercise.setDemoVideos(existing.getDemoVideos());
                 }
+                exercise.setStatus(existing.isStatus());
             });
+        } else {
+            exercise.setStatus(true);
         }
 
         return exerciseRepository.save(exercise);
@@ -167,6 +171,14 @@ public class ExerciseServiceImpl implements IExerciseService {
 
     @Override
     public void deleteById(String id) {
-        exerciseRepository.deleteById(id);
+        Exercise exercise = exerciseRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Ejercicio no encontrado: " + id));
+
+        if (Boolean.FALSE.equals(exercise.isStatus())) {
+            return;
+        }
+
+        exercise.setStatus(false);
+        update(exercise);
     }
 }
