@@ -24,19 +24,19 @@ public class TrainerAssignmentServiceImpl implements ITrainerAssignmentService {
     // ===================== NEGOCIO =====================
 
     @Override
-    public TrainerAssignment assign(String userUsername, String trainerUsername) {
+    public TrainerAssignment assign(String userUsername, String trainerId) {
         // Validaciones
         if (userUsername == null || userUsername.isBlank()) {
             throw new IllegalArgumentException("userUsername es obligatorio");
         }
-        if (trainerUsername == null || trainerUsername.isBlank()) {
-            throw new IllegalArgumentException("trainerUsername es obligatorio");
+        if (trainerId == null || trainerId.isBlank()) {
+            throw new IllegalArgumentException("trainerId es obligatorio");
         }
 
         // Evitar reasignar al mismo entrenador si ya está activo
         trainerAssignmentRepository.findByUserUsernameAndActiveTrue(userUsername)
                 .ifPresent(current -> {
-                    if (trainerUsername.equals(current.getTrainerId())) {
+                    if (trainerId.equals(current.getTrainerId())) {
                         throw new IllegalStateException("El usuario ya tiene asignado ese mismo entrenador");
                     }
                 });
@@ -50,21 +50,21 @@ public class TrainerAssignmentServiceImpl implements ITrainerAssignmentService {
 
         TrainerAssignment newA = TrainerAssignment.builder()
                 .userUsername(userUsername)
-                .trainerId(trainerUsername)
+                .trainerId(trainerId)
                 .assignedAt(LocalDateTime.now())
                 .active(true)
                 .build();
 
         newA = trainerAssignmentRepository.save(newA);
 
-        statsService.registerNewAssignment(trainerUsername, YearMonth.now());
+        statsService.registerNewAssignment(trainerId, YearMonth.now());
 
         return newA;
     }
 
     @Override
-    public TrainerAssignment reassign(String userUsername, String newTrainerUsername) {
-        return assign(userUsername, newTrainerUsername);
+    public TrainerAssignment reassign(String userUsername, String newTrainerId) {
+        return assign(userUsername, newTrainerId);
     }
 
     @Override
@@ -92,8 +92,8 @@ public class TrainerAssignmentServiceImpl implements ITrainerAssignmentService {
     }
 
     @Override
-    public List<TrainerAssignment> listByTrainer(String trainerUsername) {
-        return trainerAssignmentRepository.findByTrainerIdOrderByAssignedAtDesc(trainerUsername);
+    public List<TrainerAssignment> listByTrainer(String trainerId) {
+        return trainerAssignmentRepository.findByTrainerIdOrderByAssignedAtDesc(trainerId);
     }
 
     @Override

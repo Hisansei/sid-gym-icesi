@@ -1,0 +1,198 @@
+/* ===== Admin · Assignments – look & feel específico ===== */
+
+/* Contenedores y títulos */
+.assignments-page .site-header {
+    border-bottom: 1px solid #e6ecf5;
+    background: #f8fbff;
+}
+
+.assignments-page .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-bottom: .75rem;
+}
+
+.assignments-page .page-title {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+/* Acciones de cabecera */
+.assignments-page .actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+}
+
+/* Tarjetas */
+.assignments-page .card {
+    border-radius: 14px;
+    border: 1px solid #e6ecf5;
+    box-shadow: 0 4px 14px rgba(0, 35, 90, .06);
+}
+
+.assignments-page .card h2 {
+    margin: 0 0 .75rem 0;
+    font-size: 1.15rem;
+}
+
+/* Tablas */
+.assignments-page .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .95rem;
+}
+
+.assignments-page .table thead th {
+    text-align: left;
+    font-weight: 600;
+    color: #2f3b52;
+    padding: .75rem .9rem;
+    background: #f3f7fe;
+    border-bottom: 1px solid #e6ecf5;
+}
+
+.assignments-page .table tbody td {
+    padding: .7rem .9rem;
+    border-bottom: 1px solid #eef2f9;
+}
+
+.assignments-page .table tbody tr:hover {
+    background: #fbfdff;
+}
+
+/* Etiquetas/Badges */
+.assignments-page .badge {
+    display: inline-block;
+    padding: .15rem .5rem;
+    border-radius: 999px;
+    background: #eef3ff;
+    color: #364b7d;
+    font-weight: 600;
+    font-size: .8rem;
+}
+
+.assignments-page .badge.success {
+    background: #e9f8ef;
+    color: #176b3b;
+}
+
+/* Columna de acciones */
+.assignments-page .table-actions {
+    display: flex;
+    gap: .5rem;
+}
+
+.assignments-page .btn.btn-small {
+    padding: .35rem .6rem;
+    font-size: .85rem;
+    border-radius: 10px;
+}
+
+.assignments-page .btn-danger {
+    background: #e34855;
+    color: #fff;
+}
+
+.assignments-page .btn-danger:hover {
+    background: #cc3342;
+}
+
+/* Estado vacío */
+.assignments-page .muted {
+    color: #6f7b95;
+}
+
+/* Bloques de listado dividido en 2 columnas (si hay espacio) */
+@media (min-width: 1200px) {
+    .assignments-page .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+}
+
+/* Estadísticas */
+.assignments-page .stats-table td:first-child,
+.assignments-page .stats-table th:first-child {
+    min-width: 220px;
+}
+
+/* Listado de nombre (ID) */
+.assignments-page .trainer-id {
+    color: #6f7b95;
+    font-size: .85rem;
+}
+
+/* Formularios */
+.assignments-page .form label {
+    display: block;
+    margin-bottom: .85rem;
+}
+
+.assignments-page .form input[type="text"],
+.assignments-page .form input[list] {
+    width: 100%;
+    border: 1px solid #d9e2f0;
+    border-radius: 10px;
+    padding: .6rem .7rem;
+}
+
+.assignments-page .form-actions {
+    display: flex;
+    gap: .5rem;
+    margin-top: .5rem;
+}
+
+/* Alertas alineadas a layout */
+.assignments-page .alert {
+    border-radius: 10px;
+    padding: .6rem .8rem;
+}
+
+/* --- Encabezado + tabla dentro de la misma tarjeta --- */
+.assignments-page .card {
+    padding: 0;                 /* quitamos padding para que header + tabla unan bordes */
+    overflow: hidden;           /* recorta cualquier borde sobresaliente */
+}
+
+/* El h2 actúa como barra de encabezado de la tabla */
+.assignments-page .card h2 {
+    margin: 0;                  /* sin separación con la tabla */
+    padding: .75rem .9rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #21324f;
+    background: #f3f7fe;        /* mismo fondo que thead */
+    border-bottom: 1px solid #e6ecf5;
+}
+
+/* Volvemos a dar padding al cuerpo de la tarjeta cuando no hay tabla */
+.assignments-page .card > :not(h2) {
+    padding-left: .9rem;
+    padding-right: .9rem;
+}
+
+/* Tablas dentro de card: ocupan todo el ancho y sin doble padding */
+.assignments-page .card .table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Asegura mismas esquinas redondeadas en todo el bloque */
+.assignments-page .card {
+    border-radius: 14px;
+}
+
+/* Quitar padding superior/inf. extra cuando debajo del h2 viene un aviso "Sin X" */
+.assignments-page .card .muted:first-child {
+    padding-top: .8rem;
+}
+
+/* Fijar alineaciones de cabecera */
+.assignments-page .table thead th,
+.assignments-page .table tbody td {
+    vertical-align: middle;
+}

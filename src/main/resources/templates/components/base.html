@@ -34,12 +34,22 @@
                         <span class="nav-label">Home</span>
                     </a>
                 </li>
+                <!-- ADMIN: Gestión de usuarios -->
                 <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{/mvc/admin/users}" class="nav-link" data-page="admin-users">
                         <span class="material-symbols-rounded nav-icon">group</span>
                         <span class="nav-label">Gestión de usuarios</span>
                     </a>
                 </li>
+
+                <!-- ADMIN: Asignaciones (NUEVO) -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/mvc/admin/assignments}" class="nav-link" data-page="admin-assignments">
+                        <span class="material-symbols-rounded nav-icon">supervisor_account</span>
+                        <span class="nav-label">Asignaciones</span>
+                    </a>
+                </li>
+                <!-- Entrenador -->
                 <li class="nav-item"
                     sec:authorize="hasRole('EMPLOYEE')"
                     th:if="${session.user != null and session.user.employeeType == 'Instructor'}">
@@ -64,6 +74,7 @@
                         <span class="nav-label">Plantillas de rutinas</span>
                     </a>
                 </li>
+                <!-- Estudiante/Colaborador (rutas no-instructor) -->
                 <li class="nav-item"
                     sec:authorize="hasAnyRole('STUDENT','EMPLOYEE')"
                     th:if="${session.user == null or session.user.employeeType == null or session.user.employeeType != 'Instructor'}">

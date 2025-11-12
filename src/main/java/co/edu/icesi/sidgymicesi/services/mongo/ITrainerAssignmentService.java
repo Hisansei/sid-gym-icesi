@@ -8,12 +8,12 @@ import java.util.Optional;
 public interface ITrainerAssignmentService {
 
     TrainerAssignment assign(String userUsername, String trainerUsername);
-    TrainerAssignment reassign(String userUsername, String newTrainerUsername);
+    TrainerAssignment reassign(String userUsername, String newTrainerId);
     void closeAssignment(String assignmentId);
 
     List<TrainerAssignment> listActive();
     List<TrainerAssignment> listAll();
-    List<TrainerAssignment> listByTrainer(String trainerUsername);
+    List<TrainerAssignment> listByTrainer(String trainerId);
 
     Optional<TrainerAssignment> findActiveByUser(String userUsername);
 
