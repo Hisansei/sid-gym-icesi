@@ -51,6 +51,8 @@ public class Routine {
 
         private String difficulty;
 
+        private boolean status;
+
         @Field("demo_videos")
         private List<String> demoVideos;
 
