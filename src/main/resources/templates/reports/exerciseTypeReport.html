@@ -14,7 +14,7 @@
         <div th:if="${#maps.isEmpty(report)}">
             <p>No se encontraron registros de ejercicios para este usuario.</p>
         </div>
-        
+
         <table>
             <thead>
                 <tr>
@@ -30,7 +30,7 @@
             </tbody>
         </table>
 
-        <p><a th:href="@{/mvc/admin/users/detail?username=${username}}">Volver al detalle del usuario</a></p>
+        <p><a th:href="@{/mvc/admin/users/detail(username=${username})}">Volver al detalle del usuario</a></p>
     </div>
 </section>
 </html>
