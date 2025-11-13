@@ -4,9 +4,10 @@
           title='Detalle de usuario',
           content=~{::content}
       )}">
-<section th:fragment="content">
+<section th:fragment="content" class="admin-users-page admin-users-detail-page">
   <link rel="stylesheet" th:href="@{/css/app.css}">
-  <div class="container">
+  <link rel="stylesheet" th:href="@{/css/admin-users.css}">
+  <div class="container card">
 
     <div th:if="${error}" class="alert-error">
       <span th:text="${error}">Usuario no encontrado.</span>
@@ -14,10 +15,17 @@
     </div>
 
     <div th:if="${actualUser != null}">
-      <h2>Detalle del usuario</h2>
-      <table>
-        <tr><th>Username</th><td th:text="${actualUser.username}">username</td></tr>
-        <tr><th>Rol</th><td th:text="${actualUser.role}">ROLE</td></tr>
+      <h2 class="card-title">Detalle del usuario</h2>
+
+      <table class="table detail-table">
+        <tr>
+          <th>Username</th>
+          <td th:text="${actualUser.username}">username</td>
+        </tr>
+        <tr>
+          <th>Rol</th>
+          <td th:text="${actualUser.role}">ROLE</td>
+        </tr>
 
         <!-- Mostrar Estudiante ID solo si tiene valor -->
         <tr th:if="${actualUser.studentId != null}">
@@ -36,36 +44,11 @@
           <th>Tipo de Empleado</th>
           <td th:text="${actualUser.employeeType}">Tipo</td>
         </tr>
-        
-        <tr><th>Activo</th><td th:text="${actualUser.active} ? 'Sí' : 'No'">Sí</td></tr>
+
+        <tr>
+          <th>Activo</th>
+          <td th:text="${actualUser.active} ? 'Sí' : 'No'">Sí</td>
+        </tr>
         <tr>
           <th>Creado</th>
-          <td th:text="${actualUser.createdAt != null ? #temporals.format(actualUser.createdAt,'dd/MM/yyyy HH:mm') : '-'}">fecha</td>
-        </tr>
-      </table>
-
-      <div th:if="${actualUser.role.name() == 'EMPLOYEE' and actualUser.employeeType == 'Instructor'}">
-        <p>
-            <a th:href="@{/mvc/admin/trainers/stats/detail(trainerUsername=${actualUser.username})}">Ver estadísticas del entrenador</a>
-        </p>
-      </div>
-
-      <div th:if="${actualUser.passwordHash}" style="display:none"></div>
-
-      <p>
-          <a th:href="@{/mvc/reports/select(username=${actualUser.username})}">Generar Reportes</a>
-      </p>
-
-      <p style="margin-top: 12px;">
-        <a th:href="@{/mvc/admin/users}">Volver al listado</a>
-      </p>
-    </div>
-
-    <div th:if="${actualUser == null and error == null}">
-      <p>Usuario no disponible.</p>
-      <p><a th:href="@{/mvc/admin/users}">Volver</a></p>
-    </div>
-
-  </div>
-</section>
-</html>
+          <td th:text="${actualUser.createdAt != null ? #temporals.format(actualUser

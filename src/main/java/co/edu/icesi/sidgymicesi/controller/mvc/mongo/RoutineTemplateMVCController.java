@@ -110,8 +110,10 @@ public class RoutineTemplateMVCController {
     public String adopt(Authentication auth, @PathVariable String id) {
         RoutineTemplate tpl = templateService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Template not found"));
-        var newRoutine = routineService.create(auth.getName(), tpl.getName(), tpl.getId());
-        return "redirect:/mvc/routines/" + newRoutine.getId();
+
+        routineService.create(auth.getName(), tpl.getName(), tpl.getId());
+
+        return "redirect:/mvc/routines";
     }
 
     private void normalizeOrders(RoutineTemplate t) {
