@@ -1,39 +1,81 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{components/base :: page(title='Estadísticas de Entrenadores', content=~{::content})}">
-<section th:fragment="content">
-  <div class="container">
-    <h2>Estadísticas mensuales de Entrenadores</h2>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{components/base :: page(title='Estadísticas de Entrenadores', content=~{::content})}">
+<section th:fragment="content" class="trainers-stats-page">
 
-    <div th:if="${error}" class="alert-error">
+  <link rel="stylesheet" th:href="@{/css/admin/trainers-stats.css}" />
+
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Estadísticas mensuales de entrenadores</h1>
+      <p class="page-subtitle">
+        Visualiza las asignaciones nuevas y los seguimientos realizados por periodo.
+      </p>
+    </div>
+  </header>
+
+  <main class="container space-y">
+
+    <!-- Mensaje de error -->
+    <div th:if="${error}" class="alert alert-error">
       <span th:text="${error}">Ha ocurrido un error</span>
     </div>
 
-    <form th:action="@{/mvc/admin/trainers/stats}" method="get">
-      <input type="text" name="trainerUsername" placeholder="Filtrar por Entrenador" />
-      <button type="submit">Buscar</button>
-    </form>
+    <!-- Filtros -->
+    <section class="card">
+      <h2 class="card-title">Filtros</h2>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Entrenador</th>
-          <th>Periodo (Mes)</th>
-          <th>Asignaciones Nuevas</th>
-          <th>Seguimientos Realizados</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:each="stat : ${trainerStats}">
-          <td th:text="${stat.id.trainerUsername}">Username</td>
-          <td th:text="${stat.id.period}">Periodo</td>
-          <td th:text="${stat.newAssignments}">0</td>
-          <td th:text="${stat.followupsMade}">0</td>
-        </tr>
-        <tr th:if="${trainerStats == null or trainerStats.isEmpty()}">
-          <td colspan="5">No hay estadísticas para mostrar…</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+      <form th:action="@{/mvc/admin/trainers/stats}" method="get" class="filters-bar">
+        <div class="field">
+          <label for="trainerUsername">Entrenador</label>
+          <input id="trainerUsername"
+                 type="text"
+                 name="trainerUsername"
+                 placeholder="Filtrar por username de entrenador" />
+        </div>
+
+        <div class="filters-actions">
+          <button type="submit" class="btn">
+            <span class="material-symbols-rounded" style="font-size:18px;vertical-align:-4px;">search</span>
+            Buscar
+          </button>
+          <a th:href="@{/mvc/admin/trainers/stats}" class="btn btn-secondary">
+            Limpiar
+          </a>
+        </div>
+      </form>
+    </section>
+
+    <!-- Tabla de resultados -->
+    <section class="card">
+      <h2 class="card-title">Resultados</h2>
+
+      <div class="table-wrapper">
+        <table class="stats-table">
+          <thead>
+          <tr>
+            <th>Entrenador</th>
+            <th>Periodo (Mes)</th>
+            <th>Asignaciones nuevas</th>
+            <th>Seguimientos realizados</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="stat : ${trainerStats}">
+            <td th:text="${stat.id.trainerUsername}">Username</td>
+            <td th:text="${stat.id.period}">Periodo</td>
+            <td th:text="${stat.newAssignments}">0</td>
+            <td th:text="${stat.followupsMade}">0</td>
+          </tr>
+          <tr th:if="${trainerStats == null or trainerStats.isEmpty()}">
+            <td colspan="4" class="empty-state">
+              No hay estadísticas para mostrar…
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 </section>
 </html>

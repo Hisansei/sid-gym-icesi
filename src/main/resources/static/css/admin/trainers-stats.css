@@ -1,0 +1,296 @@
+:root {
+    --icesi-blue: #0056b3;
+    --icesi-dark-blue: #004494;
+    --accent-teal: #00c6ae;
+    --soft-bg: #f3f7ff;
+    --soft-bg-2: #e5edff;
+    --soft-border: #d0ddff;
+    --text-main: #0f172a;
+    --text-muted: #6b7280;
+    --danger: #e11d48;
+    --danger-soft: #fee2e2;
+}
+
+/* ===== Layout general ===== */
+
+.trainers-stats-page {
+    padding: 16px 18px 28px;
+    color: var(--text-main);
+    background: transparent;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Segoe UI", sans-serif;
+}
+
+.trainers-stats-page .container {
+    max-width: 1180px;
+    margin: 0 auto;
+}
+
+/* Espaciado vertical genérico (como en otros módulos) */
+.trainers-stats-page .space-y > * + * {
+    margin-top: 1rem;
+}
+
+/* ===== Header de página ===== */
+
+.trainers-stats-page .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 22px;
+    padding: 14px 18px;
+    border-radius: 18px;
+    background: linear-gradient(120deg, var(--icesi-blue), var(--icesi-dark-blue));
+    color: #ffffff;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.25);
+}
+
+.trainers-stats-page .page-title {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+}
+
+.trainers-stats-page .page-subtitle {
+    margin: 4px 0 0;
+    font-size: .9rem;
+    opacity: .9;
+}
+
+/* ===== Cards ===== */
+
+.trainers-stats-page .card {
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid var(--soft-border);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    padding: 16px 18px 18px;
+    position: relative;
+    overflow: hidden;
+}
+
+.trainers-stats-page .card + .card {
+    margin-top: 1rem;
+}
+
+.trainers-stats-page .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at top right,
+    rgba(0, 198, 174, 0.15),
+    transparent 55%);
+    opacity: 0.9;
+}
+
+.trainers-stats-page .card > * {
+    position: relative;
+    z-index: 1;
+}
+
+.trainers-stats-page .card-title {
+    margin: 0 0 .8rem 0;
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* ===== Botones ===== */
+
+.trainers-stats-page .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    padding: 8px 16px;
+    font-size: .9rem;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition:
+            transform .08s ease,
+            box-shadow .08s ease,
+            background-color .12s ease,
+            border-color .12s ease,
+            color .12s ease;
+    background: #ffffff;
+    color: var(--icesi-dark-blue);
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
+}
+
+.trainers-stats-page .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.25);
+    background: #f9fafb;
+}
+
+.trainers-stats-page .btn:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.15);
+}
+
+.trainers-stats-page .btn-secondary {
+    background: #eff4ff;
+    color: var(--icesi-dark-blue);
+    border-color: rgba(37, 99, 235, 0.25);
+    box-shadow: none;
+}
+
+.trainers-stats-page .btn-secondary:hover {
+    background: #e0ebff;
+}
+
+/* ===== Alertas ===== */
+
+.trainers-stats-page .alert {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #d4d4d8;
+    background: #f9fafb;
+    font-size: .86rem;
+    margin-bottom: 10px;
+}
+
+.trainers-stats-page .alert-error {
+    border-color: rgba(239, 68, 68, .4);
+    background: rgba(239, 68, 68, .08);
+    color: #991b1b;
+}
+
+/* ===== Barra de filtros ===== */
+
+.trainers-stats-page .filters-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px 16px;
+}
+
+.trainers-stats-page .filters-bar .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 220px;
+    flex: 1 1 220px;
+}
+
+.trainers-stats-page .filters-bar label {
+    font-size: .84rem;
+    font-weight: 500;
+    color: #4b5563;
+}
+
+.trainers-stats-page .filters-bar input[type="text"] {
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    padding: 8px 11px;
+    font-size: .9rem;
+    outline: none;
+    transition: border-color .12s ease, box-shadow .12s ease, background-color .12s ease;
+    background-color: #ffffff;
+}
+
+.trainers-stats-page .filters-bar input[type="text"]:focus {
+    border-color: var(--icesi-blue);
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.3);
+    background-color: #f9fbff;
+}
+
+.trainers-stats-page .filters-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ===== Tablas ===== */
+
+.trainers-stats-page .table-wrapper {
+    margin-top: 0.5rem;
+    overflow-x: auto;
+}
+
+.trainers-stats-page .stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .9rem;
+}
+
+.trainers-stats-page .stats-table thead th {
+    text-align: left;
+    font-weight: 600;
+    color: #1e293b;
+    padding: 0.65rem 0.85rem;
+    background: var(--soft-bg);
+    border-bottom: 1px solid var(--soft-border);
+    white-space: nowrap;
+}
+
+.trainers-stats-page .stats-table tbody td {
+    padding: 0.6rem 0.85rem;
+    border-bottom: 1px solid #e5e7eb;
+    color: #111827;
+}
+
+.trainers-stats-page .stats-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.trainers-stats-page .stats-table tbody tr:hover {
+    background: #f9fbff;
+}
+
+/* Estado vacío */
+
+.trainers-stats-page .empty-state {
+    text-align: center;
+    padding: 0.9rem 0.5rem;
+    font-size: .88rem;
+    color: var(--text-muted);
+}
+
+/* ===== Responsivo ===== */
+
+@media (max-width: 768px) {
+    .trainers-stats-page {
+        padding-inline: 12px;
+    }
+
+    .trainers-stats-page .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 12px 14px;
+    }
+
+    .trainers-stats-page .filters-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .trainers-stats-page .filters-actions .btn {
+        width: auto;
+    }
+}
+
+/* ===== Detalle: pequeña animación de entrada ===== */
+
+@keyframes ts-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.trainers-stats-page .page-header,
+.trainers-stats-page .card {
+    animation: ts-fade-up .4s ease-out;
+}
