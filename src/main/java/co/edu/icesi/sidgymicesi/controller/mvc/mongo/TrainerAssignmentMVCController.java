@@ -1,7 +1,9 @@
 package co.edu.icesi.sidgymicesi.controller.mvc.mongo;
 
 import co.edu.icesi.sidgymicesi.model.mongo.TrainerAssignment;
+import co.edu.icesi.sidgymicesi.model.postgres.Employee;
 import co.edu.icesi.sidgymicesi.model.postgres.TrainerMonthlyStat;
+import co.edu.icesi.sidgymicesi.services.IUserService;
 import co.edu.icesi.sidgymicesi.services.mongo.ITrainerAssignmentService;
 import co.edu.icesi.sidgymicesi.services.postgres.IEmployeeService;
 import co.edu.icesi.sidgymicesi.services.postgres.ITrainerStatsService;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/mvc/admin/assignments")
@@ -23,6 +26,7 @@ public class TrainerAssignmentMVCController {
     private final ITrainerAssignmentService assignmentService;
     private final ITrainerStatsService trainerStatsService;
     private final IEmployeeService employeeService;
+    private final IUserService userService;
 
     // ====================== LIST / HOME =========================
     @GetMapping
@@ -62,7 +66,14 @@ public class TrainerAssignmentMVCController {
     // ================= FORM NUEVA ASIGNACIÓN ====================
     @GetMapping("/new")
     public String newForm(Model model) {
-        model.addAttribute("trainers", employeeService.findAll());
+        List<Employee> allEmployees = employeeService.findAll();
+        List<Employee> trainers = allEmployees.stream()
+                .filter(e -> e.getEmployeeType() != null &&
+                        "Instructor".equalsIgnoreCase(e.getEmployeeType().getName()))
+                .collect(Collectors.toList());
+
+        model.addAttribute("users", userService.findAll()); // lista de usuarios (username, fullName)
+        model.addAttribute("trainers", trainers); // lista de empleados instructores
         return "admin/assignments/new";
     }
 
