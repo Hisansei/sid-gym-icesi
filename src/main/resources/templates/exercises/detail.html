@@ -1,43 +1,97 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{components/base :: page(
           title='Detalle de ejercicio',
           content=~{::content}
       )}">
-<section th:fragment="content">
+<section th:fragment="content" class="exercises-page">
     <link rel="stylesheet" th:href="@{/css/app.css}">
-    <div class="container">
-        <div th:if="${exercise == null}">
-            <p>Ejercicio no encontrado.</p>
-            <p><a th:href="@{/mvc/exercises}">Volver</a></p>
+    <link rel="stylesheet" th:href="@{/css/exercise/exercises.css}">
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="header-copy">
+                <h1 class="page-title">Detalle de ejercicio</h1>
+                <p class="muted">
+                    Visualiza la información completa de un ejercicio del catálogo.
+                </p>
+            </div>
+            <div class="header-actions">
+                <a th:href="@{/mvc/exercises}" class="btn btn-secondary">
+                    <span class="material-symbols-rounded">arrow_back</span>
+                    <span>Volver al catálogo</span>
+                </a>
+            </div>
         </div>
+    </header>
 
-        <div th:if="${exercise != null}">
-            <h2 th:text="${exercise.name}">Nombre</h2>
-            <p><strong>Tipo:</strong> <span th:text="${exercise.type}">tipo</span></p>
-            <p><strong>Dificultad:</strong> <span th:text="${exercise.difficulty}">dif</span></p>
-            <p th:if="${exercise.durationSeconds != null}">
-                <strong>Duración:</strong> <span th:text="${exercise.durationSeconds}">0</span> s
+    <main class="container page-content">
+        <!-- No encontrado -->
+        <section class="card card-empty" th:if="${exercise == null}">
+            <h2 class="card-title">Ejercicio no encontrado</h2>
+            <p class="muted">
+                El ejercicio que buscas no existe o ya fue eliminado.
             </p>
-            <p th:if="${exercise.description}">
-                <strong>Descripción:</strong> <span th:text="${exercise.description}"></span>
-            </p>
+            <div class="form-actions">
+                <a th:href="@{/mvc/exercises}" class="btn">
+                    Volver al catálogo
+                </a>
+            </div>
+        </section>
 
-            <div th:if="${exercise.demoVideos != null and !exercise.demoVideos.isEmpty()}">
+        <!-- Detalle -->
+        <section class="card card-detail" th:if="${exercise != null}">
+            <header class="detail-header">
+                <h2 class="exercise-name" th:text="${exercise.name}">Nombre</h2>
+                <div class="detail-actions">
+                    <a th:href="@{/mvc/exercises/edit(id=${exercise.id})}" class="btn btn-small"
+                       sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
+                        Editar
+                    </a>
+                    <a th:href="@{/mvc/exercises/delete(id=${exercise.id})}" class="btn btn-danger btn-small"
+                       sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
+                        Eliminar
+                    </a>
+                </div>
+            </header>
+
+            <dl class="exercise-meta">
+                <div class="exercise-meta-item">
+                    <dt>Tipo</dt>
+                    <dd th:text="${exercise.type}">tipo</dd>
+                </div>
+                <div class="exercise-meta-item">
+                    <dt>Dificultad</dt>
+                    <dd th:text="${exercise.difficulty}">dif</dd>
+                </div>
+                <div class="exercise-meta-item" th:if="${exercise.durationSeconds != null}">
+                    <dt>Duración</dt>
+                    <dd><span th:text="${exercise.durationSeconds}">0</span> s</dd>
+                </div>
+            </dl>
+
+            <section th:if="${exercise.description}" class="exercise-description">
+                <h3>Descripción</h3>
+                <p th:text="${exercise.description}"></p>
+            </section>
+
+            <section th:if="${exercise.demoVideos != null and !exercise.demoVideos.isEmpty()}"
+                     class="exercise-videos">
                 <h3>Videos demostrativos</h3>
                 <ul>
                     <li th:each="v : ${exercise.demoVideos}">
                         <a th:href="${v}" target="_blank" th:text="${v}">video</a>
                     </li>
                 </ul>
-            </div>
+            </section>
 
-            <p>
-                <a th:href="@{/mvc/exercises}">Volver</a>
-                <a th:href="@{/mvc/exercises/edit(id=${exercise.id})}">Editar</a>
-                <a th:href="@{/mvc/exercises/delete(id=${exercise.id})}">Eliminar</a>
-            </p>
-        </div>
-    </div>
+            <div class="form-actions footer-actions">
+                <a th:href="@{/mvc/exercises}" class="btn btn-secondary">
+                    Volver al catálogo
+                </a>
+            </div>
+        </section>
+    </main>
 </section>
 </html>

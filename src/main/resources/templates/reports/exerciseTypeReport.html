@@ -1,36 +1,89 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{components/base :: page(
-          title='Reporte de Progreso de Ejercicios',
-          content=~{::content}
-      )}">
-<section th:fragment="content">
+              title='Reporte de Progreso de Ejercicios',
+              content=~{::content}
+          )}">
+<section th:fragment="content" class="reports-page reports-exercise-types">
 
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/reports/reports.css}">
 
-    <div class="container">
-        <h1>Reporte de Progreso de Ejercicios para el Usuario: <span th:text="${username}"></span></h1>
-
-        <div th:if="${#maps.isEmpty(report)}">
-            <p>No se encontraron registros de ejercicios para este usuario.</p>
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="header-copy">
+                <h1 class="page-title">
+                    Progreso por tipo de ejercicio —
+                    <span th:text="${username}">Usuario</span>
+                </h1>
+                <p class="muted">
+                    Analiza cuántas sesiones se han completado para cada tipo
+                    de ejercicio registrado en el sistema.
+                </p>
+            </div>
+            <nav class="header-actions actions">
+                <a class="btn btn-secondary"
+                   th:href="@{/mvc/reports/select(username=${username})}">
+                    Cambiar tipo de reporte
+                </a>
+                <a class="btn btn-ghost"
+                   th:href="@{/mvc/admin/users/detail(username=${username})}">
+                    Volver al detalle del usuario
+                </a>
+            </nav>
         </div>
+    </header>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Tipo de Ejercicio</th>
-                    <th>Sesiones Completadas</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="entry : ${report}">
-                    <td th:text="${entry.key}">Tipo de Ejercicio</td>
-                    <td th:text="${entry.value}">Sesiones</td>
-                </tr>
-            </tbody>
-        </table>
+    <main class="container page-content">
+        <section class="card card-report">
+            <div class="card-intro">
+                <h2 class="card-title">Sesiones por tipo de ejercicio</h2>
+                <p class="muted small">
+                    Este reporte agrupa los registros por tipo de ejercicio, para identificar
+                    en qué tipo de trabajo se está enfocando más el usuario.
+                </p>
+            </div>
 
-        <p><a th:href="@{/mvc/admin/users/detail(username=${username})}">Volver al detalle del usuario</a></p>
-    </div>
+            <!-- Estado vacío -->
+            <div class="empty-state"
+                 th:if="${#maps.isEmpty(report)}">
+                <p>No se encontraron registros de ejercicios para este usuario.</p>
+                <p class="muted small">
+                    Registra sesiones de entrenamiento para ver cómo se distribuyen
+                    los tipos de ejercicio.
+                </p>
+            </div>
+
+            <!-- Tabla con datos -->
+            <div class="table-wrapper"
+                 th:if="${not #maps.isEmpty(report)}">
+                <table class="table reports-table">
+                    <thead>
+                    <tr>
+                        <th>Tipo de ejercicio</th>
+                        <th>Sesiones completadas</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="entry : ${report}">
+                        <td class="col-type" th:text="${entry.key}">
+                            Tipo de ejercicio
+                        </td>
+                        <td class="col-sessions" th:text="${entry.value}">
+                            Sesiones
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <footer class="card-footer">
+                <a class="btn btn-secondary"
+                   th:href="@{/mvc/admin/users/detail(username=${username})}">
+                    Volver al detalle del usuario
+                </a>
+            </footer>
+        </section>
+    </main>
 </section>
 </html>

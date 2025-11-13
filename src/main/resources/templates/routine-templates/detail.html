@@ -1,54 +1,131 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{components/base :: page(
-          title='Plantilla',
-          content=~{::content}
-      )}">
-<section th:fragment="content">
+              title='Plantilla',
+              content=~{::content}
+          )}">
+<section th:fragment="content" class="routine-page routine-template-page routine-template-detail-page">
   <link rel="stylesheet" th:href="@{/css/app.css}">
+  <link rel="stylesheet" th:href="@{/css/routine/routine.css}">
+  <link rel="stylesheet" th:href="@{/css/routine/routine-templates.css}">
+
   <header class="site-header">
-    <div class="container actions">
-      <h1 class="page-title" th:text="${template.name}">Plantilla</h1>
-      <nav class="actions">
-        <a class="btn" th:href="@{/mvc/routine-templates}">Volver</a>
-        <form th:action="@{'/mvc/routine-templates/' + ${template.id} + '/adopt'}" method="post" style="display:inline">
-          <button class="btn" type="submit">Crear mi rutina basada en esta plantilla</button>
+    <div class="container actions routine-header">
+      <div class="routine-header-main">
+        <h1 class="page-title">
+          <span th:text="${template.name}">Plantilla</span>
+        </h1>
+        <p class="muted routine-header-subtitle">
+          Visualiza la estructura completa de esta plantilla y crea una rutina basada en ella.
+        </p>
+      </div>
+
+      <nav class="actions routine-header-actions">
+        <a class="btn btn-ghost" th:href="@{/mvc/routine-templates}">Volver</a>
+
+        <form th:action="@{'/mvc/routine-templates/' + ${template.id} + '/adopt'}"
+              method="post" style="display:inline">
+          <button class="btn btn-secondary" type="submit">
+            Crear rutina desde esta plantilla
+          </button>
         </form>
-        <a class="btn" sec:authorize="hasAnyRole('TRAINER','ADMIN')" th:href="@{'/mvc/routine-templates/' + ${template.id} + '/edit'}">Editar</a>
-        <form sec:authorize="hasAnyRole('TRAINER','ADMIN')" th:action="@{'/mvc/routine-templates/' + ${template.id} + '/delete'}"
-              method="post" style="display:inline" onsubmit="return confirm('¿Eliminar esta plantilla?')">
+
+        <a class="btn btn-ghost"
+           sec:authorize="hasAnyRole('TRAINER','ADMIN')"
+           th:href="@{'/mvc/routine-templates/' + ${template.id} + '/edit'}">
+          Editar
+        </a>
+
+        <form sec:authorize="hasAnyRole('TRAINER','ADMIN')"
+              th:action="@{'/mvc/routine-templates/' + ${template.id} + '/delete'}"
+              method="post" style="display:inline"
+              onsubmit="return confirm('¿Eliminar esta plantilla?')">
           <button class="btn btn-danger" type="submit">Eliminar</button>
         </form>
       </nav>
     </div>
   </header>
 
-  <main class="container space-y">
-    <section class="card">
-      <h2>Información</h2>
-      <p class="muted"><strong>ID: </strong><span th:text="${template.id}">id</span></p>
-      <p><strong>Entrenador: </strong><span th:text="${template.trainerId}">trainer</span></p>
-      <p><strong>Nivel: </strong><span th:text="${template.level}">BEGINNER</span></p>
-      <p th:if="${template.description}"><strong>Descripción: </strong><span th:text="${template.description}">desc</span></p>
+  <main class="container space-y routine-template-detail-main">
+    <!-- Información principal de la plantilla -->
+    <section class="card routine-card routine-template-summary">
+      <header class="routine-card-header">
+        <div>
+          <h2>Información de la plantilla</h2>
+          <p class="muted small">
+            Detalles básicos que describen esta estructura de rutina.
+          </p>
+        </div>
+        <div class="routine-template-meta">
+                    <span class="rt-template-pill rt-template-pill-id">
+                        ID&nbsp;<span th:text="${template.id}">id</span>
+                    </span>
+          <span class="rt-template-pill rt-template-pill-level"
+                th:classappend="' level-' + ${template.level}">
+                        <span class="rt-template-pill-label">Nivel</span>
+                        <span th:text="${template.level}">BEGINNER</span>
+                    </span>
+        </div>
+      </header>
+
+      <dl class="routine-template-info-grid">
+        <div class="rt-info-item">
+          <dt>Entrenador</dt>
+          <dd th:text="${template.trainerId}">trainer</dd>
+        </div>
+
+        <div class="rt-info-item">
+          <dt>Nivel</dt>
+          <dd th:text="${template.level}">BEGINNER</dd>
+        </div>
+
+        <div class="rt-info-item rt-info-wide" th:if="${template.description}">
+          <dt>Descripción</dt>
+          <dd th:text="${template.description}">
+            Desc
+          </dd>
+        </div>
+      </dl>
     </section>
 
-    <section class="card">
-      <h2>Ejercicios de la plantilla</h2>
-      <table class="table">
-        <thead><tr><th>#</th><th>Ejercicio</th><th>Series</th><th>Reps</th><th>Descanso</th></tr></thead>
-        <tbody>
-        <tr th:if="${#lists.isEmpty(items)}">
-          <td class="muted" colspan="5">No hay ejercicios.</td>
-        </tr>
-        <tr th:each="it,idx : ${items}">
-          <td th:text="${it.order}">1</td>
-          <td th:text="${exerciseMap[it.exerciseId] != null ? exerciseMap[it.exerciseId].name : it.exerciseId}">Nombre</td>
-          <td th:text="${it.sets}">0</td>
-          <td th:text="${it.reps}">0</td>
-          <td th:text="${it.restSeconds}">0</td>
-        </tr>
-        </tbody>
-      </table>
+    <!-- Tabla de ejercicios de la plantilla -->
+    <section class="card routine-card routine-template-exercises-card">
+      <header class="routine-card-header">
+        <div>
+          <h2>Ejercicios de la plantilla</h2>
+          <p class="muted small">
+            Estructura ordenada de ejercicios, series, repeticiones y tiempos de descanso.
+          </p>
+        </div>
+      </header>
+
+      <div class="table-wrapper">
+        <table class="table routine-table routine-template-exercises-table">
+          <thead>
+          <tr>
+            <th>#</th>
+            <th>Ejercicio</th>
+            <th>Series</th>
+            <th>Reps</th>
+            <th>Descanso</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:if="${#lists.isEmpty(items)}">
+            <td class="muted" colspan="5">No hay ejercicios configurados en esta plantilla.</td>
+          </tr>
+          <tr th:each="it,idx : ${items}">
+            <td th:text="${it.order}">1</td>
+            <td th:text="${exerciseMap[it.exerciseId] != null ? exerciseMap[it.exerciseId].name : it.exerciseId}">
+              Nombre
+            </td>
+            <td th:text="${it.sets}">0</td>
+            <td th:text="${it.reps}">0</td>
+            <td th:text="${it.restSeconds}">0</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </section>
   </main>
 </section>

@@ -1,27 +1,112 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{components/base :: page(
-          title='Seleccionar Reporte',
-          content=~{::content}
-      )}">
-<section th:fragment="content">
+              title='Seleccionar Reporte',
+              content=~{::content}
+          )}">
+<section th:fragment="content" class="reports-page reports-select">
 
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/reports/reports.css}">
 
-    <div class="container">
-        <h1>Selecciona el tipo de reporte para el usuario: <span th:text="${username}"></span></h1>
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="header-copy">
+                <h1 class="page-title">Reportes del usuario</h1>
+                <p class="muted">
+                    Genera reportes de consistencia y tipos de ejercicio para
+                    <span class="chip-user" th:text="${username}">Usuario</span>.
+                </p>
+            </div>
+        </div>
+    </header>
 
-        <form action="#" th:action="@{/mvc/reports/generateConsistencyReport}" method="post">
-            <input type="hidden" name="username" th:value="${username}">
-            <label for="numberOfWeeks">Número de semanas a mostrar:</label>
-            <input type="number" id="numberOfWeeks" name="numberOfWeeks" min="1" value="4" required>
-            <button type="submit">Generar Reporte de Consistencia Semanal</button>
-        </form>
+    <main class="container page-content">
+        <section class="card card-select">
+            <div class="card-intro">
+                <h2 class="card-title">Selecciona el tipo de reporte</h2>
+                <p class="muted small">
+                    Los reportes te ayudan a entender la disciplina y el tipo de trabajo
+                    que está realizando el usuario a lo largo del tiempo.
+                </p>
+            </div>
 
-        <form action="#" th:action="@{/mvc/reports/generateExerciseTypeReport}" method="post">
-            <input type="hidden" name="username" th:value="${username}">
-            <button type="submit">Generar Reporte de Progreso de Ejercicios</button>
-        </form>
-    </div>
+            <div class="reports-options">
+                <!-- Opción: Consistencia semanal -->
+                <article class="report-option">
+                    <header class="option-header">
+                        <h3 class="option-title">Consistencia semanal</h3>
+                        <p class="muted small">
+                            Ve cuántas sesiones completas realiza el usuario cada semana
+                            y su porcentaje de consistencia.
+                        </p>
+                    </header>
+
+                    <form class="form option-form"
+                          action="#"
+                          th:action="@{/mvc/reports/generateConsistencyReport}"
+                          method="post">
+                        <input type="hidden" name="username" th:value="${username}">
+                        <div class="field">
+                            <label for="numberOfWeeks" class="field-label">
+                                Número de semanas a mostrar
+                            </label>
+                            <input type="number"
+                                   id="numberOfWeeks"
+                                   name="numberOfWeeks"
+                                   min="1"
+                                   value="4"
+                                   required>
+                            <p class="field-help">
+                                Por ejemplo, 4 semanas para ver el último mes de actividad.
+                            </p>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn">
+                                Generar reporte de consistencia
+                            </button>
+                        </div>
+                    </form>
+                </article>
+
+                <!-- Opción: Progreso por tipo de ejercicio -->
+                <article class="report-option">
+                    <header class="option-header">
+                        <h3 class="option-title">Progreso por tipo de ejercicio</h3>
+                        <p class="muted small">
+                            Visualiza cuántas sesiones se completan por tipo
+                            de ejercicio (cardio, fuerza, movilidad, etc.).
+                        </p>
+                    </header>
+
+                    <form class="form option-form"
+                          action="#"
+                          th:action="@{/mvc/reports/generateExerciseTypeReport}"
+                          method="post">
+                        <input type="hidden" name="username" th:value="${username}">
+                        <div class="field">
+                            <p class="muted small">
+                                Se generará el reporte con todos los registros existentes.
+                            </p>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-secondary">
+                                Generar reporte por tipo de ejercicio
+                            </button>
+                        </div>
+                    </form>
+                </article>
+            </div>
+
+            <footer class="card-footer">
+                <a class="btn btn-ghost"
+                   th:href="@{/mvc/admin/users/detail(username=${username})}">
+                    Volver al detalle del usuario
+                </a>
+            </footer>
+        </section>
+    </main>
 </section>
 </html>

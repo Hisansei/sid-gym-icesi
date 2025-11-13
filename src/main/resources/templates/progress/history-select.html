@@ -4,32 +4,68 @@
           title='Seleccionar rutina • Historial',
           content=~{::content}
       )}">
-<section th:fragment="content">
+<section th:fragment="content" class="progress-page progress-select">
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/progress/progress.css}">
+
     <header class="site-header">
-        <div class="container">
-            <h1 class="page-title">Historial de progreso</h1>
-            <p class="muted">Elige una rutina para ver su historial o registrar progreso.</p>
+        <div class="container header-inner">
+            <div class="header-copy">
+                <h1 class="page-title">Historial de progreso</h1>
+                <p class="muted">
+                    Elige una rutina para ver su historial o registrar progreso.
+                </p>
+            </div>
         </div>
     </header>
 
-    <main class="container card">
-        <table class="table">
-            <thead><tr><th>Rutina</th><th>Ítems</th><th></th></tr></thead>
-            <tbody>
-            <tr th:if="${#lists.isEmpty(routines)}">
-                <td class="muted" colspan="3">No tienes rutinas disponibles.</td>
-            </tr>
-            <tr th:each="r : ${routines}">
-                <td th:text="${r.name}">Nombre</td>
-                <td th:text="${#lists.size(r.exercises)}">0</td>
-                <td class="table-actions">
-                    <a class="btn btn-small" th:href="@{'/mvc/progress/history?routineId=' + ${r.id}}">Ver historial</a>
-                    <a class="btn btn-small" th:href="@{'/mvc/progress/' + ${r.id}}">Registrar progreso</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+    <main class="container page-content">
+        <section class="card card-select">
+            <div class="card-intro">
+                <h2 class="card-title">Selecciona una rutina</h2>
+                <p class="muted small">
+                    Cada rutina agrupa tus ejercicios y registros diarios.
+                </p>
+            </div>
+
+            <div class="table-wrapper">
+                <table class="table table-routines">
+                    <thead>
+                    <tr>
+                        <th>Rutina</th>
+                        <th>Ítems</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(routines)}">
+                        <td class="muted empty-state" colspan="3">
+                            No tienes rutinas disponibles.
+                        </td>
+                    </tr>
+                    <tr th:each="r : ${routines}">
+                        <td>
+                            <span class="routine-name" th:text="${r.name}">Nombre</span>
+                        </td>
+                        <td>
+                            <span class="badge badge-soft"
+                                  th:text="${#lists.size(r.exercises)}">0</span>
+                        </td>
+                        <td class="table-actions">
+                            <a class="btn btn-small"
+                               th:href="@{'/mvc/progress/history?routineId=' + ${r.id}}">
+                                Ver historial
+                            </a>
+                            <a class="btn btn-secondary btn-small"
+                               th:href="@{'/mvc/progress/' + ${r.id}}">
+                                Registrar progreso
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 </section>
 </html>

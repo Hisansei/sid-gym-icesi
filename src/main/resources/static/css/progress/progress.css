@@ -1,0 +1,256 @@
+/* ========= Progreso – estilos específicos ========= */
+
+/* Layout general de la página de progreso */
+.progress-page main.container {
+    padding-block: 1.25rem 1.75rem;
+}
+
+.progress-page .site-header {
+    border-bottom: 1px solid #e6ecf5;
+    background: linear-gradient(135deg, #f5f7ff 0%, #ffffff 60%);
+}
+
+.progress-page .header-inner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding-block: .85rem;
+}
+
+.progress-page .header-copy .page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.progress-page .header-copy .muted {
+    margin-top: .25rem;
+    font-size: .9rem;
+}
+
+.progress-page .header-actions {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.progress-page .page-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Tarjetas dentro de progreso */
+.progress-page .card {
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-page .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right,
+    rgba(84, 84, 233, 0.08),
+    transparent 55%);
+    pointer-events: none;
+}
+
+.progress-page .card > * {
+    position: relative;
+}
+
+/* Texto pequeño */
+.progress-page .small {
+    font-size: .85rem;
+}
+
+/* Estado vacío reutilizable */
+.progress-page .empty-state {
+    text-align: center;
+    padding-block: .65rem;
+}
+
+/* ------------ Selector de rutina (history-select) ------------ */
+
+.progress-select .card-select {
+    max-width: 900px;
+    margin-inline: auto;
+}
+
+.progress-select .card-intro {
+    margin-bottom: .75rem;
+}
+
+.progress-select .card-title {
+    margin: 0 0 .25rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.progress-select .routine-name {
+    font-weight: 500;
+}
+
+.progress-select .table-wrapper {
+    margin-top: .75rem;
+    overflow-x: auto;
+}
+
+.progress-select .table-routines tbody tr {
+    transition: transform .08s ease, box-shadow .08s ease, background-color .08s ease;
+}
+
+.progress-select .table-routines tbody tr:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    background: #f9fbff;
+}
+
+/* Badge suave para cantidad de ítems */
+.progress-page .badge-soft {
+    background: #e0edff;
+    color: #1d4ed8;
+}
+
+/* ------------ Historial (history) ------------ */
+
+.progress-history .card-history {
+    max-width: 1040px;
+    margin-inline: auto;
+}
+
+.progress-history .card-intro {
+    margin-bottom: .9rem;
+}
+
+.progress-history .card-title {
+    margin: 0 0 .25rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.progress-history .table-wrapper {
+    overflow-x: auto;
+}
+
+.progress-history .table-logs th:nth-child(1) {
+    min-width: 160px;
+}
+.progress-history .table-logs th:nth-child(2) {
+    width: 130px;
+}
+.progress-history .table-logs th:nth-child(3) {
+    min-width: 260px;
+}
+
+.progress-history .log-date-main {
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.progress-history .log-date-meta {
+    font-size: .8rem;
+}
+
+.progress-history .log-count {
+    font-weight: 500;
+}
+
+.progress-history .log-detail {
+    font-size: .9rem;
+}
+
+/* Listado de entradas por sesión */
+.progress-history .entries-list {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+}
+
+/* Filas de tabla con un poco más de “movimiento” en progreso */
+.progress-page .table tbody tr {
+    transition: transform .08s ease, box-shadow .08s ease, background-color .08s ease;
+}
+
+.progress-page .table tbody tr:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+    background: #f9fbff;
+}
+
+/* ------------ Registro (log) ------------ */
+
+.progress-log .card-log {
+    max-width: 960px;
+    margin-inline: auto;
+}
+
+.progress-log .log-header {
+    margin-bottom: 1rem;
+}
+
+.progress-log .log-date-value {
+    font-weight: 600;
+}
+
+.progress-log .log-exercises {
+    margin-top: .75rem;
+}
+
+/* Tarjeta por ejercicio dentro del registro */
+.progress-log .log-exercise {
+    background: linear-gradient(180deg, #ffffff 0%, #f5f7ff 100%);
+    border-radius: 18px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+.progress-log .log-exercise-header h3 {
+    margin-top: 0;
+    margin-bottom: .15rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.progress-log .log-exercise-meta {
+    font-size: .85rem;
+}
+
+/* Grid de inputs dentro de cada ejercicio */
+.progress-log .log-exercise-grid {
+    margin-top: .75rem;
+    gap: .75rem;
+}
+
+.progress-log .log-exercise-grid label {
+    font-size: .9rem;
+}
+
+/* Acciones del formulario */
+.progress-log .log-actions {
+    justify-content: flex-end;
+}
+
+/* ------------ Responsivo ------------ */
+
+@media (max-width: 768px) {
+    .progress-page .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .progress-page .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .progress-log .log-exercise-grid {
+        grid-template-columns: 1fr;
+    }
+}

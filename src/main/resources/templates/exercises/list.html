@@ -1,41 +1,93 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{components/base :: page(
           title='Catálogo de ejercicios',
           content=~{::content}
       )}">
-<section th:fragment="content">
+<section th:fragment="content" class="exercises-page">
     <link rel="stylesheet" th:href="@{/css/app.css}">
-    <div class="container">
-        <h2>Catálogo de ejercicios</h2>
+    <link rel="stylesheet" th:href="@{/css/exercise/exercises.css}">
 
-        <div th:if="${error}" class="alert">
-            <span th:text="${error}">Error message</span>
+    <!-- Header de la página -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="header-copy">
+                <h1 class="page-title">Catálogo de ejercicios</h1>
+                <p class="muted">
+                    Administra y consulta los ejercicios disponibles en el gimnasio ICESI.
+                </p>
+            </div>
+
+            <div class="header-actions">
+                <a th:href="@{/mvc/exercises/add}"
+                   class="btn"
+                   sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
+                    <span class="material-symbols-rounded">add</span>
+                    <span>Nuevo ejercicio</span>
+                </a>
+            </div>
         </div>
+    </header>
 
-        <div th:if="${message}" class="alert success">
-            <span th:text="${message}">Success message</span>
-        </div>
+    <!-- Contenido principal -->
+    <main class="container page-content">
+        <!-- Card de filtros / búsqueda -->
+        <section class="card card-filters">
+            <h2 class="card-title">Buscar en el catálogo</h2>
 
-        <form class="form search-box" th:action="@{/mvc/exercises}" method="get">
-            <input type="text" name="q" placeholder="Buscar por nombre..." />
-            <select name="type">
-                <option value="">-- Tipo --</option>
-                <option value="cardio">Cardio</option>
-                <option value="fuerza">Fuerza</option>
-                <option value="movilidad">Movilidad</option>
-            </select>
-            <select name="difficulty">
-                <option value="">-- Dificultad --</option>
-                <option value="baja">Baja</option>
-                <option value="media">Media</option>
-                <option value="alta">Alta</option>
-            </select>
-            <button type="submit" class="btn">Buscar</button>
-        </form>
+            <div th:if="${error}" class="alert alert-error">
+                <span th:text="${error}">Error message</span>
+            </div>
 
-        <table class="table">
-            <thead>
+            <div th:if="${message}" class="alert alert-success">
+                <span th:text="${message}">Success message</span>
+            </div>
+
+            <form class="form search-box" th:action="@{/mvc/exercises}" method="get">
+                <div class="search-group">
+                    <div class="field">
+                        <label for="exercise-search" class="sr-only">Nombre</label>
+                        <input id="exercise-search"
+                               type="text"
+                               name="q"
+                               placeholder="Buscar por nombre" />
+                    </div>
+
+                    <div class="field">
+                        <label for="exercise-type" class="sr-only">Tipo</label>
+                        <select id="exercise-type" name="type">
+                            <option value="">-- Tipo --</option>
+                            <option value="cardio">Cardio</option>
+                            <option value="fuerza">Fuerza</option>
+                            <option value="movilidad">Movilidad</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="exercise-difficulty" class="sr-only">Dificultad</label>
+                        <select id="exercise-difficulty" name="difficulty">
+                            <option value="">-- Dificultad --</option>
+                            <option value="baja">Baja</option>
+                            <option value="media">Media</option>
+                            <option value="alta">Alta</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn search-btn">
+                        <span class="material-symbols-rounded">search</span>
+                        <span>Buscar</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Card de resultados -->
+        <section class="card card-table">
+            <h2 class="card-title">Resultados</h2>
+
+            <table class="table">
+                <thead>
                 <tr>
                     <th>Nombre</th>
                     <th>Tipo</th>
@@ -43,32 +95,33 @@
                     <th>Duración (s)</th>
                     <th>Opciones</th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 <tr th:each="e : ${exercises}">
                     <td th:text="${e.name}">Nombre</td>
                     <td th:text="${e.type}">Tipo</td>
                     <td th:text="${e.difficulty}">Dificultad</td>
                     <td th:text="${e.durationSeconds}">Duración</td>
-                    <td>
+                    <td class="table-actions">
                         <a th:href="@{/mvc/exercises/detail(id=${e.id})}" class="btn btn-small">Detalle</a>
                         <a th:href="@{/mvc/exercises/edit(id=${e.id})}" class="btn btn-small"
-                            sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
-                            Editar</a>
+                           sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
+                            Editar
+                        </a>
                         <a th:href="@{/mvc/exercises/delete(id=${e.id})}" class="btn btn-danger btn-small"
-                            sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
-                            Eliminar</a>
+                           sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
+                            Eliminar
+                        </a>
                     </td>
                 </tr>
                 <tr th:if="${exercises == null or exercises.isEmpty()}">
-                    <td colspan="5">Aún no hay ejercicios en el catálogo . . .</td>
+                    <td colspan="5" class="muted empty-state">
+                        Aún no hay ejercicios en el catálogo…
+                    </td>
                 </tr>
-            </tbody>
-        </table>
-
-        <p><a th:href="@{/mvc/exercises/add}" class="btn" 
-            sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
-            Agregar ejercicio</a></p>
-    </div>
+                </tbody>
+            </table>
+        </section>
+    </main>
 </section>
 </html>

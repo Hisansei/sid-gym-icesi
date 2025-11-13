@@ -1,122 +1,222 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{components/base :: page(
-          title=${template.id} != null ? 'Editar plantilla' : 'Nueva plantilla',
-          content=~{::content}
-      )}">
-<section th:fragment="content">
+              title=${template.id} != null ? 'Editar plantilla' : 'Nueva plantilla',
+              content=~{::content}
+          )}">
+<section th:fragment="content" class="routine-page routine-template-page routine-template-form-page">
   <link rel="stylesheet" th:href="@{/css/app.css}">
+  <link rel="stylesheet" th:href="@{/css/routine/routine.css}">
+  <link rel="stylesheet" th:href="@{/css/routine/routine-templates.css}">
+
   <header class="site-header">
-    <div class="container actions">
-      <h1 class="page-title" th:text="${template.id} != null ? 'Editar plantilla' : 'Nueva plantilla'">Plantilla</h1>
-      <a class="btn" th:href="@{/mvc/routine-templates}">Volver</a>
+    <div class="container actions routine-header">
+      <div class="routine-header-main">
+        <h1 class="page-title"
+            th:text="${template.id} != null ? 'Editar plantilla' : 'Nueva plantilla'">
+          Plantilla
+        </h1>
+        <p class="muted routine-header-subtitle">
+          Define la estructura base de una rutina para reutilizarla con diferentes estudiantes.
+        </p>
+      </div>
+      <nav class="actions routine-header-actions">
+        <a class="btn btn-ghost" th:href="@{/mvc/routine-templates}">
+          Volver al listado
+        </a>
+      </nav>
     </div>
   </header>
 
-  <main class="container space-y card">
+  <main class="container space-y routine-template-form-main">
     <form th:action="${template.id} != null ? @{/mvc/routine-templates/{id}/edit(id=${template.id})} : @{/mvc/routine-templates/create}"
-          method="post" class="form">
+          method="post"
+          class="form routine-template-form">
 
-      <div class="grid grid-2">
-        <label>Nombre
-          <input type="text" name="name" th:value="${template.name}" required/>
-        </label>
-        <label>Nivel
-          <select name="level">
-            <option th:selected="${template.level=='BEGINNER'}" value="BEGINNER">BEGINNER</option>
-            <option th:selected="${template.level=='INTERMEDIATE'}" value="INTERMEDIATE">INTERMEDIATE</option>
-            <option th:selected="${template.level=='ADVANCED'}" value="ADVANCED">ADVANCED</option>
-          </select>
-        </label>
-        <label>Entrenador (ID)
-          <input type="text" name="trainerId" th:value="${template.trainerId}" required/>
-        </label>
-        <label>Descripción
-          <textarea name="description" th:text="${template.description}"></textarea>
-        </label>
-      </div>
+      <!-- Datos generales -->
+      <section class="card routine-card routine-template-card">
+        <header class="routine-card-header">
+          <div>
+            <h2>Datos de la plantilla</h2>
+            <p class="muted small">
+              Nombre, nivel y entrenador responsable de esta plantilla.
+            </p>
+          </div>
+        </header>
 
-      <h2>Ejercicios</h2>
-      <table class="table compact">
-        <thead>
-        <tr><th>#</th><th>Ejercicio (catálogo)</th><th>Series</th><th>Reps</th><th>Descanso (s)</th><th></th></tr>
-        </thead>
-        <tbody id="rows">
-        <tr th:if="${#lists.isEmpty(template.exercises)}" class="muted">
-          <td colspan="6">Sin filas todavía. Usa “Agregar fila”.</td>
-        </tr>
+        <div class="grid grid-2 routine-template-fields">
+          <label>Nombre
+            <input type="text" name="name" th:value="${template.name}" required/>
+          </label>
 
-        <tr th:each="it,idx : ${template.exercises}">
-          <td><input type="number" min="0" th:name="${'exercises['+idx.index+'].order'}" th:value="${it.order}"/></td>
-          <td>
-            <select th:name="${'exercises['+idx.index+'].exerciseId'}">
-              <option th:each="ex : ${exercises}" th:value="${ex.id}" th:selected="${ex.id==it.exerciseId}"
-                      th:text="${ex.name}">Ejercicio</option>
+          <label>Nivel
+            <select name="level">
+              <option th:selected="${template.level=='BEGINNER'}" value="BEGINNER">BEGINNER</option>
+              <option th:selected="${template.level=='INTERMEDIATE'}" value="INTERMEDIATE">INTERMEDIATE</option>
+              <option th:selected="${template.level=='ADVANCED'}" value="ADVANCED">ADVANCED</option>
             </select>
-          </td>
-          <td><input type="number" min="0" th:name="${'exercises['+idx.index+'].sets'}" th:value="${it.sets}"/></td>
-          <td><input type="number" min="0" th:name="${'exercises['+idx.index+'].reps'}" th:value="${it.reps}"/></td>
-          <td><input type="number" min="0" th:name="${'exercises['+idx.index+'].restSeconds'}" th:value="${it.restSeconds}"/></td>
-          <td class="table-actions">
-            <button class="btn btn-small" type="button" onclick="move(this,-1)">↑</button>
-            <button class="btn btn-small" type="button" onclick="move(this,1)">↓</button>
-            <button class="btn btn-small btn-danger" type="button" onclick="removeRow(this)">Quitar</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+          </label>
 
-      <div class="form-actions">
-        <button class="btn" type="button" onclick="addRow()">Agregar fila</button>
-        <button class="btn" type="submit" onclick="renumber()">Guardar</button>
+          <label>Entrenador (ID)
+            <input type="text" name="trainerId" th:value="${template.trainerId}" required/>
+          </label>
+
+          <label>Descripción
+            <textarea name="description"
+                      th:text="${template.description}"
+                      placeholder="Describe el enfoque de esta plantilla, recomendaciones, etc."></textarea>
+          </label>
+        </div>
+      </section>
+
+      <!-- Ítems de la plantilla -->
+      <section class="card routine-card routine-template-card">
+        <header class="routine-card-header">
+          <div>
+            <h2>Ejercicios de la plantilla</h2>
+            <p class="muted small">
+              Configura el orden, el ejercicio asociado y los parámetros de trabajo.
+            </p>
+          </div>
+          <div class="routine-template-rows-actions">
+            <button class="btn btn-ghost-primary btn-small" type="button" id="addRow">
+              Agregar fila
+            </button>
+          </div>
+        </header>
+
+        <div class="routine-template-table-wrapper">
+          <div class="table-wrapper">
+            <table class="table routine-table">
+              <thead>
+              <tr>
+                <th>#</th>
+                <th>Ejercicio</th>
+                <th>Series</th>
+                <th>Reps</th>
+                <th>Descanso (s)</th>
+                <th></th>
+              </tr>
+              </thead>
+              <tbody id="rows">
+              <tr th:if="${#lists.isEmpty(items)}" class="routine-template-empty-row">
+                <td class="muted" colspan="6">
+                  Sin filas todavía. Usa <strong>“Agregar fila”</strong> para crear la primera.
+                </td>
+              </tr>
+              <tr th:each="it,idx : ${items}" th:data-row="${idx.index}">
+                <td>
+                  <input type="number" name="order" th:value="${it.order}" min="1" step="1"/>
+                </td>
+                <td>
+                  <input type="text" name="exerciseId"
+                         th:value="${it.exerciseId}"
+                         placeholder="ID o nombre de ejercicio"/>
+                </td>
+                <td>
+                  <input type="number" name="sets" th:value="${it.sets}" min="0" step="1"/>
+                </td>
+                <td>
+                  <input type="number" name="reps" th:value="${it.reps}" min="0" step="1"/>
+                </td>
+                <td>
+                  <input type="number" name="restSeconds" th:value="${it.restSeconds}" min="0" step="1"/>
+                </td>
+                <td class="table-actions">
+                  <button class="btn btn-small btn-ghost-danger" type="button" onclick="removeRow(this)">
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="muted small routine-template-hint">
+            El número de orden se actualiza automáticamente cuando agregas o eliminas filas.
+          </p>
+        </div>
+      </section>
+
+      <div class="form-actions routine-template-form-actions">
+        <button class="btn" type="submit">
+          Guardar plantilla
+        </button>
+        <a class="btn btn-secondary" th:href="@{/mvc/routine-templates}">
+          Cancelar
+        </a>
       </div>
     </form>
   </main>
-</section>
 
-<script>
-  function addRow(){
-    const tbody = document.getElementById('rows');
-    // quita fila “Sin filas…”
-    tbody.querySelectorAll('.muted')?.forEach(m => m.remove());
-    const idx = tbody.querySelectorAll('tr').length;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td><input type="number" min="0" name="exercises[${idx}].order" value="${idx+1}"/></td>
-      <td>
-        <select name="exercises[${idx}].exerciseId">
-          ${Array.from(document.querySelectorAll('select[name$=".exerciseId"]:first-child option')).map(o => o.outerHTML).join('')}
-        </select>
-      </td>
-      <td><input type="number" min="0" name="exercises[${idx}].sets"/></td>
-      <td><input type="number" min="0" name="exercises[${idx}].reps"/></td>
-      <td><input type="number" min="0" name="exercises[${idx}].restSeconds"/></td>
-      <td class="table-actions">
-        <button class="btn btn-small" type="button" onclick="move(this,-1)">↑</button>
-        <button class="btn btn-small" type="button" onclick="move(this,1)">↓</button>
-        <button class="btn btn-small btn-danger" type="button" onclick="removeRow(this)">Quitar</button>
-      </td>`;
-    tbody.appendChild(tr);
-  }
-  function removeRow(btn){
-    const tr = btn.closest('tr'); tr.remove(); renumber();
-  }
-  function renumber(){
-    const rows = Array.from(document.querySelectorAll('#rows tr'));
-    rows.forEach((tr,i) => {
-      tr.querySelectorAll('input,select').forEach(el => {
-        el.name = el.name.replace(/exercises\[\d+]/,'exercises['+i+']');
+  <script>
+    const rowsBody = document.getElementById('rows');
+    const addRowBtn = document.getElementById('addRow');
+
+    function renumber() {
+      const trs = rowsBody.querySelectorAll('tr[data-row]');
+      trs.forEach((tr, idx) => {
+        tr.dataset.row = idx;
+        const orderInput = tr.querySelector('input[name="order"]');
+        if (orderInput) {
+          orderInput.value = idx + 1;
+        }
       });
-      const order = tr.querySelector('input[name$=".order"]');
-      if(order) order.value = i+1;
+    }
+
+    function removeRow(btn) {
+      const row = btn.closest('tr');
+      if (!row) return;
+      row.remove();
+
+      if (!rowsBody.querySelector('tr[data-row]')) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.className = 'routine-template-empty-row';
+        emptyRow.innerHTML =
+                '<td class="muted" colspan="6">Sin filas todavía. Usa <strong>“Agregar fila”</strong> para crear la primera.</td>';
+        rowsBody.appendChild(emptyRow);
+      } else {
+        renumber();
+      }
+    }
+
+    addRowBtn?.addEventListener('click', () => {
+      const emptyRow = rowsBody.querySelector('.routine-template-empty-row');
+      if (emptyRow) {
+        emptyRow.remove();
+      }
+
+      const tr = document.createElement('tr');
+      tr.setAttribute('data-row', '0');
+      tr.innerHTML = `
+                <td>
+                    <input type="number" name="order" value="0" min="1" step="1"/>
+                </td>
+                <td>
+                    <input type="text" name="exerciseId" placeholder="ID o nombre de ejercicio"/>
+                </td>
+                <td>
+                    <input type="number" name="sets" value="0" min="0" step="1"/>
+                </td>
+                <td>
+                    <input type="number" name="reps" value="0" min="0" step="1"/>
+                </td>
+                <td>
+                    <input type="number" name="restSeconds" value="0" min="0" step="1"/>
+                </td>
+                <td class="table-actions">
+                    <button class="btn btn-small btn-ghost-danger" type="button" onclick="removeRow(this)">
+                        Eliminar
+                    </button>
+                </td>
+            `;
+      rowsBody.appendChild(tr);
+      renumber();
     });
-  }
-  function move(btn,delta){
-    const tr = btn.closest('tr'); const tbody = tr.parentElement;
-    const rows = Array.from(tbody.children); const i = rows.indexOf(tr);
-    const j = i + delta; if(j<0 || j>=rows.length) return;
-    if(delta<0) tbody.insertBefore(tr, rows[j]); else tbody.insertBefore(rows[j], tr);
-    renumber();
-  }
-</script>
+
+    // Renumerar en carga inicial
+    if (rowsBody && rowsBody.querySelector('tr[data-row]')) {
+      renumber();
+    }
+  </script>
+</section>
 </html>

@@ -1,47 +1,70 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{components/base :: page(
-          title='Mis rutinas',
-          content=~{::content}
-      )}">
-<section th:fragment="content">
+              title='Mis rutinas',
+              content=~{::content}
+          )}">
+<section th:fragment="content" class="routine-page routine-list-page">
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/routine/routine.css}">
+
     <header class="site-header">
-        <div class="container actions">
-            <h1 class="page-title">Mis rutinas</h1>
-            <form th:action="@{/mvc/routines/create}" method="post" class="actions" style="margin:0">
-                <input type="text" name="name" placeholder="Nombre de la rutina (opcional)"/>
-                <button class="btn" type="submit">Crear rutina</button>
-            </form>
-            <a class="btn btn-secondary" th:href="@{/mvc/routines/create}">Crear desde ejercicios</a>
+        <div class="container actions routine-header">
+            <div class="routine-header-main">
+                <h1 class="page-title">Mis rutinas</h1>
+                <p class="muted routine-header-subtitle">
+                    Crea, organiza y registra tu progreso sobre las rutinas del gimnasio ICESI.
+                </p>
+            </div>
+
+            <div class="routine-header-actions">
+                <form th:action="@{/mvc/routines/create}" method="post" class="actions routine-quick-form">
+                    <button class="btn" type="submit">Crear rutina</button>
+                </form>
+
+                <a class="btn btn-secondary" th:href="@{/mvc/routines/create}">
+                    Crear desde ejercicios
+                </a>
+            </div>
         </div>
     </header>
 
-    <main class="container card">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Ítems</th>
-                <th>Origen</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:if="${#lists.isEmpty(routines)}">
-                <td class="muted" colspan="4">Aún no tienes rutinas.</td>
-            </tr>
-            <tr th:each="r : ${routines}">
-                <td th:text="${r.name}">Nombre</td>
-                <td th:text="${#lists.size(r.exercises)}">0</td>
-                <td th:text="${r.sourceTemplateId != null ? r.sourceTemplateId : '—'}">origen</td>
-                <td class="table-actions">
-                    <a class="btn btn-small" th:href="@{'/mvc/routines/' + ${r.id}}">Abrir</a>
-                    <a class="btn btn-small" th:href="@{'/mvc/progress/' + ${r.id}}">Registrar progreso</a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+    <main class="container card routine-card">
+        <header class="routine-card-header">
+            <div>
+                <h2 class="routine-card-title">Listado de rutinas</h2>
+                <p class="muted small">
+                    Consulta tus rutinas, revisa cuántos ítems tienen y registra tu progreso.
+                </p>
+            </div>
+        </header>
+
+        <div class="table-wrapper">
+            <table class="table routine-table">
+                <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Ítems</th>
+                    <th>Origen</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(routines)}">
+                    <td class="muted" colspan="4">Aún no tienes rutinas.</td>
+                </tr>
+                <tr th:each="r : ${routines}">
+                    <td class="routine-name-cell" th:text="${r.name}">Nombre</td>
+                    <td th:text="${#lists.size(r.exercises)}">0</td>
+                    <td class="routine-origin-cell" th:text="${r.sourceTemplateId != null ? r.sourceTemplateId : '—'}">origen</td>
+                    <td class="table-actions">
+                        <a class="btn btn-small" th:href="@{'/mvc/routines/' + ${r.id}}">Abrir</a>
+                        <a class="btn btn-small btn-ghost-primary" th:href="@{'/mvc/progress/' + ${r.id}}">Registrar progreso</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </main>
 </section>
 </html>

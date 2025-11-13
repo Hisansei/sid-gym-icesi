@@ -1,0 +1,277 @@
+/* ========= Reportes – estilos específicos ========= */
+
+/* Layout general de páginas de reportes */
+.reports-page main.container {
+    padding-block: 1.25rem 1.75rem;
+}
+
+.reports-page .site-header {
+    border-bottom: 1px solid #e5ecf7;
+    background: linear-gradient(
+            135deg,
+            var(#5454e9, #e6f0ff) 0%,
+            #ffffff 55%
+    );
+}
+
+.reports-page .header-inner {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+    padding-block: 0.85rem;
+}
+
+.reports-page .header-copy .page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.reports-page .header-copy .muted {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+}
+
+.reports-page .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.reports-page .page-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Tarjetas dentro de reportes */
+.reports-page .card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+}
+
+.reports-page .card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+            circle at top right,
+            rgba(49, 120, 198, 0.12),
+            transparent 55%
+    );
+    pointer-events: none;
+}
+
+.reports-page .card > * {
+    position: relative;
+}
+
+/* Texto pequeño reutilizable */
+.reports-page .small {
+    font-size: 0.85rem;
+}
+
+/* Chips / etiquetas */
+.reports-page .chip-user {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    background: rgba(37, 99, 235, 0.08);
+    color: #1d4ed8;
+}
+
+/* Estado vacío */
+.reports-page .empty-state {
+    text-align: center;
+    padding-block: 0.8rem;
+    border-radius: 12px;
+    background: rgba(226, 232, 240, 0.35);
+}
+
+/* Wrapper para tablas */
+.reports-page .table-wrapper {
+    margin-top: 0.85rem;
+    overflow-x: auto;
+}
+
+/* Tabla de reportes */
+.reports-page .reports-table thead th {
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    border-bottom: 1px solid #e5ecf7;
+}
+
+.reports-page .reports-table tbody tr {
+    transition:
+            transform 0.08s ease,
+            box-shadow 0.08s ease,
+            background-color 0.08s ease;
+}
+
+.reports-page .reports-table tbody tr:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    background: #f9fbff;
+}
+
+.reports-page .reports-table td.col-week {
+    font-weight: 500;
+    color: #0f172a;
+}
+
+.reports-page .reports-table td.col-rate {
+    font-weight: 600;
+    color: #0f766e;
+}
+
+/* Footer de tarjeta */
+.reports-page .card-footer {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+/* Variante de botón muy suave */
+.btn.btn-ghost {
+    background: transparent;
+    border-color: transparent;
+    color: #1d4ed8;
+}
+
+.btn.btn-ghost:hover {
+    background: rgba(226, 232, 240, 0.6);
+    border-color: rgba(148, 163, 184, 0.4);
+}
+
+/* ------------ Selector de reporte (select.html) ------------ */
+
+.reports-select .card-select {
+    max-width: 960px;
+    margin-inline: auto;
+}
+
+.reports-select .card-intro {
+    margin-bottom: 0.9rem;
+}
+
+.reports-select .card-title {
+    margin: 0 0 0.25rem;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.reports-select .reports-options {
+    margin-top: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.reports-select .report-option {
+    background: linear-gradient(180deg, #ffffff 0%, #f4f7ff 100%);
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.reports-select .option-title {
+    margin: 0 0 0.15rem;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.reports-select .option-form .field {
+    margin-top: 0.35rem;
+}
+
+.reports-select .field-label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 0.15rem;
+}
+
+.reports-select input[type="number"] {
+    width: 100%;
+}
+
+.reports-select .field-help {
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+}
+
+.reports-select .option-form .form-actions {
+    margin-top: 0.65rem;
+    justify-content: flex-end;
+}
+
+/* ------------ Páginas de tabla (consistency + exercise types) ------------ */
+
+.reports-page .card-report {
+    max-width: 960px;
+    margin-inline: auto;
+}
+
+.reports-page .card-intro {
+    margin-bottom: 0.75rem;
+}
+
+.reports-page .card-title {
+    margin: 0 0 0.25rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Responsivo */
+@media (max-width: 900px) {
+    .reports-page .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .reports-page .header-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .reports-select .reports-options {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .reports-page main.container {
+        padding-block: 1rem 1.5rem;
+    }
+
+    .reports-page .card {
+        padding-inline: 1.1rem;
+    }
+}
+
+/* Pequeña animación de entrada para las tarjetas de reportes */
+@keyframes reportsCardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.99);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.reports-page .card {
+    animation: reportsCardFadeIn 0.3s ease-out;
+}
