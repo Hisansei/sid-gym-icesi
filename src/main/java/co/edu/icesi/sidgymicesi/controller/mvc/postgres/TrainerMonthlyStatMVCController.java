@@ -1,8 +1,6 @@
 package co.edu.icesi.sidgymicesi.controller.mvc.postgres;
 
 import java.util.List;
-import java.util.Optional;
-import java.time.YearMonth;
 
 import org.springframework.ui.Model;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +17,6 @@ import co.edu.icesi.sidgymicesi.services.postgres.ITrainerStatsService;
 @Controller
 @RequestMapping("/mvc/admin/trainers/stats")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 public class TrainerMonthlyStatMVCController {
     
     private final ITrainerStatsService trainerStatsService;
@@ -32,38 +29,15 @@ public class TrainerMonthlyStatMVCController {
     }
 
     @GetMapping("/detail")
-    public String getTrainerStatsDetail(@RequestParam String trainerUsername, @RequestParam String period, Model model) {
+    public String getTrainerStatsDetail(@RequestParam String trainerUsername, Model model) {
+        List<TrainerMonthlyStat> stats = trainerStatsService.listByTrainer(trainerUsername);
 
-        YearMonth ym = YearMonth.parse(period); 
-
-        Optional<TrainerMonthlyStat> optStat = trainerStatsService.get(trainerUsername, ym);
-
-        if (optStat.isEmpty()) {
-            model.addAttribute("error", "Estadísticas no encontradas para el entrenador: " + trainerUsername + " en el mes " + period);
+        if (stats.isEmpty()) {
+            model.addAttribute("error", "Estadísticas no encontradas para el entrenador: " + trainerUsername);
             return "admin/trainers/stats/list";
         }
 
-        TrainerMonthlyStat stat = optStat.get();
-        model.addAttribute("trainerStat", stat);
-        
+        model.addAttribute("trainerStats", stats);
         return "admin/trainers/stats/detail";
     }
-
-    @GetMapping("/current")
-    public String getTrainerStatsCurrentMonth(@RequestParam String trainerUsername, Model model) {
-        YearMonth currentMonth = YearMonth.now();
-
-        Optional<TrainerMonthlyStat> optStat = trainerStatsService.get(trainerUsername, currentMonth);
-
-        if (optStat.isEmpty()) {
-            model.addAttribute("error", "Estadísticas no encontradas para el entrenador: " + trainerUsername + " en el mes actual");
-            return "admin/trainers/stats/list";
-        }
-
-        TrainerMonthlyStat stat = optStat.get();
-        model.addAttribute("trainerStat", stat);
-        
-        return "admin/trainers/stats/detail";
-    }
-
 }

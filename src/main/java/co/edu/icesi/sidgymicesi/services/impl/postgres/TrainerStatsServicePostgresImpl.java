@@ -48,13 +48,6 @@ public class TrainerStatsServicePostgresImpl implements ITrainerStatsService {
         repo.save(s);
     }
 
-    /* TODO: REVISAR
-    PARA LO DE LA CONCURRENCIA, PODRIAMOS USAR ESTE MÉTODO EN LUGAR DEL ANTERIOR
-    @Override
-    public void registerNewAssignment(String trainerUsername, YearMonth period) {
-        repo.upsertIncrementNewAssignments(trainerUsername, period.toString()); // "YYYY-MM"
-    }*/
-
     @Override
     public Optional<TrainerMonthlyStat> get(String t, YearMonth p) {
         return repo.findById(new TrainerMonthlyStatId(t, ym(p)));
@@ -77,4 +70,3 @@ public class TrainerStatsServicePostgresImpl implements ITrainerStatsService {
         return out;
     }
 }
-

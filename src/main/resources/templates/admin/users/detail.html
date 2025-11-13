@@ -18,8 +18,25 @@
       <table>
         <tr><th>Username</th><td th:text="${actualUser.username}">username</td></tr>
         <tr><th>Rol</th><td th:text="${actualUser.role}">ROLE</td></tr>
-        <tr><th>Estudiante ID</th><td th:text="${actualUser.studentId}">-</td></tr>
-        <tr><th>Empleado ID</th><td th:text="${actualUser.employeeId}">-</td></tr>
+
+        <!-- Mostrar Estudiante ID solo si tiene valor -->
+        <tr th:if="${actualUser.studentId != null}">
+          <th>Estudiante ID</th>
+          <td th:text="${actualUser.studentId}">-</td>
+        </tr>
+
+        <!-- Mostrar Empleado ID solo si tiene valor y si es tipo 'Empleado' mostrar tipo -->
+        <tr th:if="${actualUser.employeeId != null}">
+          <th>Empleado ID</th>
+          <td th:text="${actualUser.employeeId}">-</td>
+        </tr>
+
+        <!-- Mostrar el tipo de empleado solo si es de tipo 'EMPLOYEE' -->
+        <tr th:if="${actualUser.role.name() == 'EMPLOYEE'}">
+          <th>Tipo de Empleado</th>
+          <td th:text="${actualUser.employeeType}">Tipo</td>
+        </tr>
+        
         <tr><th>Activo</th><td th:text="${actualUser.active} ? 'Sí' : 'No'">Sí</td></tr>
         <tr>
           <th>Creado</th>
@@ -27,13 +44,11 @@
         </tr>
       </table>
 
-      <!-- <div th:if="${actualUser.role == 'EMPLOYEE' and actualUser.employeeType == 'Instructor'}">
-          <p>
-              <a th:href="@{/mvc/admin/trainers/stats/detail(trainerUsername=${actualUser.username}, period=${#temporals.format(#dates.format('yyyy-MM'))})}">
-                  Ver Estadísticas Mensuales
-              </a>
-          </p>
-      </div> -->
+      <div th:if="${actualUser.role.name() == 'EMPLOYEE' and actualUser.employeeType == 'Instructor'}">
+        <p>
+            <a th:href="@{/mvc/admin/trainers/stats/detail(trainerUsername=${actualUser.username})}">Ver estadísticas del entrenador</a>
+        </p>
+      </div>
 
       <div th:if="${actualUser.passwordHash}" style="display:none"></div>
 

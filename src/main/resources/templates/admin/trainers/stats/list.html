@@ -1,20 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{components/base :: page(
-          title='Estadísticas de Entrenadores',
-          content=~{::content}
-      )}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{components/base :: page(title='Estadísticas de Entrenadores', content=~{::content})}">
 <section th:fragment="content">
-  <link rel="stylesheet" th:href="@{/css/app.css}">
   <div class="container">
     <h2>Estadísticas mensuales de Entrenadores</h2>
 
     <div th:if="${error}" class="alert-error">
       <span th:text="${error}">Ha ocurrido un error</span>
     </div>
-    <div th:if="${message}" class="alert-success">
-      <span th:text="${message}">Operación exitosa</span>
-    </div>
+
+    <form th:action="@{/mvc/admin/trainers/stats}" method="get">
+      <input type="text" name="trainerUsername" placeholder="Filtrar por Entrenador" />
+      <button type="submit">Buscar</button>
+    </form>
 
     <table>
       <thead>
@@ -23,7 +20,6 @@
           <th>Periodo (Mes)</th>
           <th>Asignaciones Nuevas</th>
           <th>Seguimientos Realizados</th>
-          <th>Opciones</th>
         </tr>
       </thead>
       <tbody>
@@ -32,9 +28,6 @@
           <td th:text="${stat.id.period}">Periodo</td>
           <td th:text="${stat.newAssignments}">0</td>
           <td th:text="${stat.followupsMade}">0</td>
-          <td>
-            <a th:href="@{/mvc/admin/trainers/stats/detail(trainerUsername=${stat.id.trainerUsername}, period=${stat.id.period})}">Ver Detalle</a>
-          </td>
         </tr>
         <tr th:if="${trainerStats == null or trainerStats.isEmpty()}">
           <td colspan="5">No hay estadísticas para mostrar…</td>
