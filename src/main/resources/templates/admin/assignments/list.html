@@ -16,7 +16,6 @@
         </nav>
     </header>
 
-
     <main class="container space-y">
 
         <!-- Mensajes flash -->
@@ -24,6 +23,7 @@
         <div th:if="${msg_warn}" class="alert warning" th:text="${msg_warn}"></div>
         <div th:if="${msg_error}" class="alert danger" th:text="${msg_error}"></div>
 
+        <!-- Asignaciones activas -->
         <section class="card">
             <h2>Asignaciones activas</h2>
             <table class="table stats-table">
@@ -56,6 +56,7 @@
             </table>
         </section>
 
+        <!-- Histórico -->
         <section class="card">
             <h2>Histórico (todas)</h2>
             <table class="table stats-table">
@@ -75,14 +76,15 @@
                     <td th:text="${#temporals.format(h.assignedAt, 'yyyy-MM-dd HH:mm')}">2025-01-01</td>
                     <td th:text="${h.endedAt != null ? #temporals.format(h.endedAt, 'yyyy-MM-dd HH:mm') : '-'}">-</td>
                     <td>
-              <span th:text="${h.active ? 'ACTIVA' : 'CERRADA'}"
-                    th:classappend="${h.active} ? 'badge success' : 'badge'">ACTIVA</span>
+                        <span th:text="${h.active ? 'ACTIVA' : 'CERRADA'}"
+                              th:classappend="${h.active} ? 'badge success' : 'badge'">ACTIVA</span>
                     </td>
                 </tr>
                 </tbody>
             </table>
         </section>
 
+        <!-- Estadísticas mensuales -->
         <section class="card">
             <h2>Estadísticas mensuales (asignaciones nuevas)</h2>
             <table class="table stats-table">

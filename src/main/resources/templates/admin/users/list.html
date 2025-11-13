@@ -4,47 +4,64 @@
           title='Usuarios',
           content=~{::content}
       )}">
-<section th:fragment="content">
+<section th:fragment="content" class="admin-users-page">
   <link rel="stylesheet" th:href="@{/css/app.css}">
-  <div class="container">
-    <h2>Usuarios institucionales</h2>
+  <link rel="stylesheet" th:href="@{/css/admin-users.css}">
 
-    <div th:if="${error}" class="alert-error">
-      <span th:text="${error}">Ha ocurrido un error</span>
+  <header class="site-header">
+    <div class="container page-header">
+      <div>
+        <h1 class="page-title">Usuarios institucionales</h1>
+        <p class="page-subtitle">
+          Gestión de cuentas que pueden acceder al gimnasio universitario.
+        </p>
+      </div>
     </div>
-    <div th:if="${message}" class="alert-success">
-      <span th:text="${message}">Operación exitosa</span>
-    </div>
+  </header>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Username</th>
-          <th>Rol</th>
-          <th>Estudiante ID</th>
-          <th>Empleado ID</th>
-          <th>Activo</th>
-          <th>Creado</th>
-          <th>Opciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr th:each="u : ${users}">
-          <td th:text="${u.username}">username</td>
-          <td th:text="${u.role}">ROLE</td>
-          <td th:text="${u.studentId}">-</td>
-          <td th:text="${u.employeeId}">-</td>
-          <td th:text="${u.active} ? 'Sí' : 'No'">Sí/No</td>
-          <td th:text="${u.createdAt != null ? #temporals.format(u.createdAt,'dd/MM/yyyy HH:mm') : '-'}">fecha</td>
-          <td>
-            <a th:href="@{/mvc/admin/users/detail(username=${u.username})}">Detalle</a>
-          </td>
-        </tr>
-        <tr th:if="${users == null or users.isEmpty()}">
-          <td colspan="7">No hay usuarios para mostrar…</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+  <main class="container">
+    <section class="card">
+      <h2 class="card-title">Listado</h2>
+
+      <div th:if="${error}" class="alert-error">
+        <span th:text="${error}">Ha ocurrido un error</span>
+      </div>
+      <div th:if="${message}" class="alert-success">
+        <span th:text="${message}">Operación exitosa</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="table users-table">
+          <thead>
+          <tr>
+            <th>Username</th>
+            <th>Rol</th>
+            <th>Estudiante ID</th>
+            <th>Empleado ID</th>
+            <th>Activo</th>
+            <th>Creado</th>
+            <th>Opciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="u : ${users}">
+            <td th:text="${u.username}">username</td>
+            <td th:text="${u.role}">ROLE</td>
+            <td th:text="${u.studentId}">-</td>
+            <td th:text="${u.employeeId}">-</td>
+            <td th:text="${u.active} ? 'Sí' : 'No'">Sí/No</td>
+            <td th:text="${u.createdAt != null ? #temporals.format(u.createdAt,'dd/MM/yyyy HH:mm') : '-'}">fecha</td>
+            <td>
+              <a th:href="@{/mvc/admin/users/detail(username=${u.username})}">Detalle</a>
+            </td>
+          </tr>
+          <tr th:if="${users == null or users.isEmpty()}">
+            <td colspan="7">No hay usuarios para mostrar…</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
 </section>
 </html>
