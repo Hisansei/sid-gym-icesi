@@ -1,29 +1,56 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-    th:replace="~{components/base :: page(title='Detalle de Estadísticas de Usuario', content=~{::content})}">
-<section th:fragment="content">
-    <div class="container">
-        <h2>Detalle de las estadísticas del usuario</h2>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{components/base :: page(title='Detalle de Estadísticas de Usuario', content=~{::content})}">
+<section th:fragment="content" class="users-stats-page">
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Usuario</th>
-                    <th>Periodo (Mes)</th>
-                    <th>Asignaciones Iniciadas</th>
-                    <th>Seguimientos Realizados</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="stat : ${userStats}">
-                    <td th:text="${stat.id.userUsername}">Username</td>
-                    <td th:text="${stat.id.period}">Periodo</td>
-                    <td th:text="${stat.routinesStarted}">0</td>
-                    <td th:text="${stat.followupsMade}">0</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <link rel="stylesheet" th:href="@{/css/admin/users-stats.css}" />
+
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Detalle de las estadísticas del usuario</h1>
+            <p class="page-subtitle">
+                Desglose mensual de rutinas iniciadas y seguimientos realizados.
+            </p>
+        </div>
+
+        <nav class="actions">
+            <a class="btn btn-secondary" th:href="@{/mvc/admin/users/stats}">
+                <span class="material-symbols-rounded" style="font-size:18px;vertical-align:-4px;">arrow_back</span>
+                Volver al listado
+            </a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section class="card">
+            <h2 class="card-title">Histórico mensual</h2>
+
+            <div class="table-wrapper">
+                <table class="stats-table">
+                    <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Periodo (Mes)</th>
+                        <th>Asignaciones iniciadas</th>
+                        <th>Seguimientos realizados</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="stat : ${userStats}">
+                        <td th:text="${stat.id.userUsername}">Username</td>
+                        <td th:text="${stat.id.period}">Periodo</td>
+                        <td th:text="${stat.routinesStarted}">0</td>
+                        <td th:text="${stat.followupsMade}">0</td>
+                    </tr>
+                    <tr th:if="${userStats == null or #lists.isEmpty(userStats)}">
+                        <td colspan="4" class="empty-state">
+                            No hay estadísticas registradas para este usuario todavía.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 </section>
-
 </html>
