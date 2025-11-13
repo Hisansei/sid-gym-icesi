@@ -14,35 +14,71 @@
             <p class="muted">Accesos rápidos a tus rutinas, plantillas y progreso.</p>
         </div>
 
-        <div class="grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
+        <div class="grid">
 
             <!-- Mis rutinas (alumnos/colaboradores/admin) -->
-            <article class="card" sec:authorize="hasAnyRole('STUDENT','EMPLOYEE','ADMIN')" style="border:1px solid #e5e7eb;border-radius:8px;padding:16px">
-                <h2 style="margin:0 0 8px 0">Mis rutinas</h2>
-                <p class="muted" style="margin:0 0 12px 0">Consulta, edita o crea tus rutinas personales.</p>
-                <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap">
-                    <a class="btn" th:href="@{/mvc/routines}" style="display:inline-block;padding:8px 12px;border-radius:6px;background:#111827;color:#fff;text-decoration:none">Ver mis rutinas</a>
-                    <a class="btn" th:href="@{/mvc/routines/create}" style="display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none">Crear rutina</a>
+            <article class="card" sec:authorize="hasAnyRole('STUDENT','EMPLOYEE','ADMIN')">
+                <h2>Mis rutinas</h2>
+                <p class="muted">Consulta, edita o crea tus rutinas personales.</p>
+                <div class="actions">
+                    <a class="btn" th:href="@{/mvc/routines}">Ver mis rutinas</a>
+                    <a class="btn" th:href="@{/mvc/routines/create}">Crear rutina</a>
                 </div>
             </article>
 
             <!-- Plantillas de entrenadores (cualquier autenticado las puede ver; CRUD lo controla el controlador) -->
-            <article class="card" sec:authorize="isAuthenticated()" style="border:1px solid #e5e7eb;border-radius:8px;padding:16px">
-                <h2 style="margin:0 0 8px 0">Plantillas de rutinas</h2>
-                <p class="muted" style="margin:0 0 12px 0">Explora plantillas publicadas por entrenadores y adóptalas.</p>
-                <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap">
-                    <a class="btn" th:href="@{/mvc/routine-templates}" style="display:inline-block;padding:8px 12px;border-radius:6px;background:#111827;color:#fff;text-decoration:none">Ver plantillas</a>
-                    <a class="btn" sec:authorize="hasAnyRole('TRAINER','ADMIN')" th:href="@{/mvc/routine-templates/create}" style="display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none">Nueva plantilla</a>
+            <article class="card" sec:authorize="isAuthenticated()">
+                <h2>Plantillas de rutinas</h2>
+                <p class="muted">Explora plantillas publicadas por entrenadores y adóptalas.</p>
+                <div class="actions">
+                    <a class="btn" th:href="@{/mvc/routine-templates}">Ver plantillas</a>
+                    <a class="btn" sec:authorize="hasAnyRole('TRAINER','ADMIN')" th:href="@{/mvc/routine-templates/create}">Nueva plantilla</a>
                 </div>
             </article>
 
             <!-- Progreso (alumnos/colaboradores/admin)  → el controlador maneja selector si falta routineId -->
-            <article class="card" sec:authorize="hasAnyRole('STUDENT','EMPLOYEE','ADMIN')" style="border:1px solid #e5e7eb;border-radius:8px;padding:16px">
-                <h2 style="margin:0 0 8px 0">Mi progreso</h2>
-                <p class="muted" style="margin:0 0 12px 0">Registra tus avances (reps/tiempo/esfuerzo) y revisa tu historial.</p>
-                <div class="actions" style="display:flex;gap:8px;flex-wrap:wrap">
-                    <a class="btn" th:href="@{/mvc/progress/history}" style="display:inline-block;padding:8px 12px;border-radius:6px;background:#111827;color:#fff;text-decoration:none">Ver historial</a>
-                    <a class="btn" th:href="@{/mvc/progress/history}" style="display:inline-block;padding:8px 12px;border-radius:6px;background:#f3f4f6;color:#111827;text-decoration:none">Registrar progreso</a>
+            <article class="card" sec:authorize="hasAnyRole('STUDENT','EMPLOYEE','ADMIN')">
+                <h2>Mi progreso</h2>
+                <p class="muted">Registra tus avances (reps/tiempo/esfuerzo) y revisa tu historial.</p>
+                <div class="actions">
+                    <a class="btn" th:href="@{/mvc/progress/history}">Ver historial</a>
+                    <a class="btn" th:href="@{/mvc/progress/history}">Registrar progreso</a>
+                </div>
+            </article>
+
+            <!-- Card para ADMIN: Ver estadísticas de los entrenadores -->
+            <article class="card" sec:authorize="hasRole('ADMIN')">
+                <h2>Estadísticas de Entrenadores</h2>
+                <p class="muted">Consulta las estadísticas mensuales de todos los entrenadores.</p>
+                <div class="actions">
+                    <a class="btn" th:href="@{/mvc/admin/trainers/stats}">Ver estadísticas</a>
+                </div>
+            </article>
+
+            <!-- Card para ADMIN: Ver estadísticas de los usuarios -->
+            <article class="card" sec:authorize="hasRole('ADMIN')">
+                <h2>Estadísticas de Usuarios</h2>
+                <p class="muted">Consulta las estadísticas mensuales de todos los usuarios.</p>
+                <div class="actions">
+                    <a class="btn" th:href="@{/mvc/admin/users/stats}">Ver estadísticas</a>
+                </div>
+            </article>
+
+            <!-- Card para EMPLOYEE con tipo Instructor: Ver estadísticas de su propio rendimiento -->
+            <article class="card" sec:authorize="hasRole('EMPLOYEE') and #authentication.principal.employeeType == 'Instructor'">
+                <h2>Mis estadísticas como Instructor</h2>
+                <p class="muted">Consulta todas las estadísticas mensuales de tu desempeño como Instructor.</p>
+                <div class="actions">
+                    <a class="btn" th:href="@{/mvc/admin/trainers/stats/detail(trainerUsername=${#authentication.principal.username})}">Ver mis estadísticas</a>
+                </div>
+            </article>
+
+            <!-- Card para EMPLOYEE con tipo diferente (Entrenador/Estudiante) o para STUDENT: Ver estadísticas de sí mismo -->
+            <article class="card" sec:authorize="hasRole('EMPLOYEE') and (#authentication.principal.employeeType == null or #authentication.principal.employeeType != 'Instructor') or hasRole('STUDENT')">
+                <h2>Mis estadísticas</h2>
+                <p class="muted">Consulta todas las estadísticas mensuales de tu desempeño.</p>
+                <div class="actions">
+                    <a class="btn" th:href="@{/mvc/admin/users/stats/detail(userUsername=${#authentication.principal.username})}">Ver mis estadísticas</a>
                 </div>
             </article>
 

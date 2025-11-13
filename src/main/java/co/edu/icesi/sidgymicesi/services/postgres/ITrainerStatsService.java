@@ -12,5 +12,6 @@ public interface ITrainerStatsService {
 
     Optional<TrainerMonthlyStat> get(String trainerUsername, YearMonth period);
     List<TrainerMonthlyStat> listByTrainer(String trainerUsername);
+    void registerFollowUp(String trainerUsername, YearMonth period);
     Map<String, List<TrainerMonthlyStat>> listAll();
 }

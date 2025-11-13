@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{components/base :: page(title='Estadísticas de Usuarios', content=~{::content})}">
+<section th:fragment="content">
+    <div class="container">
+        <h2>Estadísticas mensuales de Usuarios</h2>
+
+        <div th:if="${error}" class="alert-error">
+            <span th:text="${error}">Ha ocurrido un error</span>
+        </div>
+
+        <form th:action="@{/mvc/admin/users/stats}" method="get">
+            <input type="text" name="userUsername" placeholder="Filtrar por Usuario" />
+            <button type="submit">Buscar</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Periodo (Mes)</th>
+                    <th>Asignaciones Iniciadas</th>
+                    <th>Seguimientos Realizados</th>
+                    <th>Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="stat : ${userStats}">
+                    <td th:text="${stat.id.userUsername}">Username</td>
+                    <td th:text="${stat.id.period}">Periodo</td>
+                    <td th:text="${stat.routinesStarted}">0</td>
+                    <td th:text="${stat.followupsMade}">0</td>
+                    <td>
+                        <a th:href="@{/mvc/admin/users/stats/detail(userUsername=${stat.id.userUsername})}">Ver
+                            Detalle</a>
+                    </td>
+                </tr>
+                <tr th:if="${userStats == null or userStats.isEmpty()}">
+                    <td colspan="5">No hay estadísticas para mostrar…</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+</html>
