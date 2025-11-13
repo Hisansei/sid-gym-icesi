@@ -21,4 +21,6 @@ public interface IUserService {
     Optional<User> findByEmployeeId(String employeeId);
 
     void deleteByUsername(String username);
+
+    boolean existsByUsername(String username);
 }
