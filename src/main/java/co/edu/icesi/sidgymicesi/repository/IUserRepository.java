@@ -22,6 +22,8 @@ public interface IUserRepository extends JpaRepository<User, String> {
 
     Optional<User> findByEmployeeId(String employeeId);
 
+    boolean existsById(String id);
+
     // Borrado:
     void deleteByUsername(String username);
 }

@@ -60,4 +60,9 @@ public class UserServiceImpl implements IUserService {
     public void deleteByUsername(String username) {
         userRepository.deleteById(username);
     }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsById(username);
+    }
 }
