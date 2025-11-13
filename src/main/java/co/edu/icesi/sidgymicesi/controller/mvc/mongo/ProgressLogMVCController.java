@@ -33,7 +33,6 @@ public class ProgressLogMVCController {
         this.exerciseService = exerciseService;
     }
 
-    // Selección de rutina si no viene routineId (evita 400)
     @GetMapping(value = "/history", params = "!routineId")
     @PreAuthorize("isAuthenticated()")
     public String historySelector(Authentication auth, Model model) {

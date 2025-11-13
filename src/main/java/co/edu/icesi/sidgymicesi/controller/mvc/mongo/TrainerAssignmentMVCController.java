@@ -36,20 +36,36 @@ public class TrainerAssignmentMVCController {
         List<TrainerAssignment> active = assignmentService.listActive();
         List<TrainerAssignment> history = assignmentService.listAll();
 
-        // Mapa id -> "Nombre Apellido"
+        // ------------------ NOMBRES DE ENTRENADORES ------------------
+        // Conjunto de IDs de entrenador encontrados en asignaciones
         Set<String> ids = new HashSet<>();
         active.forEach(a -> ids.add(a.getTrainerId()));
         history.forEach(h -> ids.add(h.getTrainerId()));
 
+        // También agregamos los entrenadores que aparezcan en las estadísticas
+        Map<String, List<TrainerMonthlyStat>> statsMap = trainerStatsService.listAll();
+        List<TrainerMonthlyStat> statsFlat = new ArrayList<>();
+
+        statsMap.values().forEach(list -> {
+            for (TrainerMonthlyStat s : list) {
+                statsFlat.add(s);
+                if (s.getId() != null && s.getId().getTrainerUsername() != null) {
+                    ids.add(s.getId().getTrainerUsername());
+                }
+            }
+        });
+
         Map<String, String> trainerNames = new HashMap<>();
         for (String id : ids) {
             employeeService.findById(id).ifPresent(e ->
-                    trainerNames.put(id, e.getFirstName() + " " + e.getLastName()));
+                    trainerNames.put(id, e.getFirstName() + " " + e.getLastName())
+            );
         }
 
         model.addAttribute("active", active);
         model.addAttribute("history", history);
-        model.addAttribute("statsByTrainer", trainerStatsService.listAll());
+        // Ahora la vista recibe una LISTA de TrainerMonthlyStat
+        model.addAttribute("statsByTrainer", statsFlat);
         model.addAttribute("trainerNames", trainerNames);
 
         // Si viene un usuario seleccionado (?user=)
@@ -73,7 +89,8 @@ public class TrainerAssignmentMVCController {
                 .collect(Collectors.toList());
 
         model.addAttribute("users", userService.findAll()); // lista de usuarios (username, fullName)
-        model.addAttribute("trainers", trainers); // lista de empleados instructores
+        model.addAttribute("trainers", trainers);
+
         return "admin/assignments/new";
     }
 

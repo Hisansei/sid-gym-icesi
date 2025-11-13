@@ -1,0 +1,194 @@
+/* src/main/resources/static/css/admin-users.css */
+
+/* ===== Admin · Users – look & feel específico ===== */
+
+/* Cabecera de página */
+.admin-users-page .site-header {
+    border-bottom: 1px solid #e6ecf5;
+    background: #f8fbff;
+}
+
+.admin-users-page .page-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.75rem;
+}
+
+.admin-users-page .page-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #0f172a;
+}
+
+.admin-users-page .page-subtitle {
+    margin: 0.25rem 0 0;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+/* Layout principal */
+.admin-users-page main.container {
+    padding-block: 1.25rem 1.75rem;
+}
+
+/* Tarjetas */
+.admin-users-page .card {
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid #e6ecf5;
+    box-shadow: 0 4px 14px rgba(0, 35, 90, 0.04);
+    padding: 1.25rem 1.5rem;
+}
+
+.admin-users-page .card-title {
+    margin: 0 0 0.75rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.admin-users-page .card + .card {
+    margin-top: 1rem;
+}
+
+/* Mensajes de estado */
+.admin-users-page .alert-error,
+.admin-users-page .alert-success {
+    border-radius: 10px;
+    margin-bottom: 0.75rem;
+}
+
+/* Tabla de listado */
+.admin-users-page .table-wrapper {
+    margin-top: 0.75rem;
+    overflow-x: auto;
+}
+
+.admin-users-page .users-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.admin-users-page .users-table thead th {
+    text-align: left;
+    font-weight: 600;
+    color: #1e293b;
+    padding: 0.75rem 0.9rem;
+    background: #f3f7fe;
+    border-bottom: 1px solid #e6ecf5;
+    white-space: nowrap;
+}
+
+.admin-users-page .users-table tbody td {
+    padding: 0.65rem 0.9rem;
+    border-bottom: 1px solid #eef2f9;
+}
+
+.admin-users-page .users-table tbody tr:hover {
+    background: #fbfdff;
+}
+
+/* Columna de acciones */
+.admin-users-page .users-table td:last-child {
+    white-space: nowrap;
+}
+
+/* Tabla de detalle */
+.admin-users-page .detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.admin-users-page .detail-table th,
+.admin-users-page .detail-table td {
+    padding: 0.6rem 0.9rem;
+    border-bottom: 1px solid #eef2f9;
+}
+
+.admin-users-page .detail-table th {
+    width: 190px;
+    font-weight: 500;
+    color: #64748b;
+    background: #f9fafb;
+}
+
+.admin-users-page .detail-table td {
+    font-weight: 500;
+    color: #111827;
+}
+
+/* Acciones dentro de tarjetas (por si se usan en otras vistas) */
+.admin-users-page .card-actions {
+    margin-top: 0.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.admin-users-page .card-actions a {
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+/* Utilidades */
+.admin-users-page .muted {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.admin-users-page .empty-state {
+    text-align: center;
+    padding: 1rem 0.5rem;
+}
+
+/* Vista de detalle de usuario */
+.admin-users-detail-page .container.card {
+    max-width: 720px;
+    margin-block: 1.5rem 2rem;
+}
+
+.admin-users-page .detail-action {
+    margin-top: 0.75rem;
+}
+
+.admin-users-page .detail-action a {
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .admin-users-page .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .admin-users-page .page-title {
+        font-size: 1.25rem;
+    }
+
+    .admin-users-page .card {
+        padding: 1rem 1.1rem;
+    }
+
+    .admin-users-page .users-table thead th,
+    .admin-users-page .users-table tbody td {
+        padding-inline: 0.6rem;
+    }
+
+    .admin-users-detail-page .container.card {
+        margin-block: 1rem 1.5rem;
+        padding: 1rem;
+    }
+
+    .admin-users-page .detail-table th,
+    .admin-users-page .detail-table td {
+        padding: 0.5rem 0.6rem;
+    }
+}
