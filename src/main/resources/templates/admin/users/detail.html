@@ -51,4 +51,34 @@
         </tr>
         <tr>
           <th>Creado</th>
-          <td th:text="${actualUser.createdAt != null ? #temporals.format(actualUser
+          <td th:text="${actualUser.createdAt != null ? #temporals.format(actualUser.createdAt,'dd/MM/yyyy HH:mm') : '-'}">fecha</td>
+        </tr>
+      </table>
+
+      <div th:if="${actualUser.role.name() == 'EMPLOYEE' and actualUser.employeeType == 'Instructor'}">
+        <p>
+          <a th:href="@{/mvc/admin/trainers/stats/detail(trainerUsername=${actualUser.username})}">
+            Ver estadísticas del entrenador
+          </a>
+        </p>
+      </div>
+
+      <div th:if="${actualUser.passwordHash}" style="display:none"></div>
+
+      <p class="detail-action">
+        <a th:href="@{/mvc/reports/select(username=${actualUser.username})}">Generar Reportes</a>
+      </p>
+
+      <p class="detail-action">
+        <a th:href="@{/mvc/admin/users}">Volver al listado</a>
+      </p>
+    </div>
+
+    <div th:if="${actualUser == null and error == null}">
+      <p>Usuario no disponible.</p>
+      <p><a th:href="@{/mvc/admin/users}">Volver</a></p>
+    </div>
+
+  </div>
+</section>
+</html>
