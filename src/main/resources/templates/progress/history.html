@@ -4,51 +4,87 @@
           title='Historial de progreso',
           content=~{::content}
       )}">
-<section th:fragment="content">
+<section th:fragment="content" class="progress-page progress-history">
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/progress/progress.css}">
+
     <header class="site-header">
-        <div class="container actions">
-            <h1 class="page-title">Historial: <span th:text="${routine.name}">Rutina</span></h1>
-            <nav class="actions">
-                <a class="btn" th:href="@{/mvc/progress/history}">Cambiar rutina</a>
-                <a class="btn" th:href="@{'/mvc/progress/' + ${routine.id}}">Registrar progreso</a>
+        <div class="container header-inner">
+            <div class="header-copy">
+                <h1 class="page-title">
+                    Historial: <span th:text="${routine.name}">Rutina</span>
+                </h1>
+                <p class="muted">
+                    Revisa tus sesiones registradas y el detalle de cada día.
+                </p>
+            </div>
+            <nav class="header-actions actions">
+                <a class="btn btn-secondary" th:href="@{/mvc/progress/history}">
+                    Cambiar rutina
+                </a>
+                <a class="btn" th:href="@{'/mvc/progress/' + ${routine.id}}">
+                    Registrar progreso
+                </a>
             </nav>
         </div>
     </header>
 
-    <main class="container card">
-        <table class="table">
-            <thead>
-            <tr><th>Fecha</th><th>Entradas</th><th>Detalle</th></tr>
-            </thead>
-            <tbody>
-            <tr th:if="${#lists.isEmpty(logs)}">
-                <td class="muted" colspan="3">Aún no hay registros para esta rutina.</td>
-            </tr>
+    <main class="container page-content">
+        <section class="card card-history">
+            <div class="card-intro">
+                <h2 class="card-title">Sesiones registradas</h2>
+                <p class="muted small">
+                    Cada fila corresponde a un día de entrenamiento con esta rutina.
+                </p>
+            </div>
 
-            <tr th:each="l : ${logs}">
-                <td>
-                    <div th:text="${#temporals.format(l.date, 'yyyy-MM-dd')}">2025-11-08</div>
-                    <div class="muted" th:if="${l.createdAt != null}"
-                         th:text="${'Creado: ' + #temporals.format(l.createdAt, 'yyyy-MM-dd HH:mm')}">
-                        Creado
-                    </div>
-                </td>
-                <td th:text="${#lists.size(l.entries)} + ' ejercicios'">0 ejercicios</td>
-                <td>
-                    <ul style="margin:0;padding-left:18px">
-                        <li th:each="e : ${l.entries}"
-                            th:text="${(e.completed ? '✔ ' : '• ')
-                                      + (exerciseMap[e.exerciseId] != null ? exerciseMap[e.exerciseId].name : e.exerciseId)
-                                      + (e.effortLevel != null ? (' — RPE ' + e.effortLevel) : '')
-                                      + (e.notesUser != null && !#strings.isEmpty(e.notesUser) ? (' — ' + e.notesUser) : '')}">
-                            entrada
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+            <div class="table-wrapper">
+                <table class="table table-logs">
+                    <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Entradas</th>
+                        <th>Detalle</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(logs)}">
+                        <td class="muted empty-state" colspan="3">
+                            Aún no hay registros para esta rutina.
+                        </td>
+                    </tr>
+
+                    <tr th:each="l : ${logs}">
+                        <td class="log-date">
+                            <div class="log-date-main"
+                                 th:text="${#temporals.format(l.date, 'yyyy-MM-dd')}">
+                                2025-11-08
+                            </div>
+                            <div class="muted log-date-meta" th:if="${l.createdAt != null}"
+                                 th:text="${'Creado: ' + #temporals.format(l.createdAt, 'yyyy-MM-dd HH:mm')}">
+                                Creado
+                            </div>
+                        </td>
+                        <td class="log-count"
+                            th:text="${#lists.size(l.entries)} + ' ejercicios'">
+                            0 ejercicios
+                        </td>
+                        <td class="log-detail">
+                            <ul class="entries-list">
+                                <li th:each="e : ${l.entries}"
+                                    th:text="${(e.completed ? '✔ ' : '• ')
+                                              + (exerciseMap[e.exerciseId] != null ? exerciseMap[e.exerciseId].name : e.exerciseId)
+                                              + (e.effortLevel != null ? (' — RPE ' + e.effortLevel) : '')
+                                              + (e.notesUser != null && !#strings.isEmpty(e.notesUser) ? (' — ' + e.notesUser) : '')}">
+                                    entrada
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
     </main>
 </section>
 </html>

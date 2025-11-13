@@ -4,72 +4,109 @@
           title='Editar ejercicio',
           content=~{::content}
       )}">
-<section th:fragment="content">
+<section th:fragment="content" class="exercises-page">
     <link rel="stylesheet" th:href="@{/css/app.css}">
-    <div class="container">
-        <div th:if="${actualExercise == null}">
-            <p>Ejercicio no encontrado.</p>
-            <p><a th:href="@{/mvc/exercises}">Volver</a></p>
+    <link rel="stylesheet" th:href="@{/css/exercise/exercises.css}">
+
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="header-copy">
+                <h1 class="page-title">Editar ejercicio</h1>
+                <p class="muted">
+                    Actualiza la información de un ejercicio existente del catálogo.
+                </p>
+            </div>
+            <div class="header-actions">
+                <a th:href="@{/mvc/exercises}" class="btn btn-secondary">
+                    <span class="material-symbols-rounded">arrow_back</span>
+                    <span>Volver al catálogo</span>
+                </a>
+            </div>
         </div>
+    </header>
 
-        <div th:if="${actualExercise != null}">
-            <h2>Editar ejercicio</h2>
+    <main class="container page-content">
+        <!-- Caso: no se encuentra el ejercicio -->
+        <section class="card card-empty" th:if="${actualExercise == null}">
+            <h2 class="card-title">Ejercicio no encontrado</h2>
+            <p class="muted">
+                El ejercicio que intentas editar no existe o ya fue eliminado.
+            </p>
+            <div class="form-actions">
+                <a th:href="@{/mvc/exercises}" class="btn">
+                    Volver al catálogo
+                </a>
+            </div>
+        </section>
 
-            <div th:if="${error}" class="alert-error">
+        <!-- Caso: ejercicio válido -->
+        <section class="card card-form" th:if="${actualExercise != null}">
+            <h2 class="card-title">Editar ejercicio</h2>
+
+            <div th:if="${error}" class="alert alert-error">
                 <span th:text="${error}">Error message</span>
             </div>
 
-            <form th:action="@{/mvc/exercises/edit}" method="post" th:object="${actualExercise}">
+            <form th:action="@{/mvc/exercises/edit}"
+                  method="post"
+                  th:object="${actualExercise}"
+                  class="form">
                 <input type="hidden" th:field="*{id}" />
 
-                <div>
-                    <label>Nombre</label>
-                    <input type="text" th:field="*{name}" maxlength="80" required>
+                <div class="grid grid-2">
+                    <div class="field">
+                        <label>Nombre</label>
+                        <input type="text" th:field="*{name}" maxlength="80" required>
+                    </div>
+
+                    <div class="field">
+                        <label>Tipo</label>
+                        <select th:field="*{type}" required>
+                            <option value="">-- Seleccione --</option>
+                            <option value="cardio">Cardio</option>
+                            <option value="fuerza">Fuerza</option>
+                            <option value="movilidad">Movilidad</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label>Dificultad</label>
+                        <select th:field="*{difficulty}" required>
+                            <option value="">-- Seleccione --</option>
+                            <option value="BAJA">Baja</option>
+                            <option value="MEDIA">Media</option>
+                            <option value="ALTA">Alta</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label>Duración (segundos)</label>
+                        <input type="number" th:field="*{durationSeconds}" min="1" step="1" required>
+                    </div>
                 </div>
 
-                <div>
-                    <label>Tipo</label>
-                    <select th:field="*{type}" required>
-                        <option value="">-- Seleccione --</option>
-                        <option value="cardio">Cardio</option>
-                        <option value="fuerza">Fuerza</option>
-                        <option value="movilidad">Movilidad</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label>Dificultad</label>
-                    <select th:field="*{difficulty}" required>
-                        <option value="">-- Seleccione --</option>
-                        <option value="BAJA">Baja</option>
-                        <option value="MEDIA">Media</option>
-                        <option value="ALTA">Alta</option>
-                    </select>
-                </div>
-
-                <div>
-                    <label>Duración (segundos)</label>
-                    <input type="number" th:field="*{durationSeconds}" min="1" step="1" required>
-                </div>
-
-                <div>
+                <div class="field">
                     <label>Descripción</label>
                     <textarea th:field="*{description}" maxlength="500"
-                        placeholder="Instrucciones, forma, tips, etc."></textarea>
+                              placeholder="Instrucciones, forma, tips, consideraciones de seguridad, etc."></textarea>
                 </div>
 
-                <div>
+                <div class="field">
                     <label>Videos demostrativos (una URL por línea)</label>
                     <textarea name="videosText" th:text="${videosText}"></textarea>
                 </div>
 
-                <div>
-                    <button type="submit">Actualizar</button>
+                <div class="form-actions">
+                    <button type="submit" class="btn">
+                        <span class="material-symbols-rounded">save</span>
+                        <span>Actualizar</span>
+                    </button>
+                    <a th:href="@{/mvc/exercises}" class="btn btn-secondary">
+                        Cancelar
+                    </a>
                 </div>
             </form>
-
-            <p><a th:href="@{/mvc/exercises}">Volver</a></p>
-        </div>
-    </div>
+        </section>
+    </main>
 </section>
 </html>

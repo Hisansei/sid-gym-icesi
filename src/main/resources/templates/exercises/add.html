@@ -4,63 +4,94 @@
           title='Agregar ejercicio',
           content=~{::content}
       )}">
-<section th:fragment="content">
+<section th:fragment="content" class="exercises-page">
     <link rel="stylesheet" th:href="@{/css/app.css}">
-    <div class="container">
-        <h2>Agregar nuevo ejercicio</h2>
+    <link rel="stylesheet" th:href="@{/css/exercise/exercises.css}">
 
-        <div th:if="${error}" class="alert-error">
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="header-copy">
+                <h1 class="page-title">Nuevo ejercicio</h1>
+                <p class="muted">
+                    Registra un nuevo ejercicio para usarlo en rutinas y plantillas.
+                </p>
+            </div>
+            <div class="header-actions">
+                <a th:href="@{/mvc/exercises}" class="btn btn-secondary">
+                    <span class="material-symbols-rounded">arrow_back</span>
+                    <span>Volver al catálogo</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container card card-form">
+        <h2 class="card-title">Información del ejercicio</h2>
+
+        <div th:if="${error}" class="alert alert-error">
             <span th:text="${error}">Error message</span>
         </div>
 
-        <form th:action="@{/mvc/exercises/add}" method="post" th:object="${exercise}">
-            <div>
-                <label>Nombre</label>
-                <input type="text" th:field="*{name}" maxlength="80" required>
+        <form th:action="@{/mvc/exercises/add}"
+              method="post"
+              th:object="${exercise}"
+              class="form">
+            <div class="grid grid-2">
+                <div class="field">
+                    <label>Nombre</label>
+                    <input type="text" th:field="*{name}" maxlength="80" required>
+                </div>
+
+                <div class="field">
+                    <label>Tipo</label>
+                    <select th:field="*{type}" required>
+                        <option value="">-- Seleccione --</option>
+                        <option value="cardio">Cardio</option>
+                        <option value="fuerza">Fuerza</option>
+                        <option value="movilidad">Movilidad</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Dificultad</label>
+                    <select th:field="*{difficulty}" required>
+                        <option value="">-- Seleccione --</option>
+                        <option value="baja">Baja</option>
+                        <option value="media">Media</option>
+                        <option value="alta">Alta</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Duración (segundos)</label>
+                    <input type="number" th:field="*{durationSeconds}" min="1" step="1" required>
+                </div>
             </div>
 
-            <div>
-                <label>Tipo</label>
-                <select th:field="*{type}" required>
-                    <option value="">-- Seleccione --</option>
-                    <option value="cardio">Cardio</option>
-                    <option value="fuerza">Fuerza</option>
-                    <option value="movilidad">Movilidad</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Dificultad</label>
-                <select th:field="*{difficulty}" required>
-                    <option value="">-- Seleccione --</option>
-                    <option value="baja">Baja</option>
-                    <option value="media">Media</option>
-                    <option value="alta">Alta</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Duración (segundos)</label>
-                <input type="number" th:field="*{durationSeconds}" min="1" step="1" required>
-            </div>
-
-            <div>
+            <div class="field">
                 <label>Descripción</label>
                 <textarea th:field="*{description}" maxlength="500"
-                    placeholder="Instrucciones, forma, tips, etc."></textarea>
+                          placeholder="Instrucciones, forma, tips, consideraciones de seguridad, etc."></textarea>
             </div>
 
-            <div>
+            <div class="field">
                 <label>Videos demostrativos (una URL por línea)</label>
                 <textarea name="videosText" placeholder="https://..."></textarea>
+                <p class="field-help muted">
+                    Puedes pegar links de YouTube o cualquier video público de referencia.
+                </p>
             </div>
 
-            <div>
-                <button type="submit">Guardar</button>
+            <div class="form-actions">
+                <button type="submit" class="btn">
+                    <span class="material-symbols-rounded">save</span>
+                    <span>Guardar ejercicio</span>
+                </button>
+                <a th:href="@{/mvc/exercises}" class="btn btn-secondary">
+                    Cancelar
+                </a>
             </div>
         </form>
-
-        <p><a th:href="@{/mvc/exercises}">Volver</a></p>
-    </div>
+    </main>
 </section>
 </html>

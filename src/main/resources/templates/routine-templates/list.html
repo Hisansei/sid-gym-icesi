@@ -1,43 +1,93 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{components/base :: page(
-          title='Plantillas de rutina',
-          content=~{::content}
-      )}">
-<section th:fragment="content">
+              title='Plantillas de rutina',
+              content=~{::content}
+          )}">
+<section th:fragment="content" class="routine-page routine-template-page routine-template-list-page">
   <link rel="stylesheet" th:href="@{/css/app.css}">
+  <link rel="stylesheet" th:href="@{/css/routine/routine.css}">
+  <link rel="stylesheet" th:href="@{/css/routine/routine-templates.css}">
+
   <header class="site-header">
-    <div class="container actions">
-      <h1 class="page-title">Plantillas de rutina</h1>
-      <nav class="actions">
-        <a class="btn" th:href="@{/mvc/routines}">Mis rutinas</a>
-        <a class="btn" sec:authorize="hasAnyRole('TRAINER','ADMIN')" th:href="@{/mvc/routine-templates/create}">Nueva plantilla</a>
+    <div class="container actions routine-header">
+      <div class="routine-header-main">
+        <h1 class="page-title">Plantillas de rutina</h1>
+        <p class="muted routine-header-subtitle">
+          Diseña y reutiliza estructuras de entrenamiento para acelerar la creación de nuevas rutinas
+          en el gimnasio ICESI.
+        </p>
+      </div>
+
+      <nav class="actions routine-header-actions">
+        <a class="btn btn-ghost" th:href="@{/mvc/routines}">Mis rutinas</a>
+        <a class="btn btn-secondary"
+           sec:authorize="hasAnyRole('TRAINER','ADMIN')"
+           th:href="@{/mvc/routine-templates/create}">
+          Nueva plantilla
+        </a>
       </nav>
     </div>
   </header>
 
-  <main class="container card">
-    <table class="table">
-      <thead>
-      <tr><th>Nombre</th><th>Ítems</th><th>Entrenador</th><th></th></tr>
-      </thead>
-      <tbody>
-      <tr th:if="${#lists.isEmpty(templates)}">
-        <td class="muted" colspan="4">No hay plantillas.</td>
-      </tr>
-      <tr th:each="t : ${templates}">
-        <td th:text="${t.name}">Nombre</td>
-        <td th:text="${#lists.size(t.exercises)}">0</td>
-        <td th:text="${t.trainerId}">trainer</td>
-        <td class="table-actions">
-          <a class="btn btn-small" th:href="@{'/mvc/routine-templates/' + ${t.id}}">Ver</a>
-          <form th:action="@{'/mvc/routine-templates/' + ${t.id} + '/adopt'}" method="post" style="display:inline">
-            <button class="btn btn-small" type="submit">Adoptar</button>
-          </form>
-        </td>
-      </tr>
-      </tbody>
-    </table>
+  <main class="container card routine-card routine-template-list-main">
+    <header class="routine-card-header">
+      <div>
+        <h2 class="routine-card-title">Catálogo de plantillas</h2>
+        <p class="muted small">
+          Explora las plantillas disponibles, revisa cuántos ítems tienen y crea tus propias rutinas
+          a partir de ellas.
+        </p>
+      </div>
+    </header>
+
+    <div class="table-wrapper">
+      <table class="table routine-table routine-template-table">
+        <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Ítems</th>
+          <th>Entrenador</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:if="${#lists.isEmpty(templates)}">
+          <td class="muted routine-template-empty" colspan="4">
+            No hay plantillas registradas todavía.
+            <span class="small" sec:authorize="hasAnyRole('TRAINER','ADMIN')">
+                            Crea la primera con el botón <strong>“Nueva plantilla”</strong>.
+                        </span>
+          </td>
+        </tr>
+        <tr th:each="t : ${templates}">
+          <td class="routine-template-name-cell">
+            <span class="routine-template-name" th:text="${t.name}">Nombre</span>
+          </td>
+          <td class="routine-template-count-cell">
+                        <span class="routine-template-count-badge"
+                              th:text="${#lists.size(t.exercises)}">0</span>
+          </td>
+          <td class="routine-template-trainer-cell">
+            <span class="muted small">Entrenador</span>
+            <div class="routine-template-trainer-id" th:text="${t.trainerId}">trainer</div>
+          </td>
+          <td class="table-actions routine-template-actions">
+            <a class="btn btn-small btn-ghost-primary"
+               th:href="@{'/mvc/routine-templates/' + ${t.id}}">
+              Ver
+            </a>
+            <form th:action="@{'/mvc/routine-templates/' + ${t.id} + '/adopt'}"
+                  method="post" style="display:inline">
+              <button class="btn btn-small" type="submit">
+                Adoptar
+              </button>
+            </form>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </main>
 </section>
 </html>

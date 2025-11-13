@@ -1,5 +1,44 @@
 <!DOCTYPE html>
-<html lang="es">
-<head><meta charset="UTF-8"><title>Acceso denegado</title></head>
-<body><h2>Acceso denegado</h2><p>No tienes permisos para ver esta página.</p></body>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso denegado - Universidad Icesi</title>
+
+    <!-- Tipografía oficial -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Reutilizamos los estilos del login para mantener identidad visual -->
+    <link rel="stylesheet" th:href="@{/css/auth/login.css}">
+</head>
+<body>
+<header class="header">
+    <h1>UNIVERSIDAD ICESI</h1>
+</header>
+
+<main class="container">
+    <section class="login-card" aria-labelledby="access-denied-title">
+        <h2 id="access-denied-title" class="login-title">Acceso denegado</h2>
+
+        <div class="alert alert-error">
+            No tienes permisos para ver esta página.
+        </div>
+
+        <p class="muted-text">
+            Si crees que se trata de un error, por favor contacta al administrador
+            del sistema o intenta acceder con otra cuenta institucional.
+        </p>
+
+        <form th:action="@{/mvc/auth/logout}" method="post" style="margin-top: 18px;">
+            <button type="submit" class="btn-login">
+                Cerrar sesión y cambiar de cuenta
+            </button>
+        </form>
+
+        <div class="forgot-password" style="margin-top: 18px;">
+            <a th:href="@{/mvc/home}">Volver al inicio</a>
+        </div>
+    </section>
+</main>
+</body>
 </html>

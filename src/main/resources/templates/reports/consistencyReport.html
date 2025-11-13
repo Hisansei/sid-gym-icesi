@@ -1,38 +1,92 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{components/base :: page(
-          title='Reporte Semanal',
-          content=~{::content}
-      )}">
-<section th:fragment="content">
+              title='Reporte Semanal',
+              content=~{::content}
+          )}">
+<section th:fragment="content" class="reports-page reports-consistency">
 
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/reports/reports.css}">
 
-    <div class="container">
-        <h1>Reporte de Consistencia Semanal para el Usuario: <span th:text="${username}"></span></h1>
-
-        <div th:if="${#lists.isEmpty(report)}">
-            <p>No se encontraron logs de progreso o rutinas para este usuario.</p>
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="header-copy">
+                <h1 class="page-title">
+                    Consistencia semanal —
+                    <span th:text="${username}">Usuario</span>
+                </h1>
+                <p class="muted">
+                    Revisa cuántas sesiones completas realiza el usuario por semana
+                    y su porcentaje de consistencia.
+                </p>
+            </div>
+            <nav class="header-actions actions">
+                <a class="btn btn-secondary"
+                   th:href="@{/mvc/reports/select(username=${username})}">
+                    Cambiar tipo de reporte
+                </a>
+                <a class="btn btn-ghost"
+                   th:href="@{/mvc/admin/users/detail(username=${username})}">
+                    Volver al detalle del usuario
+                </a>
+            </nav>
         </div>
+    </header>
 
-        <table th:if="${not #lists.isEmpty(report)}">
-            <thead>
-                <tr>
-                    <th>Semana</th>
-                    <th>Sesiones Completadas</th>
-                    <th>Consistencia (%)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="entry : ${report}">
-                    <td th:text="${entry.weekStartDate}">Semana</td>
-                    <td th:text="${entry.sessionsCompleted}">Sesiones</td>
-                    <td th:text="${entry.consistencyRate}">Consistencia</td>
-                </tr>
-            </tbody>
-        </table>
+    <main class="container page-content">
+        <section class="card card-report">
+            <div class="card-intro">
+                <h2 class="card-title">Resumen por semana</h2>
+                <p class="muted small">
+                    Cada fila corresponde a una semana de la ventana seleccionada.
+                </p>
+            </div>
 
-        <p><a th:href="@{/mvc/admin/users/detail(username=${username})}">Volver al detalle del usuario</a></p>
-    </div>
+            <!-- Estado vacío -->
+            <div class="empty-state"
+                 th:if="${#lists.isEmpty(report)}">
+                <p>No se encontraron logs de progreso o rutinas para este usuario.</p>
+                <p class="muted small">
+                    Pídele al usuario que registre rutinas y progreso para poder generar
+                    este reporte.
+                </p>
+            </div>
+
+            <!-- Tabla con datos -->
+            <div class="table-wrapper"
+                 th:if="${not #lists.isEmpty(report)}">
+                <table class="table reports-table">
+                    <thead>
+                    <tr>
+                        <th>Semana (inicio)</th>
+                        <th>Sesiones completadas</th>
+                        <th>Consistencia (%)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="entry : ${report}">
+                        <td class="col-week" th:text="${entry.weekStartDate}">
+                            Semana
+                        </td>
+                        <td class="col-sessions" th:text="${entry.sessionsCompleted}">
+                            Sesiones
+                        </td>
+                        <td class="col-rate" th:text="${entry.consistencyRate}">
+                            Consistencia
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <footer class="card-footer">
+                <a class="btn btn-secondary"
+                   th:href="@{/mvc/admin/users/detail(username=${username})}">
+                    Volver al detalle del usuario
+                </a>
+            </footer>
+        </section>
+    </main>
 </section>
 </html>

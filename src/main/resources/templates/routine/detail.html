@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{components/base :: page(
-          title=${routine.name} != null ? ${routine.name} : 'Detalle de rutina',
-          content=~{::content}
-      )}">
-
-<section th:fragment="content">
+              title=${routine.name} != null ? ${routine.name} : 'Detalle de rutina',
+              content=~{::content}
+          )}">
+<section th:fragment="content" class="routine-page routine-detail-page">
     <link rel="stylesheet" th:href="@{/css/app.css}"/>
+    <link rel="stylesheet" th:href="@{/css/routine/routine.css}"/>
 
     <header class="site-header">
-        <div class="container actions">
-            <h1 class="page-title">
-                <span th:text="${routine.name}">Rutina</span>
-            </h1>
-            <nav class="actions">
-                <a class="btn" th:href="@{/mvc/routines}">Volver</a>
+        <div class="container actions routine-header">
+            <div class="routine-header-main">
+                <h1 class="page-title">
+                    <span th:text="${routine.name}">Rutina</span>
+                </h1>
+                <p class="muted routine-header-subtitle">
+                    Administra los ejercicios, ajusta parámetros y guarda el orden ideal para tus sesiones.
+                </p>
+            </div>
+            <nav class="actions routine-header-actions">
+                <a class="btn btn-ghost" th:href="@{/mvc/routines}">Volver</a>
                 <a class="btn btn-secondary" th:href="@{'/mvc/progress/' + ${routine.id}}">Registrar progreso</a>
                 <form th:action="@{'/mvc/routines/' + ${routine.id} + '/delete'}" method="post" style="display:inline"
                       onsubmit="return confirm('¿Eliminar esta rutina?');">
@@ -24,9 +29,15 @@
         </div>
     </header>
 
-    <main class="container space-y">
+    <main class="container space-y routine-detail-main">
         <!-- Renombrar rutina -->
-        <section class="card">
+        <section class="card routine-rename-card">
+            <header class="routine-card-header">
+                <div>
+                    <h2>Información básica</h2>
+                    <p class="muted small">Cambia el nombre de la rutina cuando quieras.</p>
+                </div>
+            </header>
             <form class="form row" th:action="@{'/mvc/routines/' + ${routine.id} + '/rename'}" method="post">
                 <label class="grow">Nombre de la rutina
                     <input type="text" name="name" th:value="${routine.name}" required/>
@@ -35,8 +46,17 @@
             </form>
         </section>
 
-        <section class="card">
-            <h2>Agregar ejercicio</h2>
+        <!-- Agregar ejercicio -->
+        <section class="card routine-add-card">
+            <header class="routine-card-header">
+                <div>
+                    <h2>Agregar ejercicio</h2>
+                    <p class="muted small">
+                        Puedes usar ejercicios del catálogo o crear ejercicios personalizados con tus propios parámetros.
+                    </p>
+                </div>
+            </header>
+
             <form class="form grid grid-2" th:action="@{'/mvc/routines/' + ${routine.id} + '/items/add'}" method="post">
                 <label>Del catálogo
                     <select name="exerciseId">
@@ -45,7 +65,7 @@
                     </select>
                 </label>
 
-                <div class="muted" style="align-self:end">o ingresa uno personalizado</div>
+                <div class="muted routine-or-text">o ingresa uno personalizado</div>
 
                 <label>Nombre personalizado
                     <input type="text" name="name" placeholder="p. ej. Caminata ligera"/>
@@ -68,9 +88,9 @@
                     <input type="number" name="restSeconds" min="0" step="1" placeholder="p. ej. 60"/>
                 </label>
 
-                <div class="col-span-2">
+                <div class="col-span-2 routine-add-footer">
                     <button class="btn" type="submit">Agregar</button>
-                    <p class="muted" style="margin-top:.5rem">
+                    <p class="muted small">
                         Si eliges un ejercicio del catálogo, el nombre personalizado se ignora. Si lo dejas en blanco, puedes crear
                         un ejercicio personalizado con su nombre.
                     </p>
@@ -79,10 +99,15 @@
         </section>
 
         <!-- Lista + Reordenar ejercicios -->
-        <section class="card">
-            <div class="actions" style="display:flex;justify-content:space-between;align-items:center;">
-                <h2>Ejercicios de la rutina</h2>
+        <section class="card routine-reorder-card">
+            <div class="actions routine-reorder-header">
                 <div>
+                    <h2>Ejercicios de la rutina</h2>
+                    <p class="muted small">
+                        Selecciona una fila para moverla. Guarda el orden para que se vea reflejado en el registro de progreso.
+                    </p>
+                </div>
+                <div class="routine-reorder-buttons">
                     <button class="btn btn-small" type="button" onclick="moveSelected(-1)">Subir</button>
                     <button class="btn btn-small" type="button" onclick="moveSelected(1)">Bajar</button>
                     <button class="btn" type="button" onclick="submitOrder()">Guardar orden</button>
@@ -92,100 +117,101 @@
             <!-- Form para enviar el orden al endpoint /reorder -->
             <form id="reorderForm" th:action="@{'/mvc/routines/' + ${routine.id} + '/reorder'}" method="post"></form>
 
-            <table class="table" id="itemsTable">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Ejercicio</th>
-                    <th>Series</th>
-                    <th>Reps</th>
-                    <th>Duración (s)</th>
-                    <th>Descanso (s)</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:if="${#lists.isEmpty(routine.exercises)}">
-                    <td class="muted" colspan="7">Aún no hay ejercicios. Agrega el primero arriba.</td>
-                </tr>
-
-                <tr th:each="it,idx : ${routine.exercises}"
-                    th:data-id="${it.id}"
-                    onclick="selectRow(this)"
-                    style="cursor:pointer;">
-                    <td th:text="${idx.index + 1}">1</td>
-
-                    <td>
-            <span th:if="${it.exerciseId != null}"
-                  th:text="${(exerciseMap[it.exerciseId] != null ? exerciseMap[it.exerciseId].name : it.exerciseId)}">Nombre</span>
-                        <span th:if="${it.exerciseId == null}"
-                              th:text="${it.name}">Personalizado</span>
-                    </td>
-
-                    <td th:text="${it.sets}">0</td>
-                    <td th:text="${it.reps}">0</td>
-                    <td th:text="${it.durationSeconds}">0</td>
-                    <td th:text="${it.restSeconds}">0</td>
-
-                    <td class="table-actions">
-                        <form th:action="@{'/mvc/routines/' + ${routine.id} + '/items/' + ${it.id} + '/delete'}"
-                              method="post" style="display:inline"
-                              onsubmit="return confirm('¿Quitar este ejercicio?');">
-                            <button class="btn btn-small btn-danger" type="submit">Eliminar</button>
-                        </form>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-wrapper">
+                <table class="table routine-table" id="itemsTable">
+                    <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Ejercicio</th>
+                        <th>Series</th>
+                        <th>Reps</th>
+                        <th>Duración (s)</th>
+                        <th>Descanso (s)</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${#lists.isEmpty(routine.exercises)}">
+                        <td class="muted" colspan="7">Aún no hay ejercicios.</td>
+                    </tr>
+                    <tr th:each="it,idx : ${routine.exercises}"
+                        th:data-id="${it.id}"
+                        onclick="selectRow(this)">
+                        <td th:text="${idx.index + 1}">1</td>
+                        <td th:text="${it.displayName}">Ejercicio</td>
+                        <td th:text="${it.sets}">0</td>
+                        <td th:text="${it.reps}">0</td>
+                        <td th:text="${it.durationSec}">0</td>
+                        <td th:text="${it.restSeconds}">0</td>
+                        <td class="table-actions">
+                            <form th:action="@{'/mvc/routines/' + ${routine.id} + '/items/' + ${it.id} + '/delete'}"
+                                  method="post" style="display:inline"
+                                  onsubmit="return confirm('¿Eliminar este ejercicio de la rutina?');">
+                                <button class="btn btn-small btn-danger" type="submit">Quitar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
     </main>
 
     <script>
         let selectedRow = null;
 
-        function selectRow(tr) {
-            if (selectedRow) selectedRow.classList.remove('selected');
-            selectedRow = tr;
+        function selectRow(row) {
+            if (selectedRow) {
+                selectedRow.classList.remove('selected');
+            }
+            selectedRow = row;
             selectedRow.classList.add('selected');
         }
 
         function moveSelected(delta) {
             if (!selectedRow) return;
+
             const tbody = selectedRow.parentElement;
-            const rows = Array.from(tbody.children).filter(r => r.dataset.id); // ignora fila vacía
+            const rows = Array.from(tbody.querySelectorAll('tr[data-id]'));
             const idx = rows.indexOf(selectedRow);
-            const newIdx = idx + delta;
-            if (newIdx < 0 || newIdx >= rows.length) return;
+            const newIndex = idx + delta;
+
+            if (newIndex < 0 || newIndex >= rows.length) return;
+
+            tbody.removeChild(selectedRow);
             if (delta < 0) {
-                tbody.insertBefore(selectedRow, rows[newIdx]);
+                tbody.insertBefore(selectedRow, rows[newIndex]);
             } else {
-                tbody.insertBefore(selectedRow, rows[newIdx].nextSibling);
+                tbody.insertBefore(selectedRow, rows[newIndex].nextSibling);
             }
-            renumber(tbody);
+
+            // Recalcular números
+            Array.from(tbody.querySelectorAll('tr[data-id]')).forEach((tr, i) => {
+                const cell = tr.querySelector('td:first-child');
+                if (cell) cell.textContent = i + 1;
+            });
         }
 
-        function renumber(tbody) {
-            Array.from(tbody.children)
-                .filter(r => r.dataset.id)
-                .forEach((r, i) => r.children[0].innerText = i + 1);
-        }
-
-        // Envía el orden actual como múltiples parámetros "order"
         function submitOrder() {
-            const tbody = document.getElementById('itemsTable').querySelector('tbody');
-            const ids = Array.from(tbody.children)
-                .filter(r => r.dataset.id)
-                .map(r => r.dataset.id);
-
             const form = document.getElementById('reorderForm');
             form.innerHTML = '';
-            ids.forEach(id => {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'order';
-                input.value = id;
-                form.appendChild(input);
+
+            const rows = Array.from(document.querySelectorAll('#itemsTable tbody tr[data-id]'));
+            rows.forEach((tr, index) => {
+                const id = tr.getAttribute('data-id');
+                const inputId = document.createElement('input');
+                inputId.type = 'hidden';
+                inputId.name = 'items[' + index + '].id';
+                inputId.value = id;
+                form.appendChild(inputId);
+
+                const inputOrder = document.createElement('input');
+                inputOrder.type = 'hidden';
+                inputOrder.name = 'items[' + index + '].order';
+                inputOrder.value = index + 1;
+                form.appendChild(inputOrder);
             });
+
             form.submit();
         }
     </script>

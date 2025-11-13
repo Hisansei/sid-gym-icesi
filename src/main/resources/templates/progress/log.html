@@ -4,52 +4,98 @@
           title='Registrar progreso',
           content=~{::content}
       )}">
-<section th:fragment="content">
+<section th:fragment="content" class="progress-page progress-log">
     <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/progress/progress.css}">
+
     <header class="site-header">
-        <div class="container actions">
-            <h1 class="page-title">Registrar progreso — <span th:text="${routine.name}">Rutina</span></h1>
-            <nav class="actions">
-                <a class="btn" th:href="@{'/mvc/progress/history?routineId=' + ${routine.id}}">Ver historial</a>
+        <div class="container header-inner">
+            <div class="header-copy">
+                <h1 class="page-title">
+                    Registrar progreso — <span th:text="${routine.name}">Rutina</span>
+                </h1>
+                <p class="muted">
+                    Registra reps, tiempo, esfuerzo percibido y notas para cada ejercicio.
+                </p>
+            </div>
+            <nav class="header-actions actions">
+                <a class="btn btn-secondary"
+                   th:href="@{'/mvc/progress/history?routineId=' + ${routine.id}}">
+                    Ver historial
+                </a>
             </nav>
         </div>
     </header>
 
-    <main class="container space-y">
-        <section class="card">
-            <p class="muted">Fecha: <strong th:text="${today}">hoy</strong></p>
-            <form class="form" th:action="@{'/mvc/progress/' + ${routine.id}}" method="post">
-                <div class="space-y">
-                    <article class="card" th:each="it : ${routine.exercises}">
-                        <h3 th:text="${it.name != null ? it.name : it.exerciseId}">Nombre</h3>
-                        <p class="muted"
-                           th:text="${(it.sets>0? it.sets + '×':'') + (it.reps>0? it.reps + ' reps':'' ) + (it.durationSeconds!=null && it.durationSeconds>0? ( (it.sets>0||it.reps>0)? ' · ':'') + it.durationSeconds + ' s' : '')}">
-                            3×12 · 60 s
-                        </p>
+    <main class="container page-content">
+        <section class="card card-log">
+            <header class="log-header">
+                <p class="muted">
+                    Fecha de registro:
+                    <strong class="log-date-value" th:text="${today}">hoy</strong>
+                </p>
+                <p class="muted small">
+                    Completa solo los campos que apliquen a tu sesión de hoy.
+                </p>
+            </header>
 
-                        <div class="grid grid-2">
-                            <label>Repeticiones
-                                <input type="number" min="0" th:name="${'reps_' + it.id}" placeholder="p.ej. 12"/>
+            <form class="form" th:action="@{'/mvc/progress/' + ${routine.id}}" method="post">
+                <div class="log-exercises space-y">
+                    <article class="card log-exercise"
+                             th:each="it : ${routine.exercises}">
+                        <div class="log-exercise-header">
+                            <h3 th:text="${it.name != null ? it.name : it.exerciseId}">
+                                Nombre
+                            </h3>
+                            <p class="muted log-exercise-meta"
+                               th:text="${(it.sets>0? it.sets + '×':'')
+                                          + (it.reps>0? it.reps + ' reps':'' )
+                                          + (it.durationSeconds!=null && it.durationSeconds>0?
+                                             ( (it.sets>0||it.reps>0)? ' · ':'')
+                                             + it.durationSeconds + ' s' : '')}">
+                                3×12 · 60 s
+                            </p>
+                        </div>
+
+                        <div class="grid grid-2 log-exercise-grid">
+                            <label>
+                                Repeticiones
+                                <input type="number" min="0"
+                                       th:name="${'reps_' + it.id}"
+                                       placeholder="p.ej. 12"/>
                             </label>
-                            <label>Tiempo (seg)
-                                <input type="number" min="0" th:name="${'time_' + it.id}" placeholder="p.ej. 60"/>
+                            <label>
+                                Tiempo (seg)
+                                <input type="number" min="0"
+                                       th:name="${'time_' + it.id}"
+                                       placeholder="p.ej. 60"/>
                             </label>
-                            <label>RPE (esfuerzo)
+                            <label>
+                                RPE (esfuerzo)
                                 <select th:name="${'rpe_' + it.id}">
                                     <option value="">—</option>
-                                    <option th:each="n : ${#numbers.sequence(1,10)}" th:value="${n}" th:text="${n}">5</option>
+                                    <option th:each="n : ${#numbers.sequence(1,10)}"
+                                            th:value="${n}"
+                                            th:text="${n}">5</option>
                                 </select>
                             </label>
-                            <label>Notas
-                                <textarea th:name="${'notes_' + it.id}" placeholder="¿Cómo te sentiste?"></textarea>
+                            <label>
+                                Notas
+                                <textarea th:name="${'notes_' + it.id}"
+                                          placeholder="¿Cómo te sentiste?"></textarea>
                             </label>
                         </div>
                     </article>
                 </div>
 
-                <div class="form-actions">
-                    <button class="btn" type="submit">Guardar registro</button>
-                    <a class="btn btn-secondary" th:href="@{'/mvc/progress/history?routineId=' + ${routine.id}}">Cancelar</a>
+                <div class="form-actions log-actions">
+                    <button class="btn" type="submit">
+                        Guardar registro
+                    </button>
+                    <a class="btn btn-secondary"
+                       th:href="@{'/mvc/progress/history?routineId=' + ${routine.id}}">
+                        Cancelar
+                    </a>
                 </div>
             </form>
         </section>
