@@ -2,13 +2,23 @@
 :root {
     --black: #000000;
     --green: #4cb979;
-    --white: #fff;
-    --icesi-blue: #0056b3;
-    --icesi-dark-blue: #004494;
+    --white: #ffffff;
+
+    /* Azul ICESI unificado con login/home */
+    --icesi-blue: #5454e9;
+    --icesi-dark-blue: #3636c7;
+
+    /* Acentos de la marca */
+    --accent-purple: #865cf0;
+    --accent-cyan: #22d3ee;
+
     --sidebar-w: 270px;
     --sidebar-w-collapsed: 85px;
     --gutter: 16px;
     --header-h-mobile: 60px; /* Altura del header en móvil */
+
+    --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.16);
+    --transition-fast: 0.22s ease-out;
 }
 
 /* ========= Base ========= */
@@ -21,13 +31,18 @@
     font-family: "Poppins", sans-serif;
 }
 
-html, body {
+html,
+body {
     height: 100%;
 }
 
 body {
-    background: #f1f5f9;
     padding: var(--gutter);
+    /* Fondo un poco más “app” y futurista */
+    background:
+            radial-gradient(circle at 0% 0%, rgba(134, 92, 240, 0.16), transparent 55%),
+            radial-gradient(circle at 80% 0%, rgba(84, 84, 233, 0.14), transparent 55%),
+            #f1f5f9;
 }
 
 /* ========= App Shell Layout (Desktop) ========= */
@@ -36,6 +51,7 @@ body {
     grid-template-columns: var(--sidebar-w) 1fr;
     gap: var(--gutter);
     transition: grid-template-columns 0.4s ease;
+    animation: shellFadeIn 0.4s ease-out;
 }
 
 .app-shell.collapsed {
@@ -44,19 +60,49 @@ body {
 
 /* ========= Sidebar ========= */
 .sidebar {
-    background: var(--icesi-dark-blue);
     color: var(--white);
     display: flex;
     flex-direction: column;
     height: calc(100vh - (var(--gutter) * 2));
-    border-radius: 16px;
+    border-radius: 20px;
     position: sticky;
     top: var(--gutter);
-    transition: width 0.4s ease;
+    overflow: hidden;
+    transition:
+            width 0.4s ease,
+            box-shadow 0.3s ease,
+            transform 0.3s ease,
+            background 0.4s ease;
+    /* Fondo con gradiente “Icesi futurista” */
+    background:
+            radial-gradient(circle at 0% 0%, rgba(148, 163, 253, 0.35), transparent 55%),
+            linear-gradient(180deg, var(--icesi-dark-blue) 0%, #111827 100%);
+    box-shadow: var(--shadow-soft);
+}
+
+.sidebar::before {
+    content: "";
+    position: absolute;
+    inset: -40%;
+    pointer-events: none;
+    opacity: 0.35;
+    background:
+            conic-gradient(from 140deg,
+            rgba(148, 163, 253, 0.0),
+            rgba(129, 140, 248, 0.45),
+            rgba(96, 165, 250, 0.0));
+    filter: blur(8px);
+    z-index: 0;
 }
 
 .app-shell.collapsed .sidebar {
     width: var(--sidebar-w-collapsed);
+}
+
+/* Mantener contenido por encima del glow */
+.sidebar > * {
+    position: relative;
+    z-index: 1;
 }
 
 /* Header de la barra */
@@ -66,6 +112,8 @@ body {
     justify-content: space-between;
     padding: 16px 20px;
     flex-shrink: 0;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.40);
+    backdrop-filter: blur(8px);
 }
 
 .sidebar-header .header-logo img {
@@ -73,8 +121,10 @@ body {
     height: 46px;
     border-radius: 50%;
     object-fit: cover;
+    box-shadow: 0 0 0 2px rgba(248, 250, 252, 0.65);
 }
 
+/* Botones del header */
 .sidebar-header .toggler {
     height: 35px;
     width: 35px;
@@ -82,15 +132,27 @@ body {
     border: none;
     cursor: pointer;
     display: flex;
-    background: var(--white);
+    background: radial-gradient(circle at 0% 0%, #ffffff, #e5e7eb);
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
-    transition: 0.2s;
+    border-radius: 999px;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.3);
+    transition:
+            background 0.18s ease,
+            transform 0.18s ease,
+            box-shadow 0.18s ease,
+            opacity 0.18s ease;
 }
 
 .sidebar-header .toggler:hover {
-    opacity: .9;
+    opacity: 0.95;
+    transform: translateY(-1px);
+    box-shadow: 0 16px 35px rgba(15, 23, 42, 0.4);
+}
+
+.sidebar-header .toggler:active {
+    transform: translateY(0);
+    box-shadow: 0 6px 15px rgba(15, 23, 42, 0.3);
 }
 
 .sidebar-header .toggler span {
@@ -101,21 +163,19 @@ body {
     display: none;
 }
 
-
-/* --- AJUSTE CLAVE: ESTADO COLAPSADO --- */
+/* --- Ajuste estado colapsado --- */
 .app-shell.collapsed .sidebar-header {
-    flex-direction: column; /* Apila el logo y el botón verticalmente */
+    flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    gap: 16px; /* Espacio entre el logo y el botón */
+    gap: 16px;
     padding-top: 16px;
     padding-bottom: 16px;
 }
 
 .app-shell.collapsed .sidebar-header .toggler span {
-    transform: rotate(180deg); /* El ícono apunta a la derecha para expandir */
+    transform: rotate(180deg);
 }
-
 
 /* Navegación */
 .sidebar-nav {
@@ -125,61 +185,138 @@ body {
     justify-content: space-between;
     overflow-y: auto;
     overflow-x: hidden;
+    padding-block: 4px 10px;
 }
 
 .sidebar-nav .nav-list {
     list-style: none;
     margin: 0;
-    padding: 16px;
+    padding: 16px 14px;
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
 .sidebar-nav .nav-link {
+    position: relative;
     color: var(--white);
     display: flex;
     gap: 16px;
     white-space: nowrap;
-    border-radius: 8px;
-    padding: 12px;
+    border-radius: 12px;
+    padding: 11px 12px;
     align-items: center;
     text-decoration: none;
-    transition: 0.2s;
+    font-size: 0.93rem;
+    letter-spacing: 0.01em;
+    transition:
+            background var(--transition-fast),
+            color var(--transition-fast),
+            transform var(--transition-fast),
+            box-shadow var(--transition-fast);
 }
 
+/* Barra de énfasis a la izquierda */
+.sidebar-nav .nav-link::before {
+    content: "";
+    position: absolute;
+    inset-block: 7px;
+    left: 6px;
+    width: 0;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--accent-purple), var(--accent-cyan));
+    transition: width var(--transition-fast);
+}
+
+.nav-link .nav-icon {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-label {
+    opacity: 0.95;
+}
+
+/* Estado hover */
+.sidebar-nav .nav-link:hover {
+    color: #0f172a;
+    background: rgba(248, 250, 252, 0.96);
+    transform: translateX(2px);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.28);
+}
+
+.sidebar-nav .nav-link:hover::before {
+    width: 4px;
+}
+
+/* Estado activo (controlado por JS) */
+.sidebar-nav .nav-link.is-active {
+    color: #0f172a;
+    background: rgba(248, 250, 252, 0.98);
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.35);
+    transform: translateX(3px);
+}
+
+.sidebar-nav .nav-link.is-active::before {
+    width: 5px;
+}
+
+/* Cuando está colapsado */
 .app-shell.collapsed .nav-link {
-    justify-content: center; /* Centra los íconos cuando está colapsado */
+    justify-content: center;
 }
 
 .app-shell.collapsed .nav-label {
     display: none;
 }
 
-.sidebar-nav .nav-link:hover {
-    color: var(--icesi-dark-blue);
-    background: var(--white);
-}
-
-.nav-link .nav-icon {
-    flex-shrink: 0;
-}
-
 /* ========= Contenido Principal ========= */
 .content {
-    background: white;
-    border-radius: 16px;
-    padding: var(--gutter);
+    background:
+            linear-gradient(145deg, #ffffff 0%, #f9fafb 40%, #f1f5f9 100%);
+    border-radius: 22px;
+    padding: calc(var(--gutter) + 4px);
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    backdrop-filter: blur(6px);
+    animation: contentFadeIn 0.5s ease-out;
 }
 
-/* ========= Responsive (Móvil) ========= */
+/* ========= Animaciones ========= */
+@keyframes shellFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.99);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes contentFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========= Responsive (Móvil / Tablet) ========= */
 @media (max-width: 1024px) {
     body {
         padding: 0;
+        background: #f1f5f9;
     }
 
     .app-shell {
         display: block;
+        animation: none;
     }
 
     .sidebar {
@@ -192,6 +329,7 @@ body {
         z-index: 100;
         transform: translateX(-100%);
         transition: transform 0.4s ease;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.35);
     }
 
     .sidebar.menu-active {
@@ -217,6 +355,9 @@ body {
     .content {
         padding: var(--gutter);
         margin-top: var(--header-h-mobile);
+        border-radius: 18px 18px 0 0;
+        box-shadow: none;
+        border: none;
     }
 
     /* Header fijo para el botón de menú */
