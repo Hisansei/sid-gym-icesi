@@ -47,5 +47,4 @@ public class UserController {
         return "admin/users/detail";
     }
 
-    // AÑADIR LAS ESTADISTICAS DE USUARIO AQUÍ!!!!!!!!!!!!!!!!
 }

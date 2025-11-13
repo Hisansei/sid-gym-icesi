@@ -13,4 +13,8 @@ public class TrainerMonthlyStat {
 
     @Column(name = "new_assignments", nullable = false)
     private int newAssignments;
+
+    @Column(name = "followups_made", nullable = false)
+    private int followupsMade;
+
 }

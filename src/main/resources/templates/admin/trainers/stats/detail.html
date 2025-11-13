@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{components/base :: page(title='Detalle de Estadísticas de Entrenador', content=~{::content})}">
+<section th:fragment="content">
+  <div class="container">
+    <h2>Detalle de las estadísticas del entrenador</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Entrenador</th>
+          <th>Periodo (Mes)</th>
+          <th>Asignaciones Nuevas</th>
+          <th>Seguimientos Realizados</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="stat : ${trainerStats}">
+          <td th:text="${stat.id.trainerUsername}">Username</td>
+          <td th:text="${stat.id.period}">Periodo</td>
+          <td th:text="${stat.newAssignments}">0</td>
+          <td th:text="${stat.followupsMade}">0</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+</html>

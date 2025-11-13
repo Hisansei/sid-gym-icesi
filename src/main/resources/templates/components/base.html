@@ -60,7 +60,7 @@
                 <li class="nav-item"
                     sec:authorize="hasRole('EMPLOYEE')"
                     th:if="${#authentication.principal != null and #authentication.principal.employeeType == 'Instructor'}">
-                    <a th:href="@{/mvc/trainer/assignments}" class="nav-link" data-page="trainer-assignments">
+                    <a th:href="@{/mvc/admin/assignments}" class="nav-link" data-page="trainer-assignments">
                         <span class="material-symbols-rounded nav-icon">supervisor_account</span>
                         <span class="nav-label">Mis asignaciones</span>
                     </a>

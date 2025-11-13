@@ -41,12 +41,12 @@ public class TrainerStatsServicePostgresImpl implements ITrainerStatsService {
         repo.save(s);
     }
 
-    /* TODO: REVISAR
-    PARA LO DE LA CONCURRENCIA, PODRIAMOS USAR ESTE MÉTODO EN LUGAR DEL ANTERIOR
     @Override
-    public void registerNewAssignment(String trainerUsername, YearMonth period) {
-        repo.upsertIncrementNewAssignments(trainerUsername, period.toString()); // "YYYY-MM"
-    }*/
+    public void registerFollowUp(String trainerUsername, YearMonth period) {
+        TrainerMonthlyStat s = ensure(trainerUsername, period);
+        s.setFollowupsMade(s.getFollowupsMade() + 1);
+        repo.save(s);
+    }
 
     @Override
     public Optional<TrainerMonthlyStat> get(String t, YearMonth p) {
@@ -70,4 +70,3 @@ public class TrainerStatsServicePostgresImpl implements ITrainerStatsService {
         return out;
     }
 }
-

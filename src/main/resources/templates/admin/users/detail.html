@@ -4,74 +4,68 @@
           title='Detalle de usuario',
           content=~{::content}
       )}">
-<section th:fragment="content" class="admin-users-page">
+<section th:fragment="content">
   <link rel="stylesheet" th:href="@{/css/app.css}">
-  <link rel="stylesheet" th:href="@{/css/admin-users.css}">
+  <div class="container">
 
-  <header class="site-header">
-    <div class="container page-header">
-      <div>
-        <h1 class="page-title">Detalle del usuario</h1>
-        <p class="page-subtitle">Información asociada a esta cuenta institucional.</p>
-      </div>
-    </div>
-  </header>
-
-  <main class="container">
-    <div th:if="${error}" class="card alert-error">
+    <div th:if="${error}" class="alert-error">
       <span th:text="${error}">Usuario no encontrado.</span>
-      <div class="card-actions">
-        <a th:href="@{/mvc/admin/users}">Volver</a>
-      </div>
+      <p><a th:href="@{/mvc/admin/users}">Volver</a></p>
     </div>
 
-    <section th:if="${actualUser != null}" class="card">
-      <h2 class="card-title">Información general</h2>
+    <div th:if="${actualUser != null}">
+      <h2>Detalle del usuario</h2>
+      <table>
+        <tr><th>Username</th><td th:text="${actualUser.username}">username</td></tr>
+        <tr><th>Rol</th><td th:text="${actualUser.role}">ROLE</td></tr>
 
-      <table class="detail-table">
-        <tr>
-          <th>Username</th>
-          <td th:text="${actualUser.username}">username</td>
-        </tr>
-        <tr>
-          <th>Rol</th>
-          <td th:text="${actualUser.role}">ROLE</td>
-        </tr>
-        <tr>
+        <!-- Mostrar Estudiante ID solo si tiene valor -->
+        <tr th:if="${actualUser.studentId != null}">
           <th>Estudiante ID</th>
           <td th:text="${actualUser.studentId}">-</td>
         </tr>
-        <tr>
+
+        <!-- Mostrar Empleado ID solo si tiene valor y si es tipo 'Empleado' mostrar tipo -->
+        <tr th:if="${actualUser.employeeId != null}">
           <th>Empleado ID</th>
           <td th:text="${actualUser.employeeId}">-</td>
         </tr>
-        <tr>
-          <th>Activo</th>
-          <td th:text="${actualUser.active} ? 'Sí' : 'No'">Sí</td>
+
+        <!-- Mostrar el tipo de empleado solo si es de tipo 'EMPLOYEE' -->
+        <tr th:if="${actualUser.role.name() == 'EMPLOYEE'}">
+          <th>Tipo de Empleado</th>
+          <td th:text="${actualUser.employeeType}">Tipo</td>
         </tr>
+        
+        <tr><th>Activo</th><td th:text="${actualUser.active} ? 'Sí' : 'No'">Sí</td></tr>
         <tr>
           <th>Creado</th>
-          <td th:text="${actualUser.createdAt != null ? #temporals.format(actualUser.createdAt,'dd/MM/yyyy HH:mm') : '-'}">
-            fecha
-          </td>
+          <td th:text="${actualUser.createdAt != null ? #temporals.format(actualUser.createdAt,'dd/MM/yyyy HH:mm') : '-'}">fecha</td>
         </tr>
       </table>
 
-      <!-- Mantengo este bloque tal cual, solo reubicado -->
+      <div th:if="${actualUser.role.name() == 'EMPLOYEE' and actualUser.employeeType == 'Instructor'}">
+        <p>
+            <a th:href="@{/mvc/admin/trainers/stats/detail(trainerUsername=${actualUser.username})}">Ver estadísticas del entrenador</a>
+        </p>
+      </div>
+
       <div th:if="${actualUser.passwordHash}" style="display:none"></div>
 
-      <div class="card-actions">
-        <a th:href="@{/mvc/reports/select(username=${actualUser.username})}">Generar Reportes</a>
-        <a th:href="@{/mvc/admin/users}">Volver al listado</a>
-      </div>
-    </section>
+      <p>
+          <a th:href="@{/mvc/reports/select(username=${actualUser.username})}">Generar Reportes</a>
+      </p>
 
-    <section th:if="${actualUser == null and error == null}" class="card">
+      <p style="margin-top: 12px;">
+        <a th:href="@{/mvc/admin/users}">Volver al listado</a>
+      </p>
+    </div>
+
+    <div th:if="${actualUser == null and error == null}">
       <p>Usuario no disponible.</p>
-      <div class="card-actions">
-        <a th:href="@{/mvc/admin/users}">Volver</a>
-      </div>
-    </section>
-  </main>
+      <p><a th:href="@{/mvc/admin/users}">Volver</a></p>
+    </div>
+
+  </div>
 </section>
 </html>

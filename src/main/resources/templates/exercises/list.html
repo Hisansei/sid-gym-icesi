@@ -9,15 +9,15 @@
     <div class="container">
         <h2>Catálogo de ejercicios</h2>
 
-        <div th:if="${error}" class="alert-error">
+        <div th:if="${error}" class="alert">
             <span th:text="${error}">Error message</span>
         </div>
 
-        <div th:if="${message}" class="alert-success">
+        <div th:if="${message}" class="alert success">
             <span th:text="${message}">Success message</span>
         </div>
 
-        <form class="search-box" th:action="@{/mvc/exercises}" method="get">
+        <form class="form search-box" th:action="@{/mvc/exercises}" method="get">
             <input type="text" name="q" placeholder="Buscar por nombre..." />
             <select name="type">
                 <option value="">-- Tipo --</option>
@@ -31,10 +31,10 @@
                 <option value="media">Media</option>
                 <option value="alta">Alta</option>
             </select>
-            <button type="submit">Buscar</button>
+            <button type="submit" class="btn">Buscar</button>
         </form>
 
-        <table>
+        <table class="table">
             <thead>
                 <tr>
                     <th>Nombre</th>
@@ -47,16 +47,15 @@
             <tbody>
                 <tr th:each="e : ${exercises}">
                     <td th:text="${e.name}">Nombre</td>
-                    <td th:text="${e.type}">tipo</td>
-                    <td th:text="${e.difficulty}">dif</td>
-                    <td th:text="${e.durationSeconds}">0</td>
+                    <td th:text="${e.type}">Tipo</td>
+                    <td th:text="${e.difficulty}">Dificultad</td>
+                    <td th:text="${e.durationSeconds}">Duración</td>
                     <td>
-                        <a th:href="@{/mvc/exercises/detail(id=${e.id})}">
-                            Detalle</a>
-                        <a th:href="@{/mvc/exercises/edit(id=${e.id})}"
+                        <a th:href="@{/mvc/exercises/detail(id=${e.id})}" class="btn btn-small">Detalle</a>
+                        <a th:href="@{/mvc/exercises/edit(id=${e.id})}" class="btn btn-small"
                             sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
                             Editar</a>
-                        <a th:href="@{/mvc/exercises/delete(id=${e.id})}"
+                        <a th:href="@{/mvc/exercises/delete(id=${e.id})}" class="btn btn-danger btn-small"
                             sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
                             Eliminar</a>
                     </td>
@@ -67,7 +66,7 @@
             </tbody>
         </table>
 
-        <p><a th:href="@{/mvc/exercises/add}"
+        <p><a th:href="@{/mvc/exercises/add}" class="btn" 
             sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')">
             Agregar ejercicio</a></p>
     </div>
