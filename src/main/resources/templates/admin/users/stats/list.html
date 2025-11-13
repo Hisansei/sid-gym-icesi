@@ -1,46 +1,88 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-    th:replace="~{components/base :: page(title='Estadísticas de Usuarios', content=~{::content})}">
-<section th:fragment="content">
-    <div class="container">
-        <h2>Estadísticas mensuales de Usuarios</h2>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{components/base :: page(title='Estadísticas de Usuarios', content=~{::content})}">
+<section th:fragment="content" class="users-stats-page">
 
-        <div th:if="${error}" class="alert-error">
+    <link rel="stylesheet" th:href="@{/css/admin/users-stats.css}" />
+
+    <header class="page-header">
+        <div>
+            <h1 class="page-title">Estadísticas mensuales de usuarios</h1>
+            <p class="page-subtitle">
+                Visualiza las rutinas iniciadas y los seguimientos realizados por periodo.
+            </p>
+        </div>
+    </header>
+
+    <main class="container space-y">
+
+        <!-- Mensaje de error -->
+        <div th:if="${error}" class="alert alert-error">
             <span th:text="${error}">Ha ocurrido un error</span>
         </div>
 
-        <form th:action="@{/mvc/admin/users/stats}" method="get">
-            <input type="text" name="userUsername" placeholder="Filtrar por Usuario" />
-            <button type="submit">Buscar</button>
-        </form>
+        <!-- Filtros -->
+        <section class="card">
+            <h2 class="card-title">Filtros</h2>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Usuario</th>
-                    <th>Periodo (Mes)</th>
-                    <th>Asignaciones Iniciadas</th>
-                    <th>Seguimientos Realizados</th>
-                    <th>Opciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="stat : ${userStats}">
-                    <td th:text="${stat.id.userUsername}">Username</td>
-                    <td th:text="${stat.id.period}">Periodo</td>
-                    <td th:text="${stat.routinesStarted}">0</td>
-                    <td th:text="${stat.followupsMade}">0</td>
-                    <td>
-                        <a th:href="@{/mvc/admin/users/stats/detail(userUsername=${stat.id.userUsername})}">Ver
-                            Detalle</a>
-                    </td>
-                </tr>
-                <tr th:if="${userStats == null or userStats.isEmpty()}">
-                    <td colspan="5">No hay estadísticas para mostrar…</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+            <form th:action="@{/mvc/admin/users/stats}" method="get" class="filters-bar">
+                <div class="field">
+                    <label for="userUsername">Usuario</label>
+                    <input id="userUsername"
+                           type="text"
+                           name="userUsername"
+                           placeholder="Filtrar por username de usuario" />
+                </div>
+
+                <div class="filters-actions">
+                    <button type="submit" class="btn">
+                        <span class="material-symbols-rounded" style="font-size:18px;vertical-align:-4px;">search</span>
+                        Buscar
+                    </button>
+                    <a th:href="@{/mvc/admin/users/stats}" class="btn btn-secondary">
+                        Limpiar
+                    </a>
+                </div>
+            </form>
+        </section>
+
+        <!-- Tabla de resultados -->
+        <section class="card">
+            <h2 class="card-title">Resultados</h2>
+
+            <div class="table-wrapper">
+                <table class="stats-table">
+                    <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Periodo (Mes)</th>
+                        <th>Asignaciones iniciadas</th>
+                        <th>Seguimientos realizados</th>
+                        <th>Opciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="stat : ${userStats}">
+                        <td th:text="${stat.id.userUsername}">Username</td>
+                        <td th:text="${stat.id.period}">Periodo</td>
+                        <td th:text="${stat.routinesStarted}">0</td>
+                        <td th:text="${stat.followupsMade}">0</td>
+                        <td>
+                            <a class="link-detail"
+                               th:href="@{/mvc/admin/users/stats/detail(userUsername=${stat.id.userUsername})}">
+                                Ver detalle
+                            </a>
+                        </td>
+                    </tr>
+                    <tr th:if="${userStats == null or #lists.isEmpty(userStats)}">
+                        <td colspan="5" class="empty-state">
+                            No hay estadísticas para mostrar…
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 </section>
-
 </html>
