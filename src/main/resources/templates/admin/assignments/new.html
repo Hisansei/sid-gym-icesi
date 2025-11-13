@@ -1,51 +1,57 @@
-<!-- src/main/resources/templates/admin/assignments/new.html -->
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{components/base :: page(
-        title='Nueva asignación',
-        content=~{::content}
-      )}">
-<section th:fragment="content">
-    <div class="panel">
-        <div class="panel-header">
-            <a th:href="@{/mvc/admin/assignments}" class="btn btn-link">
-                ← Volver
-            </a>
-            <h1 class="panel-title">Nueva asignación</h1>
+      th:replace="components/base :: page('Nueva asignación', ~{::content})">
+
+<section th:fragment="content" class="assignments-page">
+    <link rel="stylesheet" th:href="@{/css/admin/assignments.css}" />
+
+    <header class="site-header">
+        <div class="container">
+            <h1 class="page-title">Nueva asignación</h1>
+            <nav class="actions">
+                <a class="btn btn-secondary" th:href="@{/mvc/admin/assignments}">
+                    <span class="material-symbols-rounded" style="font-size:18px;vertical-align:-4px;">arrow_back</span>
+                    Volver
+                </a>
+            </nav>
         </div>
+    </header>
 
-        <form th:action="@{/mvc/admin/assignments}" method="post" class="form form-stacked">
+    <main class="container narrow card space-y">
 
-            <!-- Usuario -->
-            <div class="form-group">
-                <label class="form-label">Usuario (username)</label>
-                <select class="form-control" name="userUsername" required>
-                    <option value="" disabled selected>Selecciona un usuario</option>
-                    <option th:each="u : ${users}"
-                            th:value="${u.username}"
-                            th:text="${u.username}">
-                    </option>
-                </select>
-            </div>
+        <!-- Mensajes flash -->
+        <div th:if="${msg_success}" class="alert success" th:text="${msg_success}"></div>
+        <div th:if="${msg_warn}" class="alert warning" th:text="${msg_warn}"></div>
+        <div th:if="${msg_error}" class="alert danger" th:text="${msg_error}"></div>
 
-            <!-- Entrenador -->
-            <div class="form-group">
-                <label for="trainerId">Entrenador</label>
-                <select id="trainerId" name="trainerId" class="form-control" required>
-                    <option value="" disabled selected>Selecciona un entrenador</option>
+        <form th:action="@{/mvc/admin/assignments}" method="post" class="form">
+            <label class="form-label">Usuario (username)</label>
+            <select class="form-control" name="userUsername" required>
+                <option value="" disabled selected>Selecciona un usuario</option>
+                <option th:each="u : ${users}"
+                        th:value="${u.username}"
+                        th:text="${u.username}">
+                </option>
+            </select>
+
+            <label for="trainerId">Entrenador</label>
+            <select id="trainerId" name="trainerId" class="form-control" required>
+                <option value="" disabled selected>Selecciona un entrenador</option>
                     <option th:each="t : ${trainers}"
                             th:value="${t.id}"
-                    th:text="${t.firstName + ' ' + t.lastName + ' (' + t.id + ')'}">
+                            th:text="${t.firstName + ' ' + t.lastName + ' (' + t.id + ')'}">
                     </option>
-                </select>
-            </div>
-
+            </select>
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Asignar</button>
-                <a th:href="@{/mvc/admin/assignments}" class="btn">Cancelar</a>
+                <button class="btn" type="submit">
+                    <span class="material-symbols-rounded" style="vertical-align:-6px">save</span>
+                    Asignar
+                </button>
+                <a class="btn btn-secondary" th:href="@{/mvc/admin/assignments}">Cancelar</a>
             </div>
         </form>
-    </div>
+    </main>
 </section>
+
 </html>

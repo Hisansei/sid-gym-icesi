@@ -125,8 +125,18 @@
 
 /* Columna de acciones */
 .assignments-page .table-actions {
-    display: flex;
-    gap: .5rem;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.assignments-page .table-actions .inline {
+    display: inline-block;
+}
+
+.assignments-page .table-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
 }
 
 .assignments-page .btn.btn-small {
@@ -184,6 +194,7 @@
     padding: .6rem .7rem;
 }
 
+/* Botones en formularios */
 .assignments-page .form-actions {
     display: flex;
     gap: .5rem;
