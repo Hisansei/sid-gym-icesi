@@ -175,7 +175,19 @@ UPDATE users SET password_hash = '$2a$10$XrRJnujctTzjLnHv/k3sTODxq9ZGKILWe5gGID7
 UPDATE users SET password_hash = '$2a$10$E637lQy51VSagThtkZ7Mwuuo1qm72pqGY6gGRbrM3tQWyWQRSXtaC' WHERE username = 'pepito.a';
 
 -- =========================
--- Stats (vacías)
+-- Stats
 -- =========================
 -- trainer_monthly_stats: trainer_username, period, new_assignments, followups_made
+INSERT INTO trainer_monthly_stats (trainer_username, period, new_assignments, followups_made) VALUES
+                                                                                                    ('andres.c', '2025-10', 2, 2),
+                                                                                                    ('paula.r', '2025-10', 3, 2),
+                                                                                                    ('andres.c', '2025-11', 1, 1),
+                                                                                                    ('paula.r', '2025-11', 2, 1);
+
 -- user_monthly_stats:   user_username,   period, routines_started, followups_made
+INSERT INTO user_monthly_stats (user_username, period, routines_started, followups_made) VALUES
+                                                                                                ('laura.h', '2025-11', 2, 2),
+                                                                                                ('pedro.m', '2025-11', 2, 1),
+                                                                                                ('ana.s', '2025-11', 1, 1),
+                                                                                                ('luis.r', '2025-11', 1, 1),
+                                                                                                ('sofia.g', '2025-11', 2, 0);

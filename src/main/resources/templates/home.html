@@ -28,19 +28,19 @@
         <!-- GRID DE FUNCIONALIDADES PRINCIPALES -->
         <div class="features-grid">
 
-            <!-- Mi progreso -->
+            <!-- Mi progreso / estadísticas personales -->
             <article class="feature-card">
                 <div class="feature-icon">
                     <span class="material-symbols-rounded">timeline</span>
                 </div>
                 <h3>Mi progreso</h3>
                 <p>
-                    Consulta la evolución de tus entrenamientos y revisa el historial
-                    de sesiones que has registrado en el gimnasio.
+                    Consulta la evolución de tus entrenamientos, revisa el historial
+                    de sesiones y haz seguimiento a tus propias estadísticas de uso del gimnasio.
                 </p>
                 <p>
                     <a class="btn btn-secondary" th:href="@{/mvc/progress/history}">
-                        Ver mi progreso
+                        Ver mis estadísticas
                     </a>
                 </p>
             </article>
@@ -62,9 +62,8 @@
                 </p>
             </article>
 
-            <!-- Plantillas de rutina (solo entrenadores / admin) -->
-            <article class="feature-card"
-                     sec:authorize="hasAnyRole('TRAINER','ADMIN')">
+            <!-- Plantillas de rutina) -->
+            <article class="feature-card">
                 <div class="feature-icon">
                     <span class="material-symbols-rounded">content_copy</span>
                 </div>
@@ -97,20 +96,23 @@
                 </p>
             </article>
 
-            <!-- Reportes (entrenadores / admin) -->
+            <!-- Estadísticas (solo admin, usando /mvc/admin/.../stats) -->
             <article class="feature-card"
-                     sec:authorize="hasAnyRole('TRAINER','ADMIN')">
+                     sec:authorize="hasRole('ADMIN')">
                 <div class="feature-icon">
-                    <span class="material-symbols-rounded">analytics</span>
+                    <span class="material-symbols-rounded">query_stats</span>
                 </div>
-                <h3>Reportes del gimnasio</h3>
+                <h3>Estadísticas del gimnasio</h3>
                 <p>
-                    Analiza información consolidada sobre uso del gimnasio, usuarios
-                    y desempeño para tomar mejores decisiones.
+                    Accede a las estadísticas mensuales consolidadas de entrenadores y usuarios:
+                    rutinas iniciadas, asignaciones nuevas y seguimientos registrados.
                 </p>
                 <p>
-                    <a class="btn btn-secondary" th:href="@{/mvc/reports/select}">
-                        Ir a reportes
+                    <a class="btn btn-secondary" th:href="@{/mvc/admin/trainers/stats}">
+                        Stats de entrenadores
+                    </a>
+                    <a class="btn btn-secondary" th:href="@{/mvc/admin/users/stats}">
+                        Stats de usuarios
                     </a>
                 </p>
             </article>

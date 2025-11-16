@@ -37,10 +37,10 @@
             <label for="trainerId">Entrenador</label>
             <select id="trainerId" name="trainerId" class="form-control" required>
                 <option value="" disabled selected>Selecciona un entrenador</option>
-                    <option th:each="t : ${trainers}"
-                            th:value="${t.id}"
-                            th:text="${t.firstName + ' ' + t.lastName + ' (' + t.id + ')'}">
-                    </option>
+                <option th:each="t : ${trainers}"
+                        th:value="${t.id}"
+                        th:text="${t.firstName + ' ' + t.lastName + ' (' + t.id + ')'}">
+                </option>
             </select>
 
             <div class="form-actions">

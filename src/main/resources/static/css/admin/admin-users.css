@@ -165,7 +165,6 @@
     border: 1px solid #d4d4d8;
     background: #f9fafb;
     font-size: .86rem;
-    margin-bottom: 10px;
 }
 
 .users-stats-page .alert-error {
@@ -287,9 +286,13 @@
     .users-stats-page .filters-actions .btn {
         width: auto;
     }
+
+    .users-stats-page .card {
+        padding: 14px 12px;
+    }
 }
 
-/* ===== Detalle: pequeña animación de entrada ===== */
+/* ===== Animación de entrada ===== */
 
 @keyframes us-fade-up {
     from {
@@ -303,6 +306,6 @@
 }
 
 .users-stats-page .page-header,
-.users-stats-page .card {
+.users-stats-page .c    ard {
     animation: us-fade-up .4s ease-out;
 }
