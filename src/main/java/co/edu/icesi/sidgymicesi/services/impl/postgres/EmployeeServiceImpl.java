@@ -36,4 +36,13 @@ public class EmployeeServiceImpl implements IEmployeeService {
     public void deleteById(String id) {
         employeeRepository.deleteById(id);
     }
+
+    @Override
+    public List<Employee> findAllInstructors() {
+        return employeeRepository.findAll().stream()
+                .filter(e -> e.getEmployeeType() != null
+                        && "Instructor".equalsIgnoreCase(e.getEmployeeType().getName()))
+                .toList();
+    }
+
 }

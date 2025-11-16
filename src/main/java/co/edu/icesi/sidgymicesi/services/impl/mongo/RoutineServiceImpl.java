@@ -87,6 +87,24 @@ public class RoutineServiceImpl implements IRoutineService {
         return saved;
     }
 
+    @Override
+    public Routine createFromTemplate(String ownerUsername, RoutineTemplate template) {
+        if (template == null) {
+            throw new IllegalArgumentException("template requerido");
+        }
+        String templateId = template.getId();
+        if (templateId == null || templateId.isBlank()) {
+            throw new IllegalArgumentException("template sin id");
+        }
+
+        String name = (template.getName() != null && !template.getName().isBlank())
+                ? template.getName()
+                : "Rutina desde plantilla";
+
+        // Reutilizamos la lógica que ya llena los ejercicios desde la plantilla
+        return create(ownerUsername, name, templateId);
+    }
+
     // ========== READ ==========
     @Override
     public Optional<Routine> findById(String id) { return routineRepo.findById(id); }

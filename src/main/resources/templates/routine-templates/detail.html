@@ -31,12 +31,12 @@
         </form>
 
         <a class="btn btn-ghost"
-           sec:authorize="hasAnyRole('TRAINER','ADMIN')"
+           sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')"
            th:href="@{'/mvc/routine-templates/' + ${template.id} + '/edit'}">
           Editar
         </a>
 
-        <form sec:authorize="hasAnyRole('TRAINER','ADMIN')"
+        <form sec:authorize="hasRole('ADMIN') or (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')"
               th:action="@{'/mvc/routine-templates/' + ${template.id} + '/delete'}"
               method="post" style="display:inline"
               onsubmit="return confirm('¿Eliminar esta plantilla?')">
@@ -57,14 +57,14 @@
           </p>
         </div>
         <div class="routine-template-meta">
-                    <span class="rt-template-pill rt-template-pill-id">
-                        ID&nbsp;<span th:text="${template.id}">id</span>
-                    </span>
+          <span class="rt-template-pill rt-template-pill-id">
+            ID&nbsp;<span th:text="${template.id}">id</span>
+          </span>
           <span class="rt-template-pill rt-template-pill-level"
                 th:classappend="' level-' + ${template.level}">
-                        <span class="rt-template-pill-label">Nivel</span>
-                        <span th:text="${template.level}">BEGINNER</span>
-                    </span>
+            <span class="rt-template-pill-label">Nivel</span>
+            <span th:text="${template.level}">BEGINNER</span>
+          </span>
         </div>
       </header>
 

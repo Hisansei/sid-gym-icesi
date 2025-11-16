@@ -14,4 +14,6 @@ public interface IEmployeeService {
     Optional<Employee> findById(String id);
 
     void deleteById(String id);
+
+    List<Employee> findAllInstructors();
 }

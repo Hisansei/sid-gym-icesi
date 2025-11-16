@@ -61,7 +61,7 @@ public class RoutineTemplateMVCController {
 
     // Crear plantilla (entrenador/admin)
     @GetMapping("/create")
-    @PreAuthorize("hasAnyRole('TRAINER','ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('EMPLOYEE') && principal.employeeType == 'Instructor')")
     public String createForm(Model model) {
         model.addAttribute("template", new RoutineTemplate());
         model.addAttribute("exercises", exerciseService.findAll());
@@ -69,7 +69,7 @@ public class RoutineTemplateMVCController {
     }
 
     @PostMapping("/create")
-    @PreAuthorize("hasAnyRole('TRAINER','ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('EMPLOYEE') && principal.employeeType == 'Instructor')")
     public String create(@ModelAttribute("template") RoutineTemplate template) {
         normalizeOrders(template);
         RoutineTemplate saved = templateService.save(template);
@@ -78,7 +78,7 @@ public class RoutineTemplateMVCController {
 
     // Editar plantilla (entrenador/admin)
     @GetMapping("/{id}/edit")
-    @PreAuthorize("hasAnyRole('TRAINER','ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('EMPLOYEE') && principal.employeeType == 'Instructor')")
     public String editForm(@PathVariable String id, Model model) {
         RoutineTemplate tpl = templateService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Template not found"));
@@ -88,7 +88,7 @@ public class RoutineTemplateMVCController {
     }
 
     @PostMapping("/{id}/edit")
-    @PreAuthorize("hasAnyRole('TRAINER','ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('EMPLOYEE') && principal.employeeType == 'Instructor')")
     public String edit(@PathVariable String id, @ModelAttribute("template") RoutineTemplate updated) {
         updated.setId(id);
         normalizeOrders(updated);
@@ -98,32 +98,48 @@ public class RoutineTemplateMVCController {
 
     // Eliminar plantilla (entrenador/admin)
     @PostMapping("/{id}/delete")
-    @PreAuthorize("hasAnyRole('TRAINER','ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or (hasRole('EMPLOYEE') && principal.employeeType == 'Instructor')")
     public String delete(@PathVariable String id) {
         templateService.deleteById(id);
         return "redirect:/mvc/routine-templates";
     }
 
-    // Adoptar plantilla -> crea rutina del usuario y redirige al detalle de la rutina creada
+    // Adoptar plantilla → crea rutina para el usuario
     @PostMapping("/{id}/adopt")
     @PreAuthorize("isAuthenticated()")
-    public String adopt(Authentication auth, @PathVariable String id) {
+    public String adopt(@PathVariable String id, Authentication auth) {
         RoutineTemplate tpl = templateService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Template not found"));
 
-        routineService.create(auth.getName(), tpl.getName(), tpl.getId());
+        String ownerUsername = auth.getName();
+        // Usa el nuevo método del servicio
+        routineService.createFromTemplate(ownerUsername, tpl);
 
         return "redirect:/mvc/routines";
     }
 
-    private void normalizeOrders(RoutineTemplate t) {
-        List<RoutineTemplate.TemplateItem> list =
-                Optional.ofNullable(t.getExercises()).orElseGet(ArrayList::new);
-        for (int i = 0; i < list.size(); i++) {
-            if (Objects.isNull(list.get(i).getOrder())) {
-                list.get(i).setOrder(i + 1);
+    private void normalizeOrders(RoutineTemplate template) {
+        List<RoutineTemplate.TemplateItem> items =
+                Optional.ofNullable(template.getExercises()).orElse(new ArrayList<>());
+
+        List<RoutineTemplate.TemplateItem> validItems = items.stream()
+                .filter(it -> it.getExerciseId() != null && !it.getExerciseId().isBlank())
+                .collect(Collectors.toList());
+
+        int order = 1;
+        for (RoutineTemplate.TemplateItem it : validItems) {
+            it.setOrder(order++);
+            if (it.getSets() <= 0) {
+                it.setSets(3);
+            }
+            if (it.getReps() <= 0) {
+                it.setReps(12);
+            }
+            if (it.getRestSeconds() <= 0) {
+                it.setRestSeconds(60);
             }
         }
-        t.setExercises(list);
+
+        template.setExercises(validItems);
     }
 }

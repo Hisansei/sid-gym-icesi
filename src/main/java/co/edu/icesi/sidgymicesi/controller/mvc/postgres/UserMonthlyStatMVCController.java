@@ -3,6 +3,7 @@ package co.edu.icesi.sidgymicesi.controller.mvc.postgres;
 import co.edu.icesi.sidgymicesi.model.postgres.UserMonthlyStat;
 import co.edu.icesi.sidgymicesi.services.postgres.IUserMonthlyStatsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/mvc/admin/users/stats")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class UserMonthlyStatMVCController {
 
     private final IUserMonthlyStatsService userMonthlyStatsService;

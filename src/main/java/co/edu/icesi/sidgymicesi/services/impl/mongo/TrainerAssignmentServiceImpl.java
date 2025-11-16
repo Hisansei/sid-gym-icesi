@@ -93,4 +93,13 @@ public class TrainerAssignmentServiceImpl implements ITrainerAssignmentService {
     @Override public List<TrainerAssignment> findByTrainer(String trainerId) { return trainerAssignmentRepository.findByTrainerIdOrderByAssignedAtDesc(trainerId); }
     @Override public void deleteById(String id) { if (id==null||id.isBlank()) throw new IllegalArgumentException("id es obligatorio"); trainerAssignmentRepository.deleteById(id); }
     @Override public List<TrainerAssignment> listHistoryByUser(String userUsername) { return trainerAssignmentRepository.findByUserUsernameOrderByAssignedAtDesc(userUsername); }
+
+    @Override
+    public Optional<TrainerAssignment> findById(String id) {
+        if (id == null || id.isBlank()) {
+            return Optional.empty();
+        }
+        return trainerAssignmentRepository.findById(id);
+    }
+
 }

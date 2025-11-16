@@ -24,4 +24,6 @@ public interface ITrainerAssignmentService {
     List<TrainerAssignment> findAllActive();
     List<TrainerAssignment> findByTrainer(String trainerId);
     void deleteById(String id);
+
+    Optional<TrainerAssignment> findById(String id);
 }

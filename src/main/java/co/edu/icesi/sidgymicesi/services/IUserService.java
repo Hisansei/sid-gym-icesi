@@ -23,4 +23,6 @@ public interface IUserService {
     void deleteByUsername(String username);
 
     boolean existsByUsername(String username);
+
+    List<User> findAllStudents();
 }

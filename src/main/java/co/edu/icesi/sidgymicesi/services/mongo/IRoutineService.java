@@ -1,6 +1,7 @@
 package co.edu.icesi.sidgymicesi.services.mongo;
 
 import co.edu.icesi.sidgymicesi.model.mongo.Routine;
+import co.edu.icesi.sidgymicesi.model.mongo.RoutineTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,6 +10,8 @@ public interface IRoutineService {
 
     // CREATE
     Routine create(String ownerUsername, String name, String originTemplateId);
+
+    Routine createFromTemplate(String ownerUsername, RoutineTemplate template);
 
     // READ
     Optional<Routine> findById(String id);

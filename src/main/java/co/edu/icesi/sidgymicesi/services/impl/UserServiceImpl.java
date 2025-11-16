@@ -65,4 +65,9 @@ public class UserServiceImpl implements IUserService {
     public boolean existsByUsername(String username) {
         return userRepository.existsById(username);
     }
+
+    @Override
+    public List<User> findAllStudents() {
+        return userRepository.findByRole(Role.STUDENT);
+    }
 }

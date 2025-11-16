@@ -1,9 +1,17 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{components/base :: page(title='Estadísticas de Usuarios', content=~{::content})}">
-<section th:fragment="content" class="users-stats-page">
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{components/base :: page(
+              title='Estadísticas de Usuarios',
+              content=~{::content}
+          )}">
 
-    <link rel="stylesheet" th:href="@{/css/admin/users-stats.css}" />
+<section th:fragment="content"
+         class="users-stats-page"
+         sec:authorize="hasRole('ADMIN')">
+
+    <link rel="stylesheet" th:href="@{/css/admin/users-stats.css}"/>
 
     <header class="page-header">
         <div>
@@ -31,22 +39,25 @@
                     <input id="userUsername"
                            type="text"
                            name="userUsername"
-                           placeholder="Filtrar por username de usuario" />
+                           placeholder="Filtrar por username de usuario"
+                           th:value="${userUsername}"/>
                 </div>
 
                 <div class="filters-actions">
-                    <button type="submit" class="btn">
-                        <span class="material-symbols-rounded" style="font-size:18px;vertical-align:-4px;">search</span>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="material-symbols-rounded"
+                              style="font-size:18px;vertical-align:-4px;">search</span>
                         Buscar
                     </button>
-                    <a th:href="@{/mvc/admin/users/stats}" class="btn btn-secondary">
-                        Limpiar
+
+                    <a class="btn btn-ghost" th:href="@{/mvc/admin/users/stats}">
+                        Limpiar filtros
                     </a>
                 </div>
             </form>
         </section>
 
-        <!-- Tabla de resultados -->
+        <!-- Resultados -->
         <section class="card">
             <h2 class="card-title">Resultados</h2>
 
@@ -58,7 +69,6 @@
                         <th>Periodo (Mes)</th>
                         <th>Asignaciones iniciadas</th>
                         <th>Seguimientos realizados</th>
-                        <th>Opciones</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -67,22 +77,17 @@
                         <td th:text="${stat.id.period}">Periodo</td>
                         <td th:text="${stat.routinesStarted}">0</td>
                         <td th:text="${stat.followupsMade}">0</td>
-                        <td>
-                            <a class="link-detail"
-                               th:href="@{/mvc/admin/users/stats/detail(userUsername=${stat.id.userUsername})}">
-                                Ver detalle
-                            </a>
-                        </td>
                     </tr>
-                    <tr th:if="${userStats == null or #lists.isEmpty(userStats)}">
-                        <td colspan="5" class="empty-state">
-                            No hay estadísticas para mostrar…
+                    <tr th:if="${userStats == null || #lists.isEmpty(userStats)}">
+                        <td colspan="4" class="empty-state">
+                            No hay estadísticas para mostrar con los filtros actuales.
                         </td>
                     </tr>
                     </tbody>
                 </table>
             </div>
         </section>
+
     </main>
 </section>
 </html>

@@ -1,173 +1,143 @@
 package co.edu.icesi.sidgymicesi.controller.mvc.mongo;
 
 import co.edu.icesi.sidgymicesi.model.mongo.TrainerAssignment;
-import co.edu.icesi.sidgymicesi.model.postgres.Employee;
-import co.edu.icesi.sidgymicesi.model.postgres.TrainerMonthlyStat;
 import co.edu.icesi.sidgymicesi.services.IUserService;
 import co.edu.icesi.sidgymicesi.services.mongo.ITrainerAssignmentService;
 import co.edu.icesi.sidgymicesi.services.postgres.IEmployeeService;
-import co.edu.icesi.sidgymicesi.services.postgres.ITrainerStatsService;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/mvc/admin/assignments")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class TrainerAssignmentMVCController {
 
-    private final ITrainerAssignmentService assignmentService;
-    private final ITrainerStatsService trainerStatsService;
-    private final IEmployeeService employeeService;
+    private static final Logger logger = LoggerFactory.getLogger(TrainerAssignmentMVCController.class);
+
+    private final ITrainerAssignmentService trainerAssignmentService;
     private final IUserService userService;
+    private final IEmployeeService employeeService;
 
     // ====================== LIST / HOME =========================
+
     @GetMapping
-    public String listPage(@RequestParam(value = "user", required = false) String userUsername,
-                           Model model) {
+    public String list(
+            @RequestParam(value = "userUsername", required = false) String userUsername,
+            @RequestParam(value = "trainerId", required = false) String trainerId,
+            Model model) {
 
-        List<TrainerAssignment> active = assignmentService.listActive();
-        List<TrainerAssignment> history = assignmentService.listAll();
+        List<TrainerAssignment> assignments = trainerAssignmentService.listAll();
 
-        // ------------------ NOMBRES DE ENTRENADORES ------------------
-        // Conjunto de IDs de entrenador encontrados en asignaciones
-        Set<String> ids = new HashSet<>();
-        active.forEach(a -> ids.add(a.getTrainerId()));
-        history.forEach(h -> ids.add(h.getTrainerId()));
-
-        // También agregamos los entrenadores que aparezcan en las estadísticas
-        Map<String, List<TrainerMonthlyStat>> statsMap = trainerStatsService.listAll();
-        List<TrainerMonthlyStat> statsFlat = new ArrayList<>();
-
-        statsMap.values().forEach(list -> {
-            for (TrainerMonthlyStat s : list) {
-                statsFlat.add(s);
-                if (s.getId() != null && s.getId().getTrainerUsername() != null) {
-                    ids.add(s.getId().getTrainerUsername());
-                }
-            }
-        });
-
-        Map<String, String> trainerNames = new HashMap<>();
-        for (String id : ids) {
-            employeeService.findById(id).ifPresent(e ->
-                    trainerNames.put(id, e.getFirstName() + " " + e.getLastName())
-            );
+        if (userUsername != null && !userUsername.isBlank()) {
+            assignments = assignments.stream()
+                    .filter(a -> userUsername.equalsIgnoreCase(a.getUserUsername()))
+                    .toList();
+            model.addAttribute("filterUserUsername", userUsername);
         }
 
-        model.addAttribute("active", active);
-        model.addAttribute("history", history);
-        // Ahora la vista recibe una LISTA de TrainerMonthlyStat
-        model.addAttribute("statsByTrainer", statsFlat);
-        model.addAttribute("trainerNames", trainerNames);
-
-        // Si viene un usuario seleccionado (?user=)
-        if (StringUtils.hasText(userUsername)) {
-            model.addAttribute("selectedUser", userUsername);
-            model.addAttribute("userHistory", assignmentService.listHistoryByUser(userUsername));
-            assignmentService.findActiveByUser(userUsername)
-                    .ifPresent(a -> model.addAttribute("userActiveAssignment", a));
+        if (trainerId != null && !trainerId.isBlank()) {
+            assignments = assignments.stream()
+                    .filter(a -> trainerId.equalsIgnoreCase(a.getTrainerId()))
+                    .toList();
+            model.addAttribute("filterTrainerId", trainerId);
         }
 
+        model.addAttribute("assignments", assignments);
         return "admin/assignments/list";
     }
 
-    // ================= FORM NUEVA ASIGNACIÓN ====================
-    @GetMapping("/new")
-    public String newForm(Model model) {
-        List<Employee> allEmployees = employeeService.findAll();
-        List<Employee> trainers = allEmployees.stream()
-                .filter(e -> e.getEmployeeType() != null &&
-                        "Instructor".equalsIgnoreCase(e.getEmployeeType().getName()))
-                .collect(Collectors.toList());
+    // ====================== CREATE =========================
 
-        model.addAttribute("users", userService.findAll()); // lista de usuarios (username, fullName)
-        model.addAttribute("trainers", trainers);
+    @GetMapping("/create")
+    public String createForm(@RequestParam(value = "userUsername", required = false) String userUsername,
+                             Model model) {
 
-        return "admin/assignments/new";
-    }
+        model.addAttribute("users", userService.findAllStudents());
+        model.addAttribute("trainers", employeeService.findAllInstructors());
 
-    // ====================== CREATE (ASSIGN) =====================
-    @PostMapping
-    public String assign(@RequestParam("userUsername") @NotBlank String userUsername,
-                         @RequestParam("trainerId") @NotBlank String trainerId,
-                         RedirectAttributes ra) {
-        try {
-            assignmentService.assign(userUsername, trainerId);
-            ra.addFlashAttribute("msg_success",
-                    "Entrenador " + trainerId + " asignado a " + userUsername + " correctamente.");
-        } catch (IllegalStateException ise) {
-            ra.addFlashAttribute("msg_warn", ise.getMessage());
-        } catch (IllegalArgumentException iae) {
-            ra.addFlashAttribute("msg_error", iae.getMessage());
-        } catch (Exception e) {
-            ra.addFlashAttribute("msg_error", "No se pudo realizar la asignación. " + e.getMessage());
+        TrainerAssignment assignment = new TrainerAssignment();
+        if (userUsername != null && !userUsername.isBlank()) {
+            assignment.setUserUsername(userUsername);
         }
 
-        ra.addAttribute("user", userUsername);
-        return "redirect:/mvc/admin/assignments";
+        model.addAttribute("assignment", assignment);
+        return "admin/assignments/form";
     }
 
-    // ==================== FORM REASIGNAR ========================
-    @GetMapping("/reassign")
-    public String reassignPage(@RequestParam("userUsername") String userUsername, Model model) {
-        model.addAttribute("userUsername", userUsername);
-        assignmentService.findActiveByUser(userUsername)
-                .ifPresent(a -> model.addAttribute("current", a));
+    @PostMapping("/create")
+    public String create(@ModelAttribute("assignment") TrainerAssignment assignment, Model model) {
 
-        // Agregamos nombres de entrenadores para mostrar "Nombre (ID)"
-        Map<String, String> trainerNames = new HashMap<>();
-        assignmentService.findActiveByUser(userUsername).ifPresent(a ->
-                employeeService.findById(a.getTrainerId()).ifPresent(e ->
-                        trainerNames.put(e.getId(), e.getFirstName() + " " + e.getLastName())
-                )
+        if (assignment.getUserUsername() == null || assignment.getUserUsername().isBlank()) {
+            model.addAttribute("error", "Debe seleccionar un usuario.");
+            model.addAttribute("users", userService.findAllStudents());
+            model.addAttribute("trainers", employeeService.findAllInstructors());
+            return "admin/assignments/form";
+        }
+
+        if (assignment.getTrainerId() == null || assignment.getTrainerId().isBlank()) {
+            model.addAttribute("error", "Debe seleccionar un entrenador.");
+            model.addAttribute("users", userService.findAllStudents());
+            model.addAttribute("trainers", employeeService.findAllInstructors());
+            return "admin/assignments/form";
+        }
+
+        // El servicio ya se encarga de cerrar asignaciones previas y poner fechas
+        trainerAssignmentService.assign(
+                assignment.getUserUsername(),
+                assignment.getTrainerId()
         );
-        model.addAttribute("trainerNames", trainerNames);
-        model.addAttribute("trainers", employeeService.findAll());
 
-        return "admin/assignments/reassign";
-    }
-
-    // ======================== REASSIGN ==========================
-    @PostMapping("/reassign")
-    public String reassign(@RequestParam("userUsername") @NotBlank String userUsername,
-                           @RequestParam("newTrainerId") @NotBlank String newTrainerId,
-                           RedirectAttributes ra) {
-        try {
-            assignmentService.reassign(userUsername, newTrainerId);
-            ra.addFlashAttribute("msg_success",
-                    "Usuario " + userUsername + " reasignado a entrenador " + newTrainerId + " correctamente.");
-        } catch (IllegalStateException ise) {
-            ra.addFlashAttribute("msg_warn", ise.getMessage());
-        } catch (IllegalArgumentException iae) {
-            ra.addFlashAttribute("msg_error", iae.getMessage());
-        } catch (Exception e) {
-            ra.addFlashAttribute("msg_error", "No se pudo realizar la reasignación. " + e.getMessage());
-        }
-
-        ra.addAttribute("user", userUsername);
         return "redirect:/mvc/admin/assignments";
     }
 
-    // ========================== CLOSE ===========================
-    @PostMapping("/close")
-    public String close(@RequestParam("assignmentId") @NotBlank String assignmentId,
-                        RedirectAttributes ra) {
-        try {
-            assignmentService.closeAssignment(assignmentId);
-            ra.addFlashAttribute("msg_success", "Asignación cerrada correctamente.");
-        } catch (IllegalArgumentException iae) {
-            ra.addFlashAttribute("msg_error", iae.getMessage());
-        } catch (Exception e) {
-            ra.addFlashAttribute("msg_error", "No se pudo cerrar la asignación. " + e.getMessage());
+    // ====================== DETAIL =========================
+
+    @GetMapping("/detail")
+    public String detail(@RequestParam("id") String id, Model model) {
+        Optional<TrainerAssignment> opt = trainerAssignmentService.findById(id);
+        if (opt.isEmpty()) {
+            throw new NoSuchElementException("Asignación no encontrada: " + id);
         }
+        model.addAttribute("assignment", opt.get());
+        return "admin/assignments/detail";
+    }
+
+    // ====================== CLOSE / REASSIGN =========================
+
+    @PostMapping("/close")
+    public String close(@RequestParam("id") String id) {
+        trainerAssignmentService.closeAssignment(id);
+        return "redirect:/mvc/admin/assignments";
+    }
+
+    @GetMapping("/reassign")
+    public String reassignForm(@RequestParam("id") String id, Model model) {
+        TrainerAssignment assignment = trainerAssignmentService.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Asignación no encontrada: " + id));
+
+        model.addAttribute("assignment", assignment);
+        model.addAttribute("trainers", employeeService.findAllInstructors());
+        return "admin/assignments/reassign-form";
+    }
+
+    @PostMapping("/reassign")
+    public String reassign(@RequestParam("id") String id,
+                           @RequestParam("newTrainerId") String newTrainerId) {
+
+        TrainerAssignment assignment = trainerAssignmentService.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Asignación no encontrada: " + id));
+
+        trainerAssignmentService.reassign(assignment.getUserUsername(), newTrainerId);
         return "redirect:/mvc/admin/assignments";
     }
 }

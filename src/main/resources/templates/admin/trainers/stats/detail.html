@@ -1,21 +1,30 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{components/base :: page(title='Detalle de Estadísticas de Entrenador', content=~{::content})}">
-<section th:fragment="content" class="trainers-stats-page">
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{components/base :: page(
+              title='Detalle de Estadísticas de Entrenador',
+              content=~{::content}
+          )}">
 
-  <link rel="stylesheet" th:href="@{/css/admin/trainers-stats.css}" />
+<section th:fragment="content"
+         class="trainers-stats-page"
+         sec:authorize="hasRole('ADMIN')">
+
+  <link rel="stylesheet" th:href="@{/css/admin/trainers-stats.css}"/>
 
   <header class="page-header">
     <div>
       <h1 class="page-title">Detalle de las estadísticas del entrenador</h1>
       <p class="page-subtitle">
-        Desglose mensual de asignaciones nuevas y seguimientos realizados.
+        Desglose mensual de asignaciones y seguimientos realizados por este entrenador.
       </p>
     </div>
 
     <nav class="actions">
       <a class="btn btn-secondary" th:href="@{/mvc/admin/trainers/stats}">
-        <span class="material-symbols-rounded" style="font-size:18px;vertical-align:-4px;">arrow_back</span>
+                <span class="material-symbols-rounded"
+                      style="font-size:18px;vertical-align:-4px;">arrow_back</span>
         Volver al listado
       </a>
     </nav>
@@ -37,7 +46,7 @@
           </thead>
           <tbody>
           <tr th:each="stat : ${trainerStats}">
-            <td th:text="${stat.id.trainerUsername}">Username</td>
+            <td th:text="${stat.id.trainerUsername}">trainerUsername</td>
             <td th:text="${stat.id.period}">Periodo</td>
             <td th:text="${stat.newAssignments}">0</td>
             <td th:text="${stat.followupsMade}">0</td>
