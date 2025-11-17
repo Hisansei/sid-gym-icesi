@@ -12,7 +12,7 @@
                 <p class="muted">Gestión de asignaciones de usuarios a entrenadores y estadísticas mensuales.</p>
             </div>
             <nav class="actions">
-                <a class="btn" th:href="@{/mvc/admin/assignments/new}">
+                <a class="btn" th:href="@{/mvc/admin/assignments/create}">
                     <span class="material-symbols-rounded" style="font-size:18px;vertical-align:-4px;">add</span>
                     Nueva asignación
                 </a>
@@ -71,15 +71,14 @@
                         </td>
                         <td class="actions-cell">
                             <a class="btn btn-secondary"
-                               th:href="@{/mvc/admin/assignments/reassign(userUsername=${a.userUsername})}">
-                                <span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px;">swap_horiz</span>
+                               th:href="@{/mvc/admin/assignments/reassign(id=${a.id})}">
                                 Reasignar
                             </a>
-                            <form th:action="@{/mvc/admin/assignments/close}" method="post" style="display:inline;">
-                                <input type="hidden" name="assignmentId" th:value="${a.id}" />
-                                <button type="submit" class="btn btn-danger"
-                                        onclick="return confirm('¿Cerrar esta asignación?');">
-                                    <span class="material-symbols-rounded" style="font-size:16px;vertical-align:-3px;">close</span>
+
+                            <form th:action="@{/mvc/admin/assignments/close}" method="post" class="inline-form">
+                                <input type="hidden" name="id" th:value="${a.id}">
+                                <button class="btn btn-danger" type="submit">
+                                    <span class="material-symbols-rounded" style="font-size:18px;vertical-align:-4px;">close</span>
                                     Cerrar
                                 </button>
                             </form>

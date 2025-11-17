@@ -152,7 +152,7 @@ INSERT INTO USERS (
         ('paula.r',  'hash_pr123', 'EMPLOYEE', NULL,   '1007', TRUE, CURRENT_TIMESTAMP),
         ('andres.c', 'hash_ac123', 'EMPLOYEE', NULL,   '1008', TRUE, CURRENT_TIMESTAMP),
 
-        -- Administrador(es) [Prueba]
+        -- Administrador
         ('pepito.a', 'hash_pa123', 'ADMIN',    NULL,   '1009', TRUE, CURRENT_TIMESTAMP);
 
 -- =========================

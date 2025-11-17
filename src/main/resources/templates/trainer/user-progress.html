@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{components/base :: page(title='Progreso de usuario', content=~{::content})}">
+
+<section th:fragment="content" class="content">
+    <div class="page-header">
+        <h1 th:text="'Progreso de ' + ${username}">Progreso de usuario</h1>
+        <p class="text-muted">
+            Registros de progreso y esfuerzo percibido del usuario asignado.
+        </p>
+        <a th:href="@{/mvc/trainer/dashboard}" class="btn btn-link">&larr; Volver al panel</a>
+    </div>
+
+    <div sec:authorize="hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor'">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Logs de progreso</h2>
+            </div>
+            <div class="card-body">
+                <div th:if="${#lists.isEmpty(logs)}" class="alert alert-info">
+                    Este usuario aún no tiene registros de progreso.
+                </div>
+
+                <div th:if="${!#lists.isEmpty(logs)}" class="list-group">
+                    <div th:each="log : ${logs}" class="list-group-item mb-2">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1">
+                                    <span th:text="${log.routineName}">Nombre rutina</span>
+                                    <small class="text-muted ms-2"
+                                           th:text="${#temporals.format(log.date, 'yyyy-MM-dd')}">2024-01-01</small>
+                                </h5>
+                                <p class="mb-1">
+                                    <strong>RPE:</strong>
+                                    <span th:text="${log.perceivedEffort}">7</span>
+                                    <span th:if="${log.notes != null && !#strings.isEmpty(log.notes)}">
+                                        &mdash; <span th:text="${log.notes}">comentarios del usuario</span>
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Feedback del entrenador existente -->
+                        <div th:if="${log.trainerFeedback != null and !#lists.isEmpty(log.trainerFeedback)}"
+                             class="mt-2">
+                            <h6 class="fw-bold">Comentarios del entrenador</h6>
+                            <ul class="list-unstyled mb-0">
+                                <li th:each="fb : ${log.trainerFeedback}" class="mb-1">
+                                    <small class="text-muted">
+                                        <span th:text="${fb.trainerUsername}">trainer</span>
+                                        &mdash;
+                                        <span th:text="${#temporals.format(fb.createdAt, 'yyyy-MM-dd HH:mm')}">
+                                            fecha
+                                        </span>
+                                    </small>
+                                    <div th:text="${fb.comment}">Comentario</div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- AQUÍ luego enganchamos el formulario para nuevo feedback (Fase 2 - punto 5.x) -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div sec:authorize="! (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')" class="alert alert-danger mt-3">
+        No tienes permisos para ver el progreso de este usuario.
+    </div>
+</section>
+
+</html>

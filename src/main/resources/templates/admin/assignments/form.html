@@ -24,7 +24,7 @@
         <div th:if="${msg_warn}" class="alert warning" th:text="${msg_warn}"></div>
         <div th:if="${msg_error}" class="alert danger" th:text="${msg_error}"></div>
 
-        <form th:action="@{/mvc/admin/assignments}" method="post" class="form">
+        <form th:action="@{/mvc/admin/assignments/create}" method="post" class="form">
             <label class="form-label">Usuario (username)</label>
             <select class="form-control" name="userUsername" required>
                 <option value="" disabled selected>Selecciona un usuario</option>

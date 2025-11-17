@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
+<html lang="es"
+      xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:fragment="page(title, content)">
 <head>
@@ -8,7 +9,8 @@
     <title th:text="${title} ?: 'Mi Aplicación'">Mi Aplicación</title>
     <link rel="icon" type="image/x-icon" th:href="@{/img/icon/favicon.ico}">
     <link rel="stylesheet" th:href="@{/css/components/base.css}" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
 <body>
 <div class="app-shell">
@@ -27,12 +29,14 @@
 
         <nav class="sidebar-nav">
             <ul class="nav-list primary-nav">
+                <!-- Home -->
                 <li class="nav-item">
                     <a th:href="@{/mvc/home}" class="nav-link" data-page="home">
                         <span class="material-symbols-rounded nav-icon">home</span>
                         <span class="nav-label">Inicio</span>
                     </a>
                 </li>
+
                 <!-- ADMIN: Gestión de usuarios -->
                 <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{/mvc/admin/users}" class="nav-link" data-page="admin-users">
@@ -41,14 +45,15 @@
                     </a>
                 </li>
 
-                <!-- ADMIN: Asignaciones (NUEVO) -->
+                <!-- ADMIN: Asignaciones -->
                 <li class="nav-item" sec:authorize="hasRole('ADMIN')">
                     <a th:href="@{/mvc/admin/assignments}" class="nav-link" data-page="admin-assignments">
                         <span class="material-symbols-rounded nav-icon">supervisor_account</span>
                         <span class="nav-label">Asignaciones</span>
                     </a>
                 </li>
-                <!-- Entrenador -->
+
+                <!-- Catálogo de ejercicios (todos los roles autenticados) -->
                 <li class="nav-item"
                     sec:authorize="hasAnyRole('STUDENT','EMPLOYEE','ADMIN')">
                     <a th:href="@{/mvc/exercises}" class="nav-link" data-page="exercises">
@@ -56,14 +61,17 @@
                         <span class="nav-label">Catálogo de ejercicios</span>
                     </a>
                 </li>
+
                 <li class="nav-item"
                     sec:authorize="hasRole('EMPLOYEE')"
                     th:if="${#authentication.principal != null and #authentication.principal.employeeType == 'Instructor'}">
-                    <a th:href="@{/mvc/admin/assignments}" class="nav-link" data-page="trainer-assignments">
+                    <a th:href="@{/mvc/trainer/dashboard}" class="nav-link" data-page="trainer-dashboard">
                         <span class="material-symbols-rounded nav-icon">supervisor_account</span>
                         <span class="nav-label">Mis asignaciones</span>
                     </a>
                 </li>
+
+                <!-- Plantillas de rutinas (solo instructor) -->
                 <li class="nav-item"
                     sec:authorize="hasRole('EMPLOYEE')"
                     th:if="${#authentication.principal != null and #authentication.principal.employeeType == 'Instructor'}">
@@ -72,7 +80,8 @@
                         <span class="nav-label">Plantillas de rutinas</span>
                     </a>
                 </li>
-                <!-- Estudiante/Colaborador (rutas no-instructor) -->
+
+                <!-- Estudiante/Colaborador (no instructor): Mis rutinas -->
                 <li class="nav-item"
                     sec:authorize="hasAnyRole('STUDENT','EMPLOYEE')"
                     th:if="${#authentication.principal == null or #authentication.principal.employeeType == null or #authentication.principal.employeeType != 'Instructor'}">
@@ -82,6 +91,7 @@
                     </a>
                 </li>
             </ul>
+
             <ul class="nav-list secondary-nav">
                 <li class="nav-item">
                     <form th:action="@{/mvc/auth/logout}" method="post" class="logout-form" style="margin:0">

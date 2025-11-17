@@ -13,8 +13,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+
+import co.edu.icesi.sidgymicesi.model.postgres.TrainerMonthlyStat;
+import co.edu.icesi.sidgymicesi.services.postgres.ITrainerStatsService;
+
 
 @Controller
 @RequestMapping("/mvc/admin/assignments")
@@ -27,6 +34,8 @@ public class TrainerAssignmentMVCController {
     private final ITrainerAssignmentService trainerAssignmentService;
     private final IUserService userService;
     private final IEmployeeService employeeService;
+    private final ITrainerStatsService trainerStatsService;
+
 
     // ====================== LIST / HOME =========================
 
@@ -36,23 +45,45 @@ public class TrainerAssignmentMVCController {
             @RequestParam(value = "trainerId", required = false) String trainerId,
             Model model) {
 
-        List<TrainerAssignment> assignments = trainerAssignmentService.listAll();
+        List<TrainerAssignment> all = trainerAssignmentService.listAll();
 
         if (userUsername != null && !userUsername.isBlank()) {
-            assignments = assignments.stream()
+            all = all.stream()
                     .filter(a -> userUsername.equalsIgnoreCase(a.getUserUsername()))
                     .toList();
             model.addAttribute("filterUserUsername", userUsername);
         }
 
         if (trainerId != null && !trainerId.isBlank()) {
-            assignments = assignments.stream()
+            all = all.stream()
                     .filter(a -> trainerId.equalsIgnoreCase(a.getTrainerId()))
                     .toList();
             model.addAttribute("filterTrainerId", trainerId);
         }
 
-        model.addAttribute("assignments", assignments);
+        List<TrainerAssignment> active = all.stream()
+                .filter(TrainerAssignment::isActive)
+                .toList();
+
+        List<TrainerAssignment> history = all;
+
+        Map<String, String> trainerNames = employeeService.findAllInstructors()
+                .stream()
+                .collect(Collectors.toMap(
+                        e -> e.getId().toString(),
+                        e -> e.getFirstName() + " " + e.getLastName()
+                ));
+
+        Map<String, List<TrainerMonthlyStat>> statsMap = trainerStatsService.listAll();
+
+        List<TrainerMonthlyStat> statsByTrainer = new ArrayList<>();
+        statsMap.values().forEach(statsByTrainer::addAll);
+
+        model.addAttribute("active", active);
+        model.addAttribute("history", history);
+        model.addAttribute("trainerNames", trainerNames);
+        model.addAttribute("statsByTrainer", statsByTrainer);
+
         return "admin/assignments/list";
     }
 
@@ -127,7 +158,7 @@ public class TrainerAssignmentMVCController {
 
         model.addAttribute("assignment", assignment);
         model.addAttribute("trainers", employeeService.findAllInstructors());
-        return "admin/assignments/reassign-form";
+        return "admin/assignments/reassign";
     }
 
     @PostMapping("/reassign")
@@ -140,4 +171,5 @@ public class TrainerAssignmentMVCController {
         trainerAssignmentService.reassign(assignment.getUserUsername(), newTrainerId);
         return "redirect:/mvc/admin/assignments";
     }
+
 }

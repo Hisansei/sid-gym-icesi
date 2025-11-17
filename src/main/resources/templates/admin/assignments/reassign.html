@@ -38,7 +38,12 @@
         </div>
 
         <form th:action="@{/mvc/admin/assignments/reassign}" method="post" class="form">
+            <!-- id de la asignación -->
+            <input type="hidden" name="id" th:value="${assignment.id}" />
+
+            <!-- opcional: puedes dejar esto si lo sigues usando en la vista -->
             <input type="hidden" name="userUsername" th:value="${userUsername}">
+
             <label>Nuevo entrenador (ID)
                 <input name="newTrainerId" list="trainersList" required placeholder="p.ej. E002"/>
                 <datalist id="trainersList">
@@ -48,6 +53,7 @@
                     </option>
                 </datalist>
             </label>
+
             <div class="form-actions">
                 <button class="btn" type="submit">
                     <span class="material-symbols-rounded" style="vertical-align:-6px">swap_horiz</span>
@@ -56,6 +62,7 @@
                 <a class="btn btn-secondary" th:href="@{/mvc/admin/assignments}">Cancelar</a>
             </div>
         </form>
+
     </main>
 </section>
 
