@@ -18,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/mvc/trainer")
@@ -88,6 +87,21 @@ public class TrainerDashboardMVCController {
 
         List<ProgressLog> logs = progressLogService.listByOwner(username);
 
+        Set<String> trainerIds = new HashSet<>();
+        for (ProgressLog log : logs) {
+            if (log.getTrainerFeedback() != null) {
+                // Obtenemos todos los IDs/Nombres de entrenadores únicos presentes en el feedback
+                log.getTrainerFeedback().forEach(fb -> trainerIds.add(fb.getTrainerId()));
+            }
+        }
+
+        Map<String, String> trainerNamesMap = new HashMap<>();
+        for (String id : trainerIds) {
+            trainerNamesMap.put(id, id);
+        }
+
+        model.addAttribute("trainerNames", trainerNamesMap);
+
         model.addAttribute("username", username);
         model.addAttribute("logs", logs);
         return "trainer/user-progress";
@@ -111,15 +125,14 @@ public class TrainerDashboardMVCController {
         String trainerId = currentTrainerId(authentication);
         String trainerUsername = authentication.getName();
 
-        boolean hasActiveById = trainerAssignmentService
-                .listByTrainer(trainerId)
-                .stream()
+        List<TrainerAssignment> byId = trainerAssignmentService.listByTrainer(trainerId);
+        List<TrainerAssignment> byName = trainerAssignmentService.listByTrainer(trainerUsername);
+
+        boolean hasActiveById = byId != null && byId.stream()
                 .filter(TrainerAssignment::isActive)
                 .anyMatch(a -> username.equalsIgnoreCase(a.getUserUsername()));
 
-        boolean hasActiveByName = trainerAssignmentService
-                .listByTrainer(trainerUsername)
-                .stream()
+        boolean hasActiveByName = byName != null && byName.stream()
                 .filter(TrainerAssignment::isActive)
                 .anyMatch(a -> username.equalsIgnoreCase(a.getUserUsername()));
 
@@ -138,10 +151,11 @@ public class TrainerDashboardMVCController {
         // Validamos seguridad
         assertHasActiveAssignment(authentication, username);
 
-        String trainerId = currentTrainerId(authentication);
+        // Guardamos el Username/ID del entrenador
+        String trainerUsername = authentication.getName();
 
         if (message != null && !message.isBlank()) {
-            progressLogService.addFeedback(logId, trainerId, message.trim());
+            progressLogService.addFeedback(logId, trainerUsername, message.trim());
         }
 
         // Redirigir de vuelta a la lista de progresos de ese usuario
