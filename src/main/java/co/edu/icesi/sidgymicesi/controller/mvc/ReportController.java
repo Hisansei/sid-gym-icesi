@@ -23,7 +23,7 @@ public class ReportController {
 
     private final IReportService reportService;
 
-    @GetMapping
+    @GetMapping({"", "/select"})
     public String select(@RequestParam(name = "username", required = false) String username,
                          @RequestParam(name = "numberOfWeeks", required = false) Integer numberOfWeeks,
                          Authentication authentication,
@@ -48,14 +48,14 @@ public class ReportController {
             numberOfWeeks = 8;
         }
 
-        model.addAttribute("username", effectiveUsername);          // usuario "objetivo" para el reporte
+        model.addAttribute("username", effectiveUsername);               // usuario objetivo
         model.addAttribute("currentUsername", authentication.getName()); // usuario logueado
         model.addAttribute("numberOfWeeks", numberOfWeeks);
 
         return "reports/select";
     }
 
-    @PostMapping("/consistency")
+    @PostMapping("/generateConsistencyReport")
     public String generateConsistencyReport(
             @RequestParam(name = "username", required = false) String username,
             @RequestParam(name = "numberOfWeeks", defaultValue = "8") int numberOfWeeks,
@@ -85,8 +85,11 @@ public class ReportController {
             targetUsername = authentication.getName();
         }
 
-        List<Map<String, Object>> reportList = reportService.generateConsistencyReport(targetUsername, numberOfWeeks);
-        Map<String, Object> report = reportList.isEmpty() ? Map.of() : reportList.get(0);
+        if (numberOfWeeks <= 0) {
+            numberOfWeeks = 8;
+        }
+
+        List<Map<String, Object>> report = reportService.generateConsistencyReport(targetUsername, numberOfWeeks);
 
         model.addAttribute("username", targetUsername);
         model.addAttribute("numberOfWeeks", numberOfWeeks);
@@ -95,7 +98,7 @@ public class ReportController {
         return "reports/consistencyReport";
     }
 
-    @PostMapping("/exercise-type")
+    @PostMapping("/generateExerciseTypeReport")
     public String generateExerciseTypeReport(
             @RequestParam(name = "username", required = false) String username,
             Authentication authentication,
