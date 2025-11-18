@@ -5,12 +5,12 @@ import co.edu.icesi.sidgymicesi.model.mongo.Routine;
 import co.edu.icesi.sidgymicesi.services.mongo.IExerciseService;
 import co.edu.icesi.sidgymicesi.services.mongo.IRoutineService;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -37,7 +37,7 @@ public class RoutineMVCController {
         return "routine/form";
     }
 
-    // Crear rutina (funciona como quick-create o con selección de ejercicios)
+    // Crear rutina (quick-create o con selección de ejercicios)
     @PostMapping("/create")
     @PreAuthorize("isAuthenticated()")
     public String create(Authentication auth,
@@ -47,30 +47,26 @@ public class RoutineMVCController {
         String n = (name == null || name.isBlank()) ? "Nueva rutina" : name.trim();
         Routine r = routineService.create(auth.getName(), n, null);
 
-        // Si viene selección, agregamos ítems por cada ejercicio marcado
+        // Si viene selección de ejercicios desde el form.html
         if (exerciseIds != null && !exerciseIds.isEmpty()) {
             for (String exId : exerciseIds) {
                 if (exId == null || exId.isBlank()) continue;
 
-                Optional<Exercise> exOpt = exerciseService.findById(exId.trim());
-                if (exOpt.isEmpty()) continue; // Saltar si el ID no es válido
-                Exercise exercise = exOpt.get();
-
                 Routine.RoutineExercise it = new Routine.RoutineExercise();
                 it.setExerciseId(exId.trim());
-
-                it.setName(exercise.getName());
-
-                // Defaults sensatos para pasar validaciones del servicio
+                // Valores por defecto para ejercicios agregados en lote
                 it.setSets(3);
                 it.setReps(12);
                 it.setRestSeconds(60);
-                routineService.addItem(r.getId(), it);
+
+                try {
+                    routineService.addItem(r.getId(), it);
+                } catch (Exception e) {
+                    // Ignoramos errores individuales al crear en lote para no detener el proceso
+                    e.printStackTrace();
+                }
             }
-
-            r = routineService.findById(r.getId()).orElse(r);
         }
-
         return "redirect:/mvc/routines/" + r.getId();
     }
 
@@ -84,7 +80,7 @@ public class RoutineMVCController {
         Map<String, Exercise> exerciseMap = exerciseOptions.stream()
                 .collect(Collectors.toMap(Exercise::getId, e -> e));
 
-        // 🔹 Solo ejercicios ACTIVOS
+        // Filtramos solo los ejercicios activos para mostrar
         List<Routine.RoutineExercise> activeExercises = Optional.ofNullable(routine.getExercises())
                 .orElseGet(ArrayList::new)
                 .stream()
@@ -95,7 +91,7 @@ public class RoutineMVCController {
         model.addAttribute("routine", routine);
         model.addAttribute("exerciseOptions", exerciseOptions);
         model.addAttribute("exerciseMap", exerciseMap);
-        model.addAttribute("activeExercises", activeExercises); // <- nueva lista
+        model.addAttribute("activeExercises", activeExercises);
 
         return "routine/detail";
     }
@@ -107,46 +103,52 @@ public class RoutineMVCController {
         return "redirect:/mvc/routines/" + id;
     }
 
-    // Agregar ejercicio (desde catálogo o personalizado) — se mantiene
+    // SOLUCIÓN ERROR ADD ITEM: Se agrega recepción de 'type' y manejo de excepciones
     @PostMapping("/{id}/items/add")
     @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     public String addItem(@PathVariable String id,
                           @RequestParam(required = false) String exerciseId,
-                          @RequestParam(required = false) String name, // nombre personalizado
+                          @RequestParam(required = false) String name,
+                          @RequestParam(required = false) String type, // <--- CORRECCIÓN: Nuevo campo Type
                           @RequestParam(required = false) Integer sets,
                           @RequestParam(required = false) Integer reps,
                           @RequestParam(required = false) Integer durationSec,
-                          @RequestParam(required = false) Integer restSeconds) {
-        Routine.RoutineExercise newItem = new Routine.RoutineExercise();
+                          @RequestParam(required = false) Integer restSeconds,
+                          RedirectAttributes ra) {
+        try {
+            Routine.RoutineExercise newItem = new Routine.RoutineExercise();
 
-        // 1. Manejar la selección del catálogo
-        if (exerciseId != null && !exerciseId.isBlank()) {
-            newItem.setExerciseId(exerciseId.trim());
-            // Buscar el ejercicio del catálogo para obtener el nombre
-            Optional<Exercise> exOpt = exerciseService.findById(exerciseId.trim());
-            if (exOpt.isPresent()) {
-                // USAMOS EL NOMBRE DEL CATÁLOGO, ignorando el 'name' personalizado si viene.
-                newItem.setName(exOpt.get().getName());
+            // 1. Selección del catálogo
+            if (exerciseId != null && !exerciseId.isBlank()) {
+                newItem.setExerciseId(exerciseId.trim());
+                // El servicio buscará el ejercicio y llenará nombre/tipo automáticamente
             }
-        }
-        // 2. Si NO se seleccionó del catálogo, pero se dio un nombre personalizado
-        else if (name != null && !name.isBlank()) {
-                newItem.setName(name.trim());
+            // 2. Ejercicio Personalizado
+            else {
+                if (name != null && !name.isBlank()) newItem.setName(name.trim());
+                if (type != null && !type.isBlank()) newItem.setType(type.trim()); // <--- CORRECCIÓN: Asignar tipo
+            }
+
+            newItem.setSets(sets);
+            newItem.setReps(reps);
+            newItem.setDurationSeconds(durationSec);
+            newItem.setRestSeconds(restSeconds);
+
+            routineService.addItem(id, newItem);
+
+        } catch (IllegalArgumentException e) {
+            // Enviamos el error a la vista para que el usuario sepa qué pasó
+            ra.addFlashAttribute("error", e.getMessage());
         }
 
-        newItem.setSets(sets);
-        newItem.setReps(reps);
-        newItem.setDurationSeconds(durationSec);
-        newItem.setRestSeconds(restSeconds);
-        routineService.addItem(id, newItem);
         return "redirect:/mvc/routines/" + id;
     }
 
     @PostMapping("/{id}/items/{itemId}/delete")
     @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     public String removeItem(@PathVariable String id,
-                            @PathVariable String itemId,
-                            org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+                             @PathVariable String itemId,
+                             RedirectAttributes ra) {
         try {
             routineService.removeItem(id, itemId);
             ra.addFlashAttribute("successMessage", "Ejercicio eliminado de la rutina.");
@@ -156,7 +158,6 @@ public class RoutineMVCController {
         return "redirect:/mvc/routines/" + id;
     }
 
-    // Reordenar ejercicios
     @PostMapping("/{id}/reorder")
     @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     public String reorder(@PathVariable String id, @RequestParam("order") List<String> orderedIds) {
