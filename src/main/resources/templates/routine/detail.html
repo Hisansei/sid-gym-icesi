@@ -30,6 +30,10 @@
     </header>
 
     <main class="container space-y routine-detail-main">
+
+            <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
         <!-- Renombrar rutina -->
         <section class="card routine-rename-card">
             <header class="routine-card-header">
@@ -131,17 +135,17 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:if="${#lists.isEmpty(routine.exercises)}">
-                        <td class="muted" colspan="7">Aún no hay ejercicios.</td>
-                    </tr>
-                    <tr th:each="it,idx : ${routine.exercises}"
-                        th:data-id="${it.id}"
-                        onclick="selectRow(this)">
+                        <tr th:if="${#lists.isEmpty(activeExercises)}">
+                            <td class="muted" colspan="7">Aún no hay ejercicios.</td>
+                        </tr>
+                        <tr th:each="it,idx : ${activeExercises}"
+                            th:data-id="${it.id}"
+                            onclick="selectRow(this)">
                         <td th:text="${idx.index + 1}">1</td>
-                        <td th:text="${it.displayName}">Ejercicio</td>
+                        <td th:text="${it.name}">Ejercicio</td>
                         <td th:text="${it.sets}">0</td>
                         <td th:text="${it.reps}">0</td>
-                        <td th:text="${it.durationSec}">0</td>
+                        <td th:text="${it.durationSeconds}">0</td>
                         <td th:text="${it.restSeconds}">0</td>
                         <td class="table-actions">
                             <form th:action="@{'/mvc/routines/' + ${routine.id} + '/items/' + ${it.id} + '/delete'}"
@@ -197,19 +201,13 @@
             form.innerHTML = '';
 
             const rows = Array.from(document.querySelectorAll('#itemsTable tbody tr[data-id]'));
-            rows.forEach((tr, index) => {
+            rows.forEach((tr) => {
                 const id = tr.getAttribute('data-id');
-                const inputId = document.createElement('input');
-                inputId.type = 'hidden';
-                inputId.name = 'items[' + index + '].id';
-                inputId.value = id;
-                form.appendChild(inputId);
-
-                const inputOrder = document.createElement('input');
-                inputOrder.type = 'hidden';
-                inputOrder.name = 'items[' + index + '].order';
-                inputOrder.value = index + 1;
-                form.appendChild(inputOrder);
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'order';
+                input.value = id;
+                form.appendChild(input);
             });
 
             form.submit();

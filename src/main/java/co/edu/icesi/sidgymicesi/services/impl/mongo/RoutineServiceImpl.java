@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.YearMonth;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -142,6 +143,8 @@ public class RoutineServiceImpl implements IRoutineService {
             }
         }
 
+        newItem.setStatus(true);
+
         // Asignar id y orden
         if (isBlank(newItem.getId())) newItem.setId(UUID.randomUUID().toString());
         newItem.setOrder(nextOrder(r));
@@ -158,6 +161,15 @@ public class RoutineServiceImpl implements IRoutineService {
         Routine r = routineRepo.findById(routineId)
                 .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada: " + routineId));
 
+        if (r.getExercises() == null || r.getExercises().isEmpty()) {
+            throw new IllegalStateException("La rutina no tiene ejercicios.");
+        }
+
+        // Contar solo ejercicios ACTIVOS
+        long activeCount = r.getExercises().stream()
+                .filter(Routine.RoutineExercise::isStatus)
+                .count();
+
         Optional<Routine.RoutineExercise> itemOpt = r.getExercises().stream()
                 .filter(it -> Objects.equals(it.getId(), itemId))
                 .findFirst();
@@ -167,9 +179,20 @@ public class RoutineServiceImpl implements IRoutineService {
         }
 
         Routine.RoutineExercise item = itemOpt.get();
-        item.setStatus(false); 
 
+        // Si el ejercicio que quiero borrar está activo y es el único → NO permitir
+        if (item.isStatus() && activeCount <= 1) {
+            throw new IllegalStateException(
+                    "No se puede dejar una rutina sin ejercicios. Agrega otro ejercicio antes de quitar este."
+            );
+        }
+
+        // Soft delete del ejercicio
+        item.setStatus(false);
+
+        // Normalizamos el orden SOLO de los ejercicios activos
         normalizeOrder(r.getExercises());
+
         return routineRepo.save(r);
     }
 
@@ -180,27 +203,46 @@ public class RoutineServiceImpl implements IRoutineService {
                 .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada: " + routineId));
         if (r.getExercises() == null) r.setExercises(new ArrayList<>());
 
-        // Validar conjuntos iguales (sin duplicados)
-        Set<String> current = new HashSet<>();
-        for (Routine.RoutineExercise e : r.getExercises()) current.add(e.getId());
+        List<Routine.RoutineExercise> all = r.getExercises();
+
+        List<Routine.RoutineExercise> active = all.stream()
+                .filter(Routine.RoutineExercise::isStatus)
+                .collect(Collectors.toList());
+
+        List<Routine.RoutineExercise> inactive = all.stream()
+                .filter(e -> !e.isStatus())
+                .collect(Collectors.toList());
+
+        Set<String> current = active.stream()
+                .map(Routine.RoutineExercise::getId)
+                .collect(Collectors.toSet());
         Set<String> target = new HashSet<>(orderedIds);
 
         if (current.size() != orderedIds.size() || !current.equals(target)) {
-            throw new IllegalArgumentException("La lista de IDs no coincide con los ejercicios actuales");
+            throw new IllegalArgumentException("La lista de IDs no coincide con los ejercicios activos actuales");
         }
 
-        Map<String, Routine.RoutineExercise> byId = new HashMap<>();
-        for (Routine.RoutineExercise e : r.getExercises()) byId.put(e.getId(), e);
+        Map<String, Routine.RoutineExercise> byId = active.stream()
+                .collect(Collectors.toMap(Routine.RoutineExercise::getId, e -> e));
 
-        List<Routine.RoutineExercise> reordered = new ArrayList<>();
+        List<Routine.RoutineExercise> reorderedActive = new ArrayList<>();
         int order = 1;
         for (String id : orderedIds) {
             Routine.RoutineExercise e = byId.get(id);
             e.setOrder(order++);
-            reordered.add(e);
+            reorderedActive.add(e);
         }
 
-        r.setExercises(reordered);
+        // Opcional: reasignar órdenes consecutivos también a inactivos después
+        for (Routine.RoutineExercise e : inactive) {
+            e.setOrder(order++);
+        }
+
+        List<Routine.RoutineExercise> newList = new ArrayList<>();
+        newList.addAll(reorderedActive);
+        newList.addAll(inactive);
+
+        r.setExercises(newList);
         return routineRepo.save(r);
     }
 
@@ -235,16 +277,28 @@ public class RoutineServiceImpl implements IRoutineService {
     private static boolean isBlank(String s) { return s == null || s.isBlank(); }
 
     private static int nextOrder(Routine r) {
-        return (r.getExercises() == null || r.getExercises().isEmpty())
-                ? 1
-                : r.getExercises().stream().mapToInt(Routine.RoutineExercise::getOrder).max().orElse(0) + 1;
+        if (r.getExercises() == null || r.getExercises().isEmpty()) {
+            return 1;
+        }
+        return r.getExercises().stream()
+                .filter(Routine.RoutineExercise::isStatus)
+                .mapToInt(Routine.RoutineExercise::getOrder)
+                .max()
+                .orElse(0) + 1;
     }
 
     private static void normalizeOrder(List<Routine.RoutineExercise> items) {
         if (items == null) return;
-        items.sort(Comparator.comparingInt(Routine.RoutineExercise::getOrder));
+
+        List<Routine.RoutineExercise> active = items.stream()
+                .filter(Routine.RoutineExercise::isStatus)
+                .sorted(Comparator.comparingInt(Routine.RoutineExercise::getOrder))
+                .collect(Collectors.toList());
+
         int i = 1;
-        for (Routine.RoutineExercise e : items) e.setOrder(i++);
+        for (Routine.RoutineExercise e : active) {
+            e.setOrder(i++);
+        }
     }
 
     private void validateItem(Routine.RoutineExercise it) {
