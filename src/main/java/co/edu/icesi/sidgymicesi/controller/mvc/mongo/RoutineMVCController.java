@@ -79,12 +79,24 @@ public class RoutineMVCController {
     public String detail(@PathVariable String id, Model model) {
         Routine routine = routineService.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Routine not found"));
+
         List<Exercise> exerciseOptions = exerciseService.findAll();
         Map<String, Exercise> exerciseMap = exerciseOptions.stream()
                 .collect(Collectors.toMap(Exercise::getId, e -> e));
+
+        // 🔹 Solo ejercicios ACTIVOS
+        List<Routine.RoutineExercise> activeExercises = Optional.ofNullable(routine.getExercises())
+                .orElseGet(ArrayList::new)
+                .stream()
+                .filter(Routine.RoutineExercise::isStatus)
+                .sorted(Comparator.comparingInt(Routine.RoutineExercise::getOrder))
+                .collect(Collectors.toList());
+
         model.addAttribute("routine", routine);
         model.addAttribute("exerciseOptions", exerciseOptions);
         model.addAttribute("exerciseMap", exerciseMap);
+        model.addAttribute("activeExercises", activeExercises); // <- nueva lista
+
         return "routine/detail";
     }
 
@@ -132,8 +144,15 @@ public class RoutineMVCController {
 
     @PostMapping("/{id}/items/{itemId}/delete")
     @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
-    public String removeItem(@PathVariable String id, @PathVariable String itemId) {
-        routineService.removeItem(id, itemId);
+    public String removeItem(@PathVariable String id,
+                            @PathVariable String itemId,
+                            org.springframework.web.servlet.mvc.support.RedirectAttributes ra) {
+        try {
+            routineService.removeItem(id, itemId);
+            ra.addFlashAttribute("successMessage", "Ejercicio eliminado de la rutina.");
+        } catch (IllegalStateException e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/mvc/routines/" + id;
     }
 
