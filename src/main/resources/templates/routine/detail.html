@@ -138,10 +138,10 @@
                         th:data-id="${it.id}"
                         onclick="selectRow(this)">
                         <td th:text="${idx.index + 1}">1</td>
-                        <td th:text="${it.displayName}">Ejercicio</td>
+                        <td th:text="${it.name}">Ejercicio</td>
                         <td th:text="${it.sets}">0</td>
                         <td th:text="${it.reps}">0</td>
-                        <td th:text="${it.durationSec}">0</td>
+                        <td th:text="${it.durationSeconds}">0</td>
                         <td th:text="${it.restSeconds}">0</td>
                         <td class="table-actions">
                             <form th:action="@{'/mvc/routines/' + ${routine.id} + '/items/' + ${it.id} + '/delete'}"
