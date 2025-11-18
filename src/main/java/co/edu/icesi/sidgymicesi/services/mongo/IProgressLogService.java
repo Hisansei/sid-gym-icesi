@@ -23,4 +23,6 @@ public interface IProgressLogService {
     Map<String, Object> summarizeOwnerBetween(String ownerUsername, LocalDate from, LocalDate to);
 
     void deleteLog(String logId);
+
+    void addFeedback(String logId, String trainerId, String message);
 }

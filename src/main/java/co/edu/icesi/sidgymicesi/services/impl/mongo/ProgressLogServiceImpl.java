@@ -144,4 +144,24 @@ public class ProgressLogServiceImpl implements IProgressLogService {
     public void deleteLog(String logId) {
         progressRepo.deleteById(logId);
     }
+
+    @Override
+    public void addFeedback(String logId, String trainerId, String message) {
+        ProgressLog log = progressRepo.findById(logId)
+                .orElseThrow(() -> new java.util.NoSuchElementException("Registro de progreso no encontrado: " + logId));
+
+        // Crear el objeto de feedback
+        ProgressLog.TrainerFeedback feedback = new ProgressLog.TrainerFeedback();
+        feedback.setTrainerId(trainerId);
+        feedback.setMessage(message);
+        feedback.setCreatedAt(java.time.Instant.now());
+
+        // Inicializar la lista si es nula (por seguridad)
+        if (log.getTrainerFeedback() == null) {
+            log.setTrainerFeedback(new java.util.ArrayList<>());
+        }
+
+        log.getTrainerFeedback().add(feedback);
+        progressRepo.save(log);
+    }
 }
