@@ -49,7 +49,28 @@ public class ProgressLogMVCController {
                 .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada"));
 
         model.addAttribute("routine", routine);
-        model.addAttribute("logs", progressService.listByRoutine(routineId));
+
+        List<ProgressLog> logs = progressService.listByRoutine(routineId);
+        model.addAttribute("logs", logs);
+
+        Set<String> trainerIds = new HashSet<>();
+        for (ProgressLog log : logs) {
+            if (log.getTrainerFeedback() != null) {
+                log.getTrainerFeedback().forEach(fb -> {
+                    if (fb.getTrainerId() != null) {
+                        trainerIds.add(fb.getTrainerId());
+                    }
+                });
+            }
+        }
+
+        // Por ahora usamos el id como "nombre" (igual que en la vista de entrenador)
+        Map<String, String> trainerNames = new HashMap<>();
+        for (String id : trainerIds) {
+            trainerNames.put(id, id);
+        }
+        model.addAttribute("trainerNames", trainerNames);
+        // 🔚 NUEVO
 
         Map<String, Exercise> exerciseMap = exerciseService.findAll()
                 .stream()
