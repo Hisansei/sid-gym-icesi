@@ -47,7 +47,6 @@ public class ProgressLogMVCController {
     public String history(@RequestParam("routineId") String routineId, Model model) {
         Routine routine = routineService.findById(routineId)
                 .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada"));
-
         model.addAttribute("routine", routine);
 
         List<ProgressLog> logs = progressService.listByRoutine(routineId);
@@ -70,7 +69,6 @@ public class ProgressLogMVCController {
             trainerNames.put(id, id);
         }
         model.addAttribute("trainerNames", trainerNames);
-        // 🔚 NUEVO
 
         Map<String, Exercise> exerciseMap = exerciseService.findAll()
                 .stream()
@@ -124,34 +122,38 @@ public class ProgressLogMVCController {
     private String doSubmitLog(Authentication auth, String routineId, Map<String, String> form) {
         Routine routine = routineService.findById(routineId)
                 .orElseThrow(() -> new NoSuchElementException("Rutina no encontrada"));
-
         List<ProgressLog.Entry> entries = new ArrayList<>();
 
         for (Routine.RoutineExercise it : routine.getExercises()) {
             String key = it.getId(); // id del item dentro de la rutina
             Integer reps = parseInt(form.get("reps_" + key));
-            Integer secs = parseInt(form.get("time_" + key)); // usamos solo para 'completed'
+            Integer secs = parseInt(form.get("time_" + key));
             String rpe = form.get("rpe_" + key);
             String notes = form.getOrDefault("notes_" + key, "").trim();
 
+            // Verificamos si el usuario llenó ALGO para este ejercicio
             boolean completed = (reps != null && reps > 0)
                     || (secs != null && secs > 0)
                     || (rpe != null && !rpe.isBlank())
                     || (!notes.isBlank());
 
-            ProgressLog.Entry e = new ProgressLog.Entry();
-            e.setExerciseId(it.getExerciseId());
-            e.setCompleted(completed);
-            e.setReps(reps != null ? List.of(reps) : null); // List<Integer>
-            e.setSets(null);
-            e.setWeightKg(null);
-            e.setEffortLevel(rpe);
-            e.setNotesUser(notes);
+            // SOLO agregamos la entrada si hay datos (completed es true)
+            if (completed) {
+                ProgressLog.Entry e = new ProgressLog.Entry();
+                e.setExerciseId(it.getExerciseId());
+                e.setCompleted(true); // Marcamos como completado porque hay datos
+                e.setReps(reps != null ? List.of(reps) : null);
+                e.setSets(null);
+                e.setWeightKg(null);
+                e.setEffortLevel(rpe);
+                e.setNotesUser(notes);
 
-            entries.add(e);
+                entries.add(e);
+            }
         }
 
         if (entries.isEmpty()) {
+            // Si no llenó nada, redirigimos sin guardar
             return "redirect:/mvc/progress/" + routineId;
         }
 

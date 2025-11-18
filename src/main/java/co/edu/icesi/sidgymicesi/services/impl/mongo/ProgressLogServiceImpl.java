@@ -24,19 +24,38 @@ public class ProgressLogServiceImpl implements IProgressLogService {
     @Override
     public ProgressLog addLog(ProgressLog log) {
         if (log.getDate() == null) log.setDate(LocalDate.now());
-
         validate(log);
 
+        // Buscamos si ya existe un log HOY para esta rutina
         Optional<ProgressLog> existing = progressRepo.findByRoutineIdAndDate(log.getRoutineId(), log.getDate());
+
         if (existing.isPresent()) {
             ProgressLog curr = existing.get();
+            // Validamos que sea el mismo dueño
             if (curr.getOwnerUsername().equalsIgnoreCase(log.getOwnerUsername())) {
-                return curr;
+
+                // --- LOGICA DE MEZCLA (MERGE) ---
+                List<ProgressLog.Entry> currentEntries = curr.getEntries();
+                if (currentEntries == null) currentEntries = new ArrayList<>();
+
+                // Recorremos las nuevas entradas
+                for (ProgressLog.Entry newEntry : log.getEntries()) {
+                    // Eliminamos si ya existía entrada para este ejercicio (para sobrescribir)
+                    currentEntries.removeIf(e -> e.getExerciseId().equals(newEntry.getExerciseId()));
+                    // Agregamos la nueva
+                    currentEntries.add(newEntry);
+                }
+
+                curr.setEntries(currentEntries);
+                // Guardamos la actualización
+                return progressRepo.save(curr);
             }
         }
 
+        // Si es nuevo para el día
         ProgressLog saved = progressRepo.save(log);
 
+        // Actualizar estadísticas
         YearMonth ym = YearMonth.from(saved.getDate());
         userStatsService.incrementFollowupsMade(saved.getOwnerUsername(), ym);
 
@@ -53,8 +72,11 @@ public class ProgressLogServiceImpl implements IProgressLogService {
         if (log.getEntries() == null || log.getEntries().isEmpty())
             throw new IllegalArgumentException("Debe registrar al menos un ítem de progreso");
 
-        // effortLevel es String en el modelo; si viene numérico, validar 1..10
-        for (var e : log.getEntries()) {
+        for (ProgressLog.Entry e : log.getEntries()) {
+            if (e.getExerciseId() == null || e.getExerciseId().isBlank())
+                throw new IllegalArgumentException("exerciseId requerido en entry");
+
+            // Validar RPE 1-10 si viene numérico
             String rpe = e.getEffortLevel();
             if (rpe != null && !rpe.isBlank()) {
                 if (rpe.chars().allMatch(Character::isDigit)) {
@@ -67,6 +89,30 @@ public class ProgressLogServiceImpl implements IProgressLogService {
                 }
             }
         }
+    }
+
+    @Override
+    public void deleteLog(String logId) {
+        progressRepo.deleteById(logId);
+    }
+
+    @Override
+    public void addFeedback(String logId, String trainerId, String message) {
+        ProgressLog log = progressRepo.findById(logId)
+                .orElseThrow(() -> new NoSuchElementException("Log no encontrado"));
+
+        if (log.getTrainerFeedback() == null) {
+            log.setTrainerFeedback(new ArrayList<>());
+        }
+
+        ProgressLog.TrainerFeedback fb = ProgressLog.TrainerFeedback.builder()
+                .trainerId(trainerId)
+                .message(message)
+                .createdAt(java.time.Instant.now())
+                .build();
+
+        log.getTrainerFeedback().add(fb);
+        progressRepo.save(log);
     }
 
     @Override
@@ -108,7 +154,6 @@ public class ProgressLogServiceImpl implements IProgressLogService {
         List<ProgressLog> logs = listByOwnerBetween(ownerUsername, from, to);
 
         int sessions = logs.size();
-
         WeekFields wf = WeekFields.ISO;
         Map<String, List<Integer>> weekToRpes = new LinkedHashMap<>();
 
@@ -126,42 +171,14 @@ public class ProgressLogServiceImpl implements IProgressLogService {
         }
 
         Map<String, Double> weeklyAvgRpe = new LinkedHashMap<>();
-        for (var entry : weekToRpes.entrySet()) {
-            List<Integer> vals = entry.getValue();
-            double avg = vals.stream().mapToInt(Integer::intValue).average().orElse(Double.NaN);
-            weeklyAvgRpe.put(entry.getKey(), Double.isNaN(avg) ? null : avg);
-        }
+        weekToRpes.forEach((k, v) -> {
+            double avg = v.stream().mapToInt(Integer::intValue).average().orElse(0.0);
+            weeklyAvgRpe.put(k, Math.round(avg * 10.0) / 10.0);
+        });
 
-        Map<String, Object> out = new LinkedHashMap<>();
-        out.put("sessionsCount", sessions);
-        out.put("weeklyAvgRpe", weeklyAvgRpe);
-        out.put("from", (from == null) ? null : from.toString());
-        out.put("to", (to == null) ? null : to.toString());
-        return out;
-    }
-
-    @Override
-    public void deleteLog(String logId) {
-        progressRepo.deleteById(logId);
-    }
-
-    @Override
-    public void addFeedback(String logId, String trainerId, String message) {
-        ProgressLog log = progressRepo.findById(logId)
-                .orElseThrow(() -> new java.util.NoSuchElementException("Registro de progreso no encontrado: " + logId));
-
-        // Crear el objeto de feedback
-        ProgressLog.TrainerFeedback feedback = new ProgressLog.TrainerFeedback();
-        feedback.setTrainerId(trainerId);
-        feedback.setMessage(message);
-        feedback.setCreatedAt(java.time.Instant.now());
-
-        // Inicializar la lista si es nula (por seguridad)
-        if (log.getTrainerFeedback() == null) {
-            log.setTrainerFeedback(new java.util.ArrayList<>());
-        }
-
-        log.getTrainerFeedback().add(feedback);
-        progressRepo.save(log);
+        return Map.of(
+                "totalSessions", sessions,
+                "weeklyAvgRpe", weeklyAvgRpe
+        );
     }
 }

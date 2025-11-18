@@ -103,13 +103,12 @@ public class RoutineMVCController {
         return "redirect:/mvc/routines/" + id;
     }
 
-    // SOLUCIÓN ERROR ADD ITEM: Se agrega recepción de 'type' y manejo de excepciones
     @PostMapping("/{id}/items/add")
     @PreAuthorize("@authz.isOwnerOfRoutine(#id, authentication)")
     public String addItem(@PathVariable String id,
                           @RequestParam(required = false) String exerciseId,
                           @RequestParam(required = false) String name,
-                          @RequestParam(required = false) String type, // <--- CORRECCIÓN: Nuevo campo Type
+                          @RequestParam(required = false) String type,
                           @RequestParam(required = false) Integer sets,
                           @RequestParam(required = false) Integer reps,
                           @RequestParam(required = false) Integer durationSec,
@@ -126,18 +125,20 @@ public class RoutineMVCController {
             // 2. Ejercicio Personalizado
             else {
                 if (name != null && !name.isBlank()) newItem.setName(name.trim());
-                if (type != null && !type.isBlank()) newItem.setType(type.trim()); // <--- CORRECCIÓN: Asignar tipo
+                if (type != null && !type.isBlank()) newItem.setType(type.trim());
             }
 
-            newItem.setSets(sets);
-            newItem.setReps(reps);
+            // SOLUCIÓN DEL ERROR NPE: Validar nulos antes de asignar a tipos primitivos (int)
+            newItem.setSets(sets != null ? sets : 0);
+            newItem.setReps(reps != null ? reps : 0);
+            newItem.setRestSeconds(restSeconds != null ? restSeconds : 0);
+
+            // durationSeconds es Integer en el modelo (wrapper), puede ser null
             newItem.setDurationSeconds(durationSec);
-            newItem.setRestSeconds(restSeconds);
 
             routineService.addItem(id, newItem);
 
         } catch (IllegalArgumentException e) {
-            // Enviamos el error a la vista para que el usuario sepa qué pasó
             ra.addFlashAttribute("error", e.getMessage());
         }
 
