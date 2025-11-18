@@ -13,14 +13,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 @RequestMapping("/mvc/trainer")
@@ -38,12 +36,22 @@ public class TrainerDashboardMVCController {
     @GetMapping("/dashboard")
     public String dashboard(Authentication authentication, Model model) {
         String trainerId = currentTrainerId(authentication);
+        String trainerUsername = authentication.getName();
 
-        List<TrainerAssignment> assignments = trainerAssignmentService
-                .listByTrainer(trainerId)
-                .stream()
+        // Buscamos por ID de empleado (lo estándar) y por username (para datos legados/seeds)
+        List<TrainerAssignment> byId = trainerAssignmentService.listByTrainer(trainerId);
+        List<TrainerAssignment> byUsername = trainerAssignmentService.listByTrainer(trainerUsername);
+
+        // Unificamos listas para evitar duplicados si el ID y username coincidieran
+        Set<TrainerAssignment> combined = new HashSet<>();
+        if (byId != null) combined.addAll(byId);
+        if (byUsername != null) combined.addAll(byUsername);
+
+        List<TrainerAssignment> assignments = combined.stream()
                 .filter(Objects::nonNull)
                 .filter(TrainerAssignment::isActive)
+                // Ordenar por fecha de asignación descendente
+                .sorted(Comparator.comparing(TrainerAssignment::getAssignedAt, Comparator.nullsLast(Comparator.reverseOrder())))
                 .collect(Collectors.toList());
 
         model.addAttribute("assignments", assignments);
@@ -58,8 +66,8 @@ public class TrainerDashboardMVCController {
                                Authentication authentication,
                                Model model) {
 
-        String trainerId = currentTrainerId(authentication);
-        assertHasActiveAssignment(trainerId, username);
+        // Validamos seguridad: permitimos si el usuario está asignado al ID o al Username del entrenador
+        assertHasActiveAssignment(authentication, username);
 
         List<Routine> routines = routineService.listByOwner(username);
 
@@ -76,8 +84,7 @@ public class TrainerDashboardMVCController {
                                Authentication authentication,
                                Model model) {
 
-        String trainerId = currentTrainerId(authentication);
-        assertHasActiveAssignment(trainerId, username);
+        assertHasActiveAssignment(authentication, username);
 
         List<ProgressLog> logs = progressLogService.listByOwner(username);
 
@@ -90,7 +97,6 @@ public class TrainerDashboardMVCController {
     // Helpers
     // ---------------------------------------
 
-
     private String currentTrainerId(Authentication authentication) {
         if (authentication == null || !(authentication.getPrincipal() instanceof CustomUserDetails details)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No autenticado");
@@ -101,17 +107,44 @@ public class TrainerDashboardMVCController {
         return details.getUser().getEmployeeId();
     }
 
+    private void assertHasActiveAssignment(Authentication authentication, String username) {
+        String trainerId = currentTrainerId(authentication);
+        String trainerUsername = authentication.getName();
 
-    private void assertHasActiveAssignment(String trainerId, String username) {
-        boolean hasActive = trainerAssignmentService
+        boolean hasActiveById = trainerAssignmentService
                 .listByTrainer(trainerId)
                 .stream()
                 .filter(TrainerAssignment::isActive)
                 .anyMatch(a -> username.equalsIgnoreCase(a.getUserUsername()));
 
-        if (!hasActive) {
+        boolean hasActiveByName = trainerAssignmentService
+                .listByTrainer(trainerUsername)
+                .stream()
+                .filter(TrainerAssignment::isActive)
+                .anyMatch(a -> username.equalsIgnoreCase(a.getUserUsername()));
+
+        if (!hasActiveById && !hasActiveByName) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
                     "No tienes una asignación activa sobre el usuario " + username);
         }
+    }
+
+    @PostMapping("/progress/{logId}/feedback")
+    public String addFeedback(@PathVariable("logId") String logId,
+                              @RequestParam("username") String username, // Para saber a dónde volver
+                              @RequestParam("message") String message,
+                              Authentication authentication) {
+
+        // Validamos seguridad
+        assertHasActiveAssignment(authentication, username);
+
+        String trainerId = currentTrainerId(authentication);
+
+        if (message != null && !message.isBlank()) {
+            progressLogService.addFeedback(logId, trainerId, message.trim());
+        }
+
+        // Redirigir de vuelta a la lista de progresos de ese usuario
+        return "redirect:/mvc/trainer/users/" + username + "/progress";
     }
 }
