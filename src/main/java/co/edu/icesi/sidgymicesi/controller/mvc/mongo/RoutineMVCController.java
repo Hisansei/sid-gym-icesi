@@ -51,14 +51,24 @@ public class RoutineMVCController {
         if (exerciseIds != null && !exerciseIds.isEmpty()) {
             for (String exId : exerciseIds) {
                 if (exId == null || exId.isBlank()) continue;
+
+                Optional<Exercise> exOpt = exerciseService.findById(exId.trim());
+                if (exOpt.isEmpty()) continue; // Saltar si el ID no es válido
+                Exercise exercise = exOpt.get();
+
                 Routine.RoutineExercise it = new Routine.RoutineExercise();
                 it.setExerciseId(exId.trim());
+
+                it.setName(exercise.getName());
+
                 // Defaults sensatos para pasar validaciones del servicio
                 it.setSets(3);
                 it.setReps(12);
                 it.setRestSeconds(60);
                 routineService.addItem(r.getId(), it);
             }
+
+            r = routineService.findById(r.getId()).orElse(r);
         }
 
         return "redirect:/mvc/routines/" + r.getId();
@@ -96,8 +106,22 @@ public class RoutineMVCController {
                           @RequestParam(required = false) Integer durationSec,
                           @RequestParam(required = false) Integer restSeconds) {
         Routine.RoutineExercise newItem = new Routine.RoutineExercise();
-        if (exerciseId != null && !exerciseId.isBlank()) newItem.setExerciseId(exerciseId.trim());
-        if (name != null && !name.isBlank()) newItem.setName(name.trim());
+
+        // 1. Manejar la selección del catálogo
+        if (exerciseId != null && !exerciseId.isBlank()) {
+            newItem.setExerciseId(exerciseId.trim());
+            // Buscar el ejercicio del catálogo para obtener el nombre
+            Optional<Exercise> exOpt = exerciseService.findById(exerciseId.trim());
+            if (exOpt.isPresent()) {
+                // USAMOS EL NOMBRE DEL CATÁLOGO, ignorando el 'name' personalizado si viene.
+                newItem.setName(exOpt.get().getName());
+            }
+        }
+        // 2. Si NO se seleccionó del catálogo, pero se dio un nombre personalizado
+        else if (name != null && !name.isBlank()) {
+                newItem.setName(name.trim());
+        }
+
         newItem.setSets(sets);
         newItem.setReps(reps);
         newItem.setDurationSeconds(durationSec);
