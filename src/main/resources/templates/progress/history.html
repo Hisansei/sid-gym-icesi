@@ -70,15 +70,49 @@
                             0 ejercicios
                         </td>
                         <td class="log-detail">
+                            <!-- Lista de ejercicios del log -->
                             <ul class="entries-list">
                                 <li th:each="e : ${l.entries}"
                                     th:text="${(e.completed ? '✔ ' : '• ')
                                               + (exerciseMap[e.exerciseId] != null ? exerciseMap[e.exerciseId].name : e.exerciseId)
                                               + (e.effortLevel != null ? (' — RPE ' + e.effortLevel) : '')
                                               + (e.notesUser != null && !#strings.isEmpty(e.notesUser) ? (' — ' + e.notesUser) : '')}">
-                                    entrada
+                                    Ejercicio
                                 </li>
                             </ul>
+
+                            <!-- 👉 NUEVO BLOQUE: feedback del entrenador para este log -->
+                            <div class="feedback-section">
+                                <h4 class="feedback-title">Feedback del entrenador</h4>
+
+                                <!-- Cuando no hay feedback -->
+                                <p class="muted small"
+                                   th:if="${l.trainerFeedback == null or #lists.isEmpty(l.trainerFeedback)}">
+                                    Aún no tienes comentarios del entrenador para esta sesión.
+                                </p>
+
+                                <!-- Lista de feedback si existe -->
+                                <ul class="feedback-list"
+                                    th:if="${l.trainerFeedback != null and !#lists.isEmpty(l.trainerFeedback)}">
+                                    <li class="feedback-item" th:each="fb : ${l.trainerFeedback}">
+                                        <div class="feedback-header">
+                                            <span class="badge badge-soft">
+                                                <span th:text="${trainerNames.get(fb.trainerId) ?: fb.trainerId}">
+                                                    Entrenador
+                                                </span>
+                                            </span>
+                                            <span class="feedback-date muted small" th:if="${fb.createdAt != null}"
+                                                  th:text="${#temporals.format(fb.createdAt, 'yyyy-MM-dd HH:mm')}">
+                                                2025-11-08 10:00
+                                            </span>
+                                        </div>
+                                        <p class="feedback-message" th:text="${fb.message}">
+                                            Comentario del entrenador.
+                                        </p>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- 🔚 NUEVO BLOQUE -->
                         </td>
                     </tr>
                     </tbody>
