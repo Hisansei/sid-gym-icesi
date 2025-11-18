@@ -174,30 +174,30 @@ ALTER TABLE ENROLLMENTS ADD CONSTRAINT ENROLLMENTS_STUDENTS_FK
 ALTER TABLE ENROLLMENTS ADD CONSTRAINT ENROLLMENTS_GROUPS_FK
     FOREIGN KEY (NRC) REFERENCES GROUPS (NRC);
 
-ALTER TABLE USERS      ADD CONSTRAINT USERS_STUDENTS_FK
-    FOREIGN KEY (student_id) REFERENCES STUDENTS (id);
-ALTER TABLE USERS      ADD CONSTRAINT USERS_EMPLOYEES_FK
-    FOREIGN KEY (employee_id) REFERENCES EMPLOYEES (id);
-ALTER TABLE USERS      ADD CONSTRAINT USERS_ONE_ROLE_CHK
-    CHECK (
-        (student_id IS NOT NULL AND employee_id IS NULL)
-            OR (student_id IS NULL AND employee_id IS NOT NULL)
-        );
+-- ALTER TABLE USERS      ADD CONSTRAINT USERS_STUDENTS_FK
+--     FOREIGN KEY (student_id) REFERENCES STUDENTS (id);
+-- ALTER TABLE USERS      ADD CONSTRAINT USERS_EMPLOYEES_FK
+--     FOREIGN KEY (employee_id) REFERENCES EMPLOYEES (id);
+-- ALTER TABLE USERS      ADD CONSTRAINT USERS_ONE_ROLE_CHK
+--     CHECK (
+--         (student_id IS NOT NULL AND employee_id IS NULL)
+--             OR (student_id IS NULL AND employee_id IS NOT NULL)
+--         );
 
 -- -----------------------------
 -- Tablas de ESTADÍSTICAS (requisito)
 -- -----------------------------
 CREATE TABLE trainer_monthly_stats (
-                                       trainer_username VARCHAR(100) NOT NULL,
-                                       period           CHAR(7)      NOT NULL,   -- YYYY-MM
-                                       new_assignments  INTEGER      NOT NULL DEFAULT 0,
-                                       followups_made   INTEGER      NOT NULL DEFAULT 0
+                                        trainer_username VARCHAR(100) NOT NULL,
+                                        period           CHAR(7)      NOT NULL,   -- YYYY-MM
+                                        new_assignments  INTEGER      NOT NULL DEFAULT 0,
+                                        followups_made   INTEGER      NOT NULL DEFAULT 0
 );
-ALTER TABLE trainer_monthly_stats
-    ADD CONSTRAINT trainer_monthly_stats_pk PRIMARY KEY (trainer_username, period);
-ALTER TABLE trainer_monthly_stats
-    ADD CONSTRAINT trainer_monthly_stats_users_fk
-        FOREIGN KEY (trainer_username) REFERENCES USERS (username);
+-- ALTER TABLE trainer_monthly_stats
+--     ADD CONSTRAINT trainer_monthly_stats_pk PRIMARY KEY (trainer_username, period);
+-- ALTER TABLE trainer_monthly_stats
+--     ADD CONSTRAINT trainer_monthly_stats_users_fk
+--         FOREIGN KEY (trainer_username) REFERENCES USERS (username);
 
 -- Usuario por mes
 CREATE TABLE user_monthly_stats (
@@ -206,8 +206,8 @@ CREATE TABLE user_monthly_stats (
                                     routines_started INTEGER     NOT NULL DEFAULT 0,
                                     followups_made   INTEGER     NOT NULL DEFAULT 0
 );
-ALTER TABLE user_monthly_stats
-    ADD CONSTRAINT user_monthly_stats_pk PRIMARY KEY (user_username, period);
-ALTER TABLE user_monthly_stats
-    ADD CONSTRAINT user_monthly_stats_users_fk
-        FOREIGN KEY (user_username) REFERENCES USERS (username);
+-- ALTER TABLE user_monthly_stats
+--     ADD CONSTRAINT user_monthly_stats_pk PRIMARY KEY (user_username, period);
+-- ALTER TABLE user_monthly_stats
+--     ADD CONSTRAINT user_monthly_stats_users_fk
+--         FOREIGN KEY (user_username) REFERENCES USERS (username);
