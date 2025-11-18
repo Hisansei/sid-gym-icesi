@@ -1,58 +1,50 @@
 <!DOCTYPE html>
 <html lang="es"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/extras/spring-security"
-      th:replace="~{components/base :: page(title='Rutinas de usuario', content=~{::content})}">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{components/base :: page(title='Rutinas de Usuario', content=~{::content})}">
 
-<section th:fragment="content" class="content">
-    <div class="page-header">
-        <h1 th:text="'Rutinas de ' + ${username}">Rutinas de usuario</h1>
-        <p class="text-muted">
-            Rutinas creadas por el usuario asignado.
-        </p>
-        <a th:href="@{/mvc/trainer/dashboard}" class="btn btn-link">&larr; Volver al panel</a>
-    </div>
+<section th:fragment="content" class="routine-page">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <link rel="stylesheet" th:href="@{/css/routine/routine.css}">
 
-    <div sec:authorize="hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor'">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Rutinas</h2>
-            </div>
-            <div class="card-body">
-                <div th:if="${#lists.isEmpty(routines)}" class="alert alert-info">
-                    Este usuario aún no tiene rutinas registradas.
-                </div>
-
-                <table th:if="${!#lists.isEmpty(routines)}" class="table table-striped table-hover">
-                    <thead>
-                    <tr>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Activa</th>
-                        <th>Creada</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="r : ${routines}">
-                        <td th:text="${r.name}">Nombre rutina</td>
-                        <td th:text="${r.description}">Descripción</td>
-                        <td>
-                            <span th:if="${r.active}" class="badge bg-success">Sí</span>
-                            <span th:if="${!r.active}" class="badge bg-secondary">No</span>
-                        </td>
-                        <td th:text="${r.createdAt != null ? #temporals.format(r.createdAt, 'yyyy-MM-dd HH:mm') : '-'}">
-                            2024-01-01
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="page-title">Rutinas de <span th:text="${username}">Usuario</span></h1>
+            <a th:href="@{/mvc/trainer/dashboard}" class="btn btn-secondary">Volver al Dashboard</a>
         </div>
-    </div>
+    </header>
 
-    <div sec:authorize="! (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')" class="alert alert-danger mt-3">
-        No tienes permisos para ver las rutinas de este usuario.
-    </div>
+    <main class="container page-content">
+        <div th:if="${#lists.isEmpty(routines)}" class="alert alert-info">
+            El usuario no tiene rutinas creadas.
+        </div>
+
+        <div class="table-wrapper" th:if="${!#lists.isEmpty(routines)}">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
+                    <th>Nivel</th>
+                    <th>Estado</th>
+                    <th>Ejercicios</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${routines}">
+                    <td th:text="${r.name}">Nombre</td>
+                    <td th:text="${r.description}">Desc</td>
+                    <td th:text="${r.level}">Nivel</td>
+                    <td>
+                        <span th:if="${r.status}" class="badge success">Activa</span>
+                        <span th:if="${!r.status}" class="badge">Inactiva</span>
+                    </td>
+                    <td th:text="${#lists.size(r.exercises)}">0</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
 </section>
-
 </html>

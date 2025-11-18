@@ -1,75 +1,133 @@
 <!DOCTYPE html>
 <html lang="es"
       xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/extras/spring-security"
-      th:replace="~{components/base :: page(title='Progreso de usuario', content=~{::content})}">
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{components/base :: page(title='Progreso de Usuario', content=~{::content})}">
 
-<section th:fragment="content" class="content">
-    <div class="page-header">
-        <h1 th:text="'Progreso de ' + ${username}">Progreso de usuario</h1>
-        <p class="text-muted">
-            Registros de progreso y esfuerzo percibido del usuario asignado.
-        </p>
-        <a th:href="@{/mvc/trainer/dashboard}" class="btn btn-link">&larr; Volver al panel</a>
-    </div>
+<section th:fragment="content" class="progress-page">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
 
-    <div sec:authorize="hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor'">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Logs de progreso</h2>
+    <style>
+        .log-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 0.5rem;
+        }
+        .feedback-section {
+            margin-top: 1.5rem;
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        .feedback-item {
+            border-left: 3px solid #4f46e5;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 0.75rem;
+            background: #ffffff;
+            border-radius: 4px;
+        }
+        .feedback-item p {
+            margin-bottom: 0.25rem;
+        }
+        /* Estilos para hacer la caja de texto más estética */
+        .feedback-form textarea {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 0.75rem;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        .feedback-form textarea:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        .btn-primary {
+            background-color: #4f46e5;
+            border-color: #4f46e5;
+            color: white;
+        }
+    </style>
+
+    <header class="site-header">
+        <div class="container">
+            <h1 class="page-title">Progreso de <span th:text="${username}">Usuario</span></h1>
+            <p class="muted">Revisa el historial y agrega retroalimentación.</p>
+            <a th:href="@{/mvc/trainer/dashboard}" class="btn btn-secondary">Volver al Dashboard</a>
+        </div>
+    </header>
+
+    <main class="container page-content">
+
+        <div th:if="${#lists.isEmpty(logs)}" class="alert alert-info">
+            Este usuario no ha registrado sesiones de entrenamiento todavía.
+        </div>
+
+        <div th:each="log : ${logs}" class="log-card">
+
+            <div class="log-header">
+                <h3 th:text="${#temporals.format(log.date, 'EEEE dd MMMM yyyy')}">Fecha</h3>
+                <span class="badge" th:text="${log.routineId}">Rutina</span>
             </div>
-            <div class="card-body">
-                <div th:if="${#lists.isEmpty(logs)}" class="alert alert-info">
-                    Este usuario aún no tiene registros de progreso.
+
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Ejercicio</th>
+                    <th>Sets</th>
+                    <th>Reps</th>
+                    <th>Peso (kg)</th>
+                    <th>Esfuerzo</th>
+                    <th>Notas</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="entry : ${log.entries}">
+                    <td th:text="${entry.exerciseId}">Ejercicio</td>
+                    <td th:text="${#strings.listJoin(entry.sets, ', ')}">-</td>
+                    <td th:text="${#strings.listJoin(entry.reps, ', ')}">-</td>
+                    <td th:text="${#strings.listJoin(entry.weightKg, ', ')}">-</td>
+                    <td th:text="${entry.effortLevel}">-</td>
+                    <td th:text="${entry.notesUser}">-</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="feedback-section">
+                <h4>Feedback del Entrenador</h4>
+
+                <div th:if="${#lists.isEmpty(log.trainerFeedback)}" class="text-muted small mb-2">
+                    No hay feedback registrado aún.
                 </div>
 
-                <div th:if="${!#lists.isEmpty(logs)}" class="list-group">
-                    <div th:each="log : ${logs}" class="list-group-item mb-2">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <h5 class="mb-1">
-                                    <span th:text="${log.routineName}">Nombre rutina</span>
-                                    <small class="text-muted ms-2"
-                                           th:text="${#temporals.format(log.date, 'yyyy-MM-dd')}">2024-01-01</small>
-                                </h5>
-                                <p class="mb-1">
-                                    <strong>RPE:</strong>
-                                    <span th:text="${log.perceivedEffort}">7</span>
-                                    <span th:if="${log.notes != null && !#strings.isEmpty(log.notes)}">
-                                        &mdash; <span th:text="${log.notes}">comentarios del usuario</span>
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
+                <div th:each="fb : ${log.trainerFeedback}" class="feedback-item">
+                    <p class="mb-1">
+                        <strong th:text="${trainerNames.get(fb.trainerId) ?: fb.trainerId}">Nombre Entrenador</strong>:
+                        <span th:text="${fb.message}">Mensaje</span>
+                    </p>
+                    <small class="text-muted" th:text="${fb.createdAt != null ? #temporals.format(fb.createdAt, 'dd/MM/yyyy HH:mm') : ''}">Fecha</small>
+                </div>
 
-                        <!-- Feedback del entrenador existente -->
-                        <div th:if="${log.trainerFeedback != null and !#lists.isEmpty(log.trainerFeedback)}"
-                             class="mt-2">
-                            <h6 class="fw-bold">Comentarios del entrenador</h6>
-                            <ul class="list-unstyled mb-0">
-                                <li th:each="fb : ${log.trainerFeedback}" class="mb-1">
-                                    <small class="text-muted">
-                                        <span th:text="${fb.trainerUsername}">trainer</span>
-                                        &mdash;
-                                        <span th:text="${#temporals.format(fb.createdAt, 'yyyy-MM-dd HH:mm')}">
-                                            fecha
-                                        </span>
-                                    </small>
-                                    <div th:text="${fb.comment}">Comentario</div>
-                                </li>
-                            </ul>
-                        </div>
-
-                        <!-- AQUÍ luego enganchamos el formulario para nuevo feedback (Fase 2 - punto 5.x) -->
+                <form th:action="@{'/mvc/trainer/progress/' + ${log.id} + '/feedback'}" method="post" class="mt-3 feedback-form">
+                    <input type="hidden" name="username" th:value="${username}" />
+                    <div class="field">
+                        <textarea name="message" class="form-control" rows="2" placeholder="Escribe tu retroalimentación aquí..." required></textarea>
                     </div>
-                </div>
+                    <div class="actions mt-2">
+                        <button type="submit" class="btn btn-sm btn-primary">Agregar Feedback</button>
+                    </div>
+                </form>
             </div>
         </div>
-    </div>
-
-    <div sec:authorize="! (hasRole('EMPLOYEE') and authentication.principal.employeeType == 'Instructor')" class="alert alert-danger mt-3">
-        No tienes permisos para ver el progreso de este usuario.
-    </div>
+    </main>
 </section>
-
 </html>
