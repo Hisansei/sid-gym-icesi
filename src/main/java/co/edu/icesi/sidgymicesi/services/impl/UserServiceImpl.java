@@ -68,6 +68,6 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public List<User> findAllStudents() {
-        return userRepository.findByRole(Role.STUDENT);
+        return userRepository.findAllStudentsAndNonInstructors(Role.STUDENT, Role.EMPLOYEE, "Instructor");
     }
 }

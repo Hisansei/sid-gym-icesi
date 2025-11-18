@@ -46,7 +46,7 @@
           <tbody>
           <tr th:each="u : ${users}">
             <td th:text="${u.username}">username</td>
-            <td th:text="${u.role}">ROLE</td>
+            <td th:text="${u.role.name() == 'EMPLOYEE' and u.employeeType == 'Instructor' ? 'TRAINER' : u.role}">ROLE</td>
             <td th:text="${u.studentId}">-</td>
             <td th:text="${u.employeeId}">-</td>
             <td th:text="${u.active} ? 'Sí' : 'No'">Sí/No</td>
